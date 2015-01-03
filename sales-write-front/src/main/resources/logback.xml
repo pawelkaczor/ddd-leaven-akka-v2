@@ -1,0 +1,35 @@
+<configuration>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%date{HH:mm:ss} %-5level %logger{0} [%X{akkaSource}] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="file" class="ch.qos.logback.core.FileAppender">
+        <file>${log-file:-sales-write-front.log}</file>
+        <encoder>
+            <pattern>%date{HH:mm:ss} %-5level %logger{0} [%X{akkaSource}] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="ecommerce" level="debug" additivity="false">
+        <appender-ref ref="console"/>
+        <appender-ref ref="file"/>
+    </logger>
+
+    <logger name="Remoting" level="off" additivity="false">
+    </logger>
+
+    <logger name="akka.remote.EndpointWriter" level="off" additivity="false">
+    </logger>
+
+    <logger name="akka.cluster.ClusterHeartbeatSender" level="off" additivity="false">
+    </logger>
+
+    <root level="warn">
+        <appender-ref ref="console"/>
+        <appender-ref ref="file"/>
+    </root>
+
+</configuration>
