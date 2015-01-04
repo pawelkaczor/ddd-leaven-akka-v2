@@ -1,0 +1,4 @@
+#!/bin/bash
+
+sales-write-front/target/universal/stage/bin/sales-write-front
+

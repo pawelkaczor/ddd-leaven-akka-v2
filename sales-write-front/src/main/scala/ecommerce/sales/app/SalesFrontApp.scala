@@ -1,12 +1,20 @@
 package ecommerce.sales.app
 
-import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Props, SupervisorStrategy, Terminated}
-import akka.event.LoggingAdapter
+import akka.actor._
+import akka.kernel.Bootable
+import com.typesafe.config.{Config, ConfigFactory}
 
-object SalesFrontApp extends BaseApp {
+class SalesFrontApp extends Bootable {
 
-  override def run(system: ActorSystem, log: LoggingAdapter): Unit = {
+  private val config: Config = ConfigFactory.load()
+  implicit private val system = ActorSystem("sales-front", config)
+
+  override def startup(): Unit = {
     system.actorOf(SalesFrontAppSupervisor.props, "sales-front-supervisor")
+  }
+
+  override def shutdown(): Unit = {
+    system.shutdown()
   }
 }
 

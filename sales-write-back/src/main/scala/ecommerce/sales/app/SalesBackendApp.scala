@@ -37,7 +37,7 @@ class SalesBackendApp extends Bootable {
 
   implicit object ReservationShardResolution extends DefaultShardResolution[Reservation]
 
-  def startup() = {
+  override def startup() = {
     joinCluster()
     openOffices()
   }
@@ -74,7 +74,7 @@ class SalesBackendApp extends Bootable {
     }
   }
 
-  def shutdown() = {
+  override def shutdown() = {
     system.shutdown()
   }
 

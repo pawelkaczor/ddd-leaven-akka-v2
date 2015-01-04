@@ -45,7 +45,7 @@ lazy val `sales-write-front` = project
   .settings(commonSettings: _*)
   .settings(
     libraryDependencies ++= SqlDb() ++ Seq(
-      AkkaDDD.writeFront, Akka.slf4j
+      AkkaDDD.writeFront, Akka.kernel, Akka.slf4j
     )
   )
   .dependsOn(`sales-contracts`)
