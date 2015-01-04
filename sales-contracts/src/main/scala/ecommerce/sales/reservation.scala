@@ -24,10 +24,14 @@ case class CloseReservation(reservationId: EntityId) extends Command
 // Events
 //
 
-case class ReservationCreated(reservationId: EntityId, clientId: EntityId) extends DomainEvent
-case class ProductReserved(reservationId: EntityId, product: Product, quantity: Int) extends DomainEvent
-case class ReservationConfirmed(reservationId: EntityId, clientId: EntityId) extends DomainEvent
-case class ReservationClosed(reservationId: EntityId) extends DomainEvent
+sealed trait ReservationEvent extends DomainEvent {
+  def reservationId: EntityId
+}
+
+case class ReservationCreated(reservationId: EntityId, clientId: EntityId) extends ReservationEvent
+case class ProductReserved(reservationId: EntityId, product: Product, quantity: Int) extends ReservationEvent
+case class ReservationConfirmed(reservationId: EntityId, clientId: EntityId) extends ReservationEvent
+case class ReservationClosed(reservationId: EntityId) extends ReservationEvent
 
 // Value Objects
 
