@@ -5,8 +5,8 @@ import akka.http.Http
 import akka.http.server.{Directives, Route}
 import akka.stream.scaladsl.ImplicitFlowMaterializer
 import akka.util.Timeout
-import ecommerce.sales.{Command => SalesCommand}
 import ecommerce.sales
+import ecommerce.sales.{Command => SalesCommand}
 import org.json4s.ext.{JodaTimeSerializers, UUIDSerializer}
 import org.json4s.{DefaultFormats, Formats}
 import pl.newicom.dddd.aggregate.Command
@@ -35,7 +35,7 @@ class HttpService(interface: String, port: Int)(implicit askTimeout: Timeout) ex
 
   override def receive = Actor.emptyBehavior
 
-  private def route = (pathPrefix("ecommerce")) {
+  private def route = pathPrefix("ecommerce") {
     path("sales") {
       handleCommand[SalesCommand]
     }
