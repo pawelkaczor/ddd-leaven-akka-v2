@@ -1,8 +1,7 @@
 ddd-leaven-akka-v2
 ==================
 
-
-### Setup
+### Prerequisites
 
 ##### Eventstore
 
@@ -17,3 +16,13 @@ docker run --name sales-view-store -d -p 5432:5432 postgres
 ~~~
 
 Postgres console: psql -h localhost -p 5432 -U postgres
+
+
+##### Command line HTTP client
+
+http://httpie.org/
+
+### Running services
+
+For each service there is a run script: run-{project name}
+
