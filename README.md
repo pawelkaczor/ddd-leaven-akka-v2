@@ -15,3 +15,5 @@ Go to http://127.0.0.1:2113/web/index.html#/projections and click `Enable All` b
 ~~~
 docker run --name sales-view-store -d -p 5432:5432 postgres
 ~~~
+
+Postgres console: psql -h localhost -p 5432 -U postgres
