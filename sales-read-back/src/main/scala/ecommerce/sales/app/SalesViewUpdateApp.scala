@@ -1,8 +1,9 @@
-package ecommerce.sales
+package ecommerce.sales.app
 
 import akka.actor._
 import akka.kernel.Bootable
 import com.typesafe.config.ConfigFactory
+import ecommerce.sales.SalesViewUpdateService
 
 import scala.slick.driver.{JdbcProfile, PostgresDriver}
 
