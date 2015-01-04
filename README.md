@@ -26,3 +26,16 @@ http://httpie.org/
 
 For each service there is a run script: run-{project name}
 
+### Manual testing of Sales/Reservation service using httpie
+
+- Create reservation
+
+~~~
+http POST http://127.0.0.1:9100/ecommerce/sales Command-Type:ecommerce.sales.CreateReservation reservationId="reservation-200" clientId="client-1"
+~~~
+
+- Display all reservations
+
+~~~
+http GET localhost:9300/ecommerce/sales/reservation/all
+~~~
