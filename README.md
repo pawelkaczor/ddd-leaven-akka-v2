@@ -9,18 +9,22 @@ Currently only basic *Sales/Reservation* autonomous service is available. Autono
 
 ##### sales-write-back 
 Business logic encapsulated inside Aggregate Roots. Starts as backend cluster node.
+
 *Technologies:* Akka Persistence, Akka Cluster Sharding
 
 ##### sales-write-front 
 Http server forwarding commands to backend cluster. 
+
 *Technologies:* Akka-Http, Akka Cluster Client
 
 ##### sales-read-back
 Service that consumes events from event store and updates view store (Postgresql database).
+
 *Technologies:* [EventStore JVM Client](https://github.com/EventStore/EventStore.JVM), [Slick](http://slick.typesafe.com/)
 
 ##### sales-read-front
 Http server providing rest endpoint for accessing view-store. 
+
 *Technologies:* Akka-Http, Slick
 
 
