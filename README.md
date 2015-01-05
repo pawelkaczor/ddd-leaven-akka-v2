@@ -2,7 +2,7 @@ ddd-leaven-akka-v2
 ==================
 Sample e-commerce application built on top of [Akka](akka.io) and [EventStore](geteventstore.com) following a [CQRS/DDDD](http://abdullin.com/post/dddd-cqrs-and-other-enterprise-development-buzz-words)-based approach. Makes use of [Akka DDD framework](https://github.com/pawelkaczor/akka-ddd). 
 
-Currently only basic *Sales/Reservation* autonomous service is available. Autonomous service consist of 4 executable units ([Akka Microkernel](http://doc.akka.io/docs/akka/snapshot/scala/microkernel.html) bundles). 
+Currently only basic *Sales/Reservation* **autonomous service** is available. Autonomous service consist of 4 executable units ([Akka Microkernel](http://doc.akka.io/docs/akka/snapshot/scala/microkernel.html) bundles). 
 
 
 ### Sales service - executable units 
