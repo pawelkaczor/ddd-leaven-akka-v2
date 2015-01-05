@@ -4,21 +4,22 @@ Sample e-commerce application built on top of [Akka](akka.io) and [EventStore](g
 
 Currently only basic *Sales/Reservation* autonomous service is available. Autonomous service consist of 4 executable units ([Akka Microkernel](http://doc.akka.io/docs/akka/snapshot/scala/microkernel.html) bundles). 
 
+
 ### Sales service - executable units 
 
-#### sales-write-back 
+##### sales-write-back 
 Business logic encapsulated inside Aggregate Roots. Starts as backend cluster node.
 *Technologies:* Akka Persistence, Akka Cluster Sharding
 
-#### sales-write-front 
+##### sales-write-front 
 Http server forwarding commands to backend cluster. 
 *Technologies:* Akka-Http, Akka Cluster Client
 
-#### sales-read-back
+##### sales-read-back
 Service that consumes events from event store and updates view store (Postgresql database).
 *Technologies:* [EventStore JVM Client](https://github.com/EventStore/EventStore.JVM), [Slick](http://slick.typesafe.com/)
 
-#### sales-read-front
+##### sales-read-front
 Http server providing rest endpoint for accessing view-store. 
 *Technologies:* Akka-Http, Slick
 
