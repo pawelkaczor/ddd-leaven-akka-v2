@@ -2,12 +2,11 @@ package ecommerce.sales.app
 
 import akka.actor._
 import akka.japi.Util.immutableSeq
-import pl.newicom.dddd.writefront.GlobalOfficeClientSupport
 
 import scala.collection.immutable.Seq
 import scala.concurrent.duration.{FiniteDuration, MILLISECONDS}
 
-trait SalesFrontConfiguration extends GlobalOfficeClientSupport {
+trait SalesFrontConfiguration {
   this: Actor =>
 
   object httpService {
@@ -16,7 +15,7 @@ trait SalesFrontConfiguration extends GlobalOfficeClientSupport {
     val askTimeout =  FiniteDuration(appConfig.getDuration("http-service.ask-timeout", MILLISECONDS), MILLISECONDS)
   }
 
-  override lazy val contactPoints: Seq[String] = immutableSeq(appConfig.getStringList("backend-contact-points"))
+  lazy val contactPoints: Seq[String] = immutableSeq(appConfig.getStringList("backend-contact-points"))
 
   private val appConfig = config.getConfig("app")
 

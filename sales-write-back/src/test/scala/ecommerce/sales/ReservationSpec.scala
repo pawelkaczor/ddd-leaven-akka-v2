@@ -13,6 +13,7 @@ import scala.concurrent.duration.Duration
 import ReservationSpec._
 
 object ReservationSpec {
+  implicit val as = testSystem
   implicit def factory(implicit it: Duration = 1.minute): AggregateRootActorFactory[Reservation] =
     new AggregateRootActorFactory[Reservation] {
       override def props(pc: PassivationConfig): Props = Props(new Reservation(pc) with LocalPublisher)
@@ -20,7 +21,7 @@ object ReservationSpec {
     }
 }
 
-class ReservationSpec extends OfficeSpec[Reservation](testSystem) {
+class ReservationSpec extends OfficeSpec[Reservation] {
 
   def reservationOffice: ActorRef = officeUnderTest
 
@@ -30,7 +31,7 @@ class ReservationSpec extends OfficeSpec[Reservation](testSystem) {
 
   "Reservation office" should {
     "create reservation" in {
-      whenCommand(
+      when(
         CreateReservation(reservationId, "client1")
       )
       .expectEvent(
@@ -41,10 +42,10 @@ class ReservationSpec extends OfficeSpec[Reservation](testSystem) {
 
   "Reservation office" should {
     "reserve product" in {
-      givenCommand(
+      given(
         CreateReservation(reservationId, "client1")
       )
-      .whenCommand(
+      .when(
         ReserveProduct(reservationId, product, quantity = 1)
       )
       .expectEvent {
@@ -55,11 +56,11 @@ class ReservationSpec extends OfficeSpec[Reservation](testSystem) {
 
   "Reservation office" should {
     "close reservation" in {
-      givenCommands(
+      given(
         CreateReservation(reservationId, "client1"),
         ReserveProduct(reservationId, product, quantity = 1)
       )
-      .whenCommand(
+      .when(
         CloseReservation(reservationId)
       )
       .expectEvent {

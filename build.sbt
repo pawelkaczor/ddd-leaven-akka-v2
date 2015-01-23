@@ -13,7 +13,6 @@ scalacOptions in ThisBuild := Seq("-encoding", "utf8", "-feature", "-language:po
 
 sourcesInBase := false
 
-
 lazy val root = (project in file("."))
   .settings(
     updateOptions := updateOptions.value.withCachedResolution(cachedResoluton = true)

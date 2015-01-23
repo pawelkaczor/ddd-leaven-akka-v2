@@ -19,16 +19,13 @@ object HttpService {
     Props(new HttpService(interface, port)(askTimeout))
 }
 
-class HttpService(interface: String, port: Int)(implicit askTimeout: Timeout) extends Actor with SalesFrontConfiguration
+class HttpService(interface: String, port: Int)(implicit askTimeout: Timeout)
+  extends Actor with SalesFrontConfiguration with CommandHandler
   with CommandDirective with Directives
   with ActorLogging with ImplicitFlowMaterializer with JsonMarshalling {
 
   import context.dispatcher
   implicit val formats: Formats = DefaultFormats ++ JodaTimeSerializers.all + UUIDSerializer + sales.typeHints
-
-  lazy val salesOffice = office(sales.officeName)
-
-  lazy val commandHandler = CommandHandler(context.system)
 
   Http()(context.system).bind(interface, port).startHandlingWith(route)
   log.info(s"Listening on $interface:$port")
@@ -37,15 +34,15 @@ class HttpService(interface: String, port: Int)(implicit askTimeout: Timeout) ex
 
   private def route = pathPrefix("ecommerce") {
     path("sales") {
-      handleCommand[SalesCommand]
+      handleCommand[SalesCommand](sales.officeName)
     }
   }
 
-  private def handleCommand[A <: Command]: Route = commandManifest[A] { implicit cm =>
+  private def handleCommand[A <: Command](officeName: String): Route = commandManifest[A] { implicit cm =>
     post {
       entity(as[A]) { command =>
         complete {
-          commandHandler.handle(salesOffice, command)
+          handle(officeName, command)
         }
       }
     }
