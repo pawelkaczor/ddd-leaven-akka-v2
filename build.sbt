@@ -7,7 +7,7 @@ name := "ddd-leaven-akka-v2"
 
 organization in ThisBuild := "pl.newicom"
 
-scalaVersion in ThisBuild := "2.11.4"
+scalaVersion in ThisBuild := "2.11.5"
 
 scalacOptions in ThisBuild := Seq("-encoding", "utf8", "-feature", "-language:postfixOps", "-language:implicitConversions"/*, "-Xlog-implicits"*/)
 
@@ -65,7 +65,7 @@ lazy val `sales-read-front` = project
   .settings(
     parallelExecution in Test := false,
     libraryDependencies ++= Seq(
-      Akka.testkit, Akka.http
+      Akka.testkit, Akka.httpCore
     )
   )
   .dependsOn(`sales-read-back` % "test->test;compile->compile")
@@ -75,7 +75,7 @@ lazy val commonSettings: Seq[Setting[_]] = Seq(
   libraryDependencies ++= Seq(
     "com.github.nscala-time" %% "nscala-time" % "1.4.0",
     "ch.qos.logback" % "logback-classic" % "1.1.2",
-    "org.scalatest" %% "scalatest" % "2.2.2" % "test",
+    "org.scalatest" %% "scalatest" % "2.2.4" % "test",
     "org.mockito" % "mockito-core" % "1.9.5" % "test",
     "commons-io" % "commons-io" % "2.4" % "test",
     "org.scalacheck" %% "scalacheck" % "1.11.6" % "test"

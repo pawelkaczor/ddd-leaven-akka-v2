@@ -3,14 +3,16 @@ import sbt._
 object Deps {
 
   object Version {
-    val akka =              "2.3.8"
-    val akkaDDD =           "1.0.0-SNAPSHOT"
+    val akka =              "2.3.9"
+    val akkaHttp =          "1.0-M3"
+    val akkaDDD =           "1.0.2-SNAPSHOT"
     val slick =             "2.1.0"
   }
 
   object Akka {
     val actor =            apply("actor")
-    val http =             "com.typesafe.akka" %% "akka-http-experimental" % "1.0-M2"
+    val httpCore =         "com.typesafe.akka" %% "akka-http-experimental" % Version.akkaHttp
+    val httpTestKit =      "com.typesafe.akka" %% "akka-http-testkit-experimental" % Version.akkaHttp % "test"
     val persistence =      apply("persistence-experimental")
     val contrib =          apply("contrib")
     val kernel =           apply("kernel")
@@ -32,8 +34,8 @@ object Deps {
   }
 
   object Eventstore {
-    val client = apply("eventstore-client", "1.0.1")
-    val akkaJournal = apply("akka-persistence-eventstore", "1.1.1-SNAPSHOT")
+    val client = apply("eventstore-client", "2.0.0")
+    val akkaJournal = apply("akka-persistence-eventstore", "2.0.2-SNAPSHOT")
     private def apply(moduleName: String, ver: String) = "com.geteventstore" %% moduleName % ver withSources()
   }
 
