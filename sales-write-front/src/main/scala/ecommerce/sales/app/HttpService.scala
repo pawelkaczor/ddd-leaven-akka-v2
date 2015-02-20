@@ -12,6 +12,7 @@ import ecommerce.sales.{Command => SalesCommand}
 import org.json4s.ext.{JodaTimeSerializers, UUIDSerializer}
 import org.json4s.{DefaultFormats, Formats}
 import pl.newicom.dddd.aggregate.Command
+import pl.newicom.dddd.messaging.command.CommandMessage
 import pl.newicom.dddd.writefront.{CommandDirective, CommandHandler, JsonMarshalling}
 
 import scala.concurrent.duration.FiniteDuration
@@ -45,7 +46,7 @@ class HttpService(interface: String, port: Int)(implicit askTimeout: Timeout)
     post {
       entity(as[A]) { command =>
         complete {
-          handle(officeName, command).map[ToResponseMarshallable] {
+          handle(officeName, CommandMessage(command)).map[ToResponseMarshallable] {
             case Success(msg) => StatusCodes.OK -> msg
             case Failure(ex)  => StatusCodes.InternalServerError -> ex.getMessage
           }
