@@ -1,0 +1,3 @@
+#!/bin/bash
+
+jps -l | grep "akka.kernel.Main" | cut -d ' ' -f 1 | xargs kill -15
