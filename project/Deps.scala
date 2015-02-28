@@ -34,9 +34,8 @@ object Deps {
   }
 
   object Eventstore {
-    val client = apply("eventstore-client", "2.0.0")
-    val akkaJournal = apply("akka-persistence-eventstore", "2.0.2-SNAPSHOT")
-    private def apply(moduleName: String, ver: String) = "com.geteventstore" %% moduleName % ver withSources()
+    val client = "com.geteventstore" %% "eventstore-client" % "2.0.0" withSources()
+    val akkaJournal = "pl.newicom.dddd" %% "akka-persistence-eventstore" % "2.0.2-SNAPSHOT" withSources()
   }
 
   object Json {
