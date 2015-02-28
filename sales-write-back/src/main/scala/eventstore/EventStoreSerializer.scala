@@ -7,6 +7,6 @@ import pl.newicom.eventstore.Json4sEsSerializer
 
 class EventStoreSerializer(val sys: ExtendedActorSystem) extends Json4sEsSerializer(sys) {
 
-  override implicit val formats: Formats = defaultFormats + sales.typeHints
+  override implicit val formats: Formats = defaultFormats + sales.typeHints + sales.formats
 
 }

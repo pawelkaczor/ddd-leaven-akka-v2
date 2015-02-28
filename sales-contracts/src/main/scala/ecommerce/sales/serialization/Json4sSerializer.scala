@@ -3,22 +3,34 @@ package ecommerce.sales.serialization
 import java.nio.ByteBuffer
 import java.nio.charset.Charset
 
-import ecommerce.sales.{SalesValueObjects, ReservationEvents}
+import akka.actor.{ActorRef, ExtendedActorSystem}
+import akka.serialization.Serialization
+import ecommerce.sales
+import ecommerce.sales.{ReservationEvents, SalesValueObjects}
+import org.json4s.JsonAST.JString
 import org.json4s._
 import org.json4s.ext.{JodaTimeSerializers, UUIDSerializer}
 import org.json4s.native.Serialization.{read, write}
+import pl.newicom.dddd.delivery.protocol.Processed
+import pl.newicom.dddd.delivery.protocol.alod.{Processed => AlodProcessed}
 import pl.newicom.dddd.messaging.MetaData
 
-class Json4sSerializer extends akka.serialization.Serializer {
+class Json4sSerializer(sys: ExtendedActorSystem) extends akka.serialization.Serializer {
 
   val UTF8 = Charset.forName("UTF-8")
-  val Identifier: Int = ByteBuffer.wrap("json4s".getBytes(UTF8)).getInt
+  val Identifier: Int = ByteBuffer.wrap("sales-json4s".getBytes(UTF8)).getInt
 
   def identifier = Identifier
 
   implicit val formats: Formats = DefaultFormats ++
-    JodaTimeSerializers.all + UUIDSerializer +
-    ReservationEvents + SalesValueObjects + new ShortTypeHints(List(classOf[MetaData]))
+    JodaTimeSerializers.all + UUIDSerializer + ActorRefSerializer +
+    ReservationEvents + SalesValueObjects + sales.formats + new
+      FullTypeHints(List(
+        classOf[MetaData],
+        Class.forName("akka.persistence.PersistentImpl"),
+        classOf[Processed],
+        classOf[AlodProcessed]
+      ))
 
   def includeManifest = true
 
@@ -33,5 +45,15 @@ class Json4sSerializer extends akka.serialization.Serializer {
   override def toBinary(o: AnyRef) = {
     write(o).getBytes(UTF8)
   }
+
+  object ActorRefSerializer extends CustomSerializer[ActorRef](format => (
+    {
+      case JString(s) => sys.provider.resolveActorRef(s)
+    },
+    {
+      case x: ActorRef => JString(Serialization.serializedActorPath(x))
+    }
+    ))
+
 
 }
