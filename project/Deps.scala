@@ -27,6 +27,7 @@ object Deps {
     val messaging = apply("messaging")
     val core = apply("core")
     val writeFront = apply("write-front")
+    val httpSupport = "pl.newicom.dddd" %% s"http-support" % Version.akkaDDD withSources()
     val viewUpdateSql = "pl.newicom.dddd" %% "view-update-sql" % Version.akkaDDD withSources()
     val eventStore = "pl.newicom.dddd" %% "eventstore-akka-persistence" % Version.akkaDDD withSources()
     val test = apply("test") % "test"
