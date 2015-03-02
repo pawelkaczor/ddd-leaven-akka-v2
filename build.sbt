@@ -11,6 +11,8 @@ scalaVersion in ThisBuild := "2.11.5"
 
 scalacOptions in ThisBuild := Seq("-encoding", "utf8", "-feature", "-language:postfixOps", "-language:implicitConversions"/*, "-Xlog-implicits"*/)
 
+resolvers in ThisBuild += "Akka Snapshot Repository" at "http://repo.akka.io/snapshots/"
+
 sourcesInBase := false
 
 lazy val root = (project in file("."))

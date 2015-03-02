@@ -3,7 +3,7 @@ import sbt._
 object Deps {
 
   object Version {
-    val akka =              "2.3.9"
+    val akka =              "2.4-SNAPSHOT"
     val akkaHttp =          "1.0-M3"
     val akkaDDD =           "1.0.2-SNAPSHOT"
     val slick =             "2.1.0"
@@ -35,7 +35,7 @@ object Deps {
   }
 
   object Eventstore {
-    val client = "com.geteventstore" %% "eventstore-client" % "2.0.0" withSources()
+    val client = "pl.newicom.dddd" %% "eventstore-client" % "2.0.2-SNAPSHOT" withSources()
     val akkaJournal = "pl.newicom.dddd" %% "akka-persistence-eventstore" % "2.0.2-SNAPSHOT" withSources()
   }
 
