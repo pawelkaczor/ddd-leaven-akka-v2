@@ -2,9 +2,8 @@ package ecommerce.sales.view
 
 import java.sql.Date
 
-import ecommerce.sales.ReservationStatus
-import ReservationStatus._
-import ecommerce.sales.ReservationClosed
+import ecommerce.sales.ReservationStatus._
+import ecommerce.sales.{ReservationClosed, ReservationConfirmed, ReservationCreated}
 import org.joda.time.DateTime.now
 import pl.newicom.dddd.messaging.event.DomainEventMessage
 import pl.newicom.dddd.view.sql.Projection

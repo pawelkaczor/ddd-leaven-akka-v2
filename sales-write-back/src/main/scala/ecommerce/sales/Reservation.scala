@@ -2,10 +2,8 @@ package ecommerce.sales
 
 import java.util.Date
 
-import ecommerce.sales.ReservationStatus
-import ecommerce.sales._
 import ecommerce.sales.Reservation.State
-import ReservationStatus._
+import ecommerce.sales.ReservationStatus._
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.aggregate.{AggregateRoot, AggregateState, EntityId}
 import pl.newicom.dddd.eventhandling.EventPublisher
