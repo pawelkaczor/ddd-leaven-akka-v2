@@ -1,7 +1,8 @@
 package ecommerce.sales.view
 
 import java.sql.Date
-
+import ecommerce.sales.ReservationStatus
+import ReservationStatus.ReservationStatus
 import pl.newicom.dddd.aggregate.EntityId
 
 import scala.slick.driver.JdbcProfile
@@ -10,6 +11,11 @@ import scala.slick.jdbc.meta.MTable
 class ReservationDao(implicit val profile: JdbcProfile)  {
   import profile.simple._
 
+  implicit val reservationStatusColumnType = MappedColumnType.base[ReservationStatus, String](
+    { c => c.toString },
+    { s => ReservationStatus.withName(s)}
+  )
+
   object Reservations {
     val TableName = "reservations"
   }
@@ -17,7 +23,7 @@ class ReservationDao(implicit val profile: JdbcProfile)  {
   class Reservations(tag: Tag) extends Table[ReservationView](tag, Reservations.TableName) {
     def id = column[EntityId]("ID", O.PrimaryKey, O.NotNull)
     def clientId = column[EntityId]("CLIENT_ID", O.NotNull)
-    def status = column[String]("STATUS", O.NotNull)
+    def status = column[ReservationStatus]("STATUS", O.NotNull)
     def createDate = column[Date]("CREATE_DATE", O.NotNull)
     def * = (id, clientId, status, createDate) <> (ReservationView.tupled, ReservationView.unapply)
   }

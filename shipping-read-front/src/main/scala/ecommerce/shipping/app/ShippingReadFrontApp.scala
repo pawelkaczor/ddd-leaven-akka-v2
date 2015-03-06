@@ -1,17 +1,17 @@
-package ecommerce.sales.app
+package ecommerce.shipping.app
 
 import akka.actor._
 import akka.kernel.Bootable
 import com.typesafe.config.{Config, ConfigFactory}
-import ecommerce.sales.{HttpService, SalesReadFrontConfiguration}
+import ecommerce.shipping.{HttpService, ShippingReadFrontConfiguration}
 
-class SalesReadFrontApp extends Bootable {
+class ShippingReadFrontApp extends Bootable {
    val config = ConfigFactory.load()
-   val system = ActorSystem("sales-read-front", config)
+   val system = ActorSystem("shipping-read-front", config)
 
    def startup() = {
-     new SalesReadFrontConfiguration {
-       override def config: Config = SalesReadFrontApp.this.config
+     new ShippingReadFrontConfiguration {
+       override def config: Config = ShippingReadFrontApp.this.config
        import httpService._
        system.actorOf(HttpService.props(interface, port, askTimeout), "http-service")
      }

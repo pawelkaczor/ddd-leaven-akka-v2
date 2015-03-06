@@ -1,11 +1,13 @@
-package ecommerce.sales.app
+package ecommerce.shipping.app
 
 import java.net.InetAddress
+
 import _root_.akka.cluster.Cluster
-import akka.actor.{Props, ActorSystem, AddressFromURIString}
+import akka.actor.{ActorSystem, AddressFromURIString, Props}
 import akka.kernel.Bootable
 import com.typesafe.config.{Config, ConfigFactory}
-import ecommerce.sales.Reservation
+import ecommerce.sales.Shipment
+import ecommerce.shipping.Shipment
 import org.slf4j.LoggerFactory._
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.aggregate.AggregateRootActorFactory
@@ -13,17 +15,16 @@ import pl.newicom.dddd.cluster.DefaultShardResolution
 import pl.newicom.dddd.eventhandling.EventPublisher
 import pl.newicom.dddd.messaging.event.DomainEventMessage
 import pl.newicom.dddd.office.Office._
-import pl.newicom.dddd.cluster.ShardingSupport._
 
 import scala.io.Source
 import scala.util.Try
 
-class SalesBackendApp extends Bootable {
+class ShippingBackendApp extends Bootable {
 
   private lazy val log = getLogger(this.getClass.getName)
 
   private val config: Config = ConfigFactory.load()
-  implicit private val system = ActorSystem("sales", config)
+  implicit private val system = ActorSystem("shipping", config)
 
   trait LocalPublisher extends EventPublisher {
     override def publish(em: DomainEventMessage): Unit = {
@@ -31,11 +32,11 @@ class SalesBackendApp extends Bootable {
     }
   }
 
-  implicit object ReservationARFactory extends AggregateRootActorFactory[Reservation] {
-    override def props(pc: PassivationConfig) = Props(new Reservation(pc) with LocalPublisher)
+  implicit object ShipmentARFactory extends AggregateRootActorFactory[Shipment] {
+    override def props(pc: PassivationConfig) = Props(new Shipment(pc) with LocalPublisher)
   }
 
-  implicit object ReservationShardResolution extends DefaultShardResolution[Reservation]
+  implicit object ShipmentShardResolution extends DefaultShardResolution[Shipment]
 
   override def startup() = {
     joinCluster()
@@ -43,7 +44,7 @@ class SalesBackendApp extends Bootable {
   }
 
   def openOffices(): Unit = {
-    office[Reservation]
+    office[Shipment]
   }
 
   /**
@@ -70,7 +71,7 @@ class SalesBackendApp extends Bootable {
         val port = config.getInt("app.port")
         val localAddress = Try(config.getString("app.host"))
           .toOption.getOrElse(InetAddress.getLocalHost.getHostAddress)
-        List(AddressFromURIString.parse(s"akka.tcp://sales@$localAddress:$port"))
+        List(AddressFromURIString.parse(s"akka.tcp://shipping@$localAddress:$port"))
     }
   }
 

@@ -21,6 +21,9 @@ lazy val root = (project in file("."))
   )
   .aggregate(`sales-contracts`, `sales-write-back`, `sales-write-front`, `sales-read-back`, `sales-read-front`)
 
+//
+// Sales subsystem
+//
 lazy val `sales-contracts` = project
   .settings(commonSettings: _*)
   .settings(
@@ -32,7 +35,6 @@ lazy val `sales-contracts` = project
 lazy val `sales-write-back` = project
   .settings(commonSettings ++ multiNodeTestingSettings: _*)
   .settings(
-      resolvers ++= Seq("krasserm at bintray" at "http://dl.bintray.com/krasserm/maven"),
       libraryDependencies ++= Seq(
         Akka.kernel, Akka.testkit,
         AkkaDDD.messaging, AkkaDDD.core, AkkaDDD.test,
@@ -67,10 +69,68 @@ lazy val `sales-read-front` = project
   .settings(
     parallelExecution in Test := false,
     libraryDependencies ++= Seq(
-      Akka.testkit, Akka.httpCore
+      Akka.testkit, Akka.httpTestKit, AkkaDDD.httpSupport
     )
   )
   .dependsOn(`sales-read-back` % "test->test;compile->compile")
+
+//
+// Invoicing subsystem
+//
+lazy val `invoicing-write-back` = project
+  .settings(commonSettings: _*)
+  .settings(
+    libraryDependencies ++= Seq(
+      Akka.kernel, Akka.testkit,
+      AkkaDDD.messaging, AkkaDDD.core, AkkaDDD.test,
+      AkkaDDD.eventStore, Eventstore.akkaJournal
+    )
+  )
+  .dependsOn(`sales-contracts`)
+
+//
+// Shipping subsystem
+//
+lazy val `shipping-contracts` = project
+  .settings(commonSettings: _*)
+  .settings(
+    libraryDependencies ++= Seq(
+      AkkaDDD.messaging
+    ) ++ Json.`4s`
+  )
+  .dependsOn(`sales-contracts`)
+
+lazy val `shipping-write-back` = project
+  .settings(commonSettings: _*)
+  .settings(
+    libraryDependencies ++= Seq(
+      Akka.kernel, Akka.testkit,
+      AkkaDDD.messaging, AkkaDDD.core, AkkaDDD.test,
+      AkkaDDD.eventStore
+    )
+  )
+  .dependsOn(`shipping-contracts`)
+
+lazy val `shipping-read-back` = project
+  .settings(commonSettings: _*)
+  .settings(
+    parallelExecution in Test := false,
+    libraryDependencies ++= SqlDb() ++ Seq(
+      AkkaDDD.viewUpdateSql,
+      Akka.kernel
+    )
+  )
+  .dependsOn(`shipping-contracts`)
+
+lazy val `shipping-read-front` = project
+  .settings(commonSettings: _*)
+  .settings(
+    parallelExecution in Test := false,
+    libraryDependencies ++= Seq(
+      Akka.testkit, Akka.httpTestKit, AkkaDDD.httpSupport
+    )
+  )
+  .dependsOn(`shipping-read-back` % "test->test;compile->compile")
 
 lazy val commonSettings: Seq[Setting[_]] = Seq(
   resolvers ++= Seq("Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"),

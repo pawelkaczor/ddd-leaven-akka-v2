@@ -14,7 +14,7 @@ sealed trait Command extends aggregate.Command {
   override def aggregateId = reservationId
 }
 
-case class CreateReservation(reservationId: EntityId, clientId: EntityId) extends Command
+case class CreateReservation(reservationId: EntityId, customerId: EntityId) extends Command
 case class ReserveProduct(reservationId: EntityId, product: Product, quantity: Int) extends Command
 case class ConfirmReservation(reservationId: EntityId) extends Command
 case class CloseReservation(reservationId: EntityId) extends Command
@@ -28,9 +28,9 @@ sealed trait ReservationEvent extends DomainEvent {
   def reservationId: EntityId
 }
 
-case class ReservationCreated(reservationId: EntityId, clientId: EntityId) extends ReservationEvent
+case class ReservationCreated(reservationId: EntityId, customerId: EntityId) extends ReservationEvent
 case class ProductReserved(reservationId: EntityId, product: Product, quantity: Int) extends ReservationEvent
-case class ReservationConfirmed(reservationId: EntityId, clientId: EntityId) extends ReservationEvent
+case class ReservationConfirmed(reservationId: EntityId, customerId: EntityId, totalAmount: Option[Money]) extends ReservationEvent
 case class ReservationClosed(reservationId: EntityId) extends ReservationEvent
 
 // Value Objects

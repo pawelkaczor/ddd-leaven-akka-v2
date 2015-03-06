@@ -2,13 +2,16 @@ package ecommerce.sales
 
 import java.util.Currency
 
-import ecommerce.sales.ProductType.ProductType
+import ProductType.ProductType
 import pl.newicom.dddd.messaging.event.AggregateSnapshotId
 
 object Money {
 
   val DEFAULT_CURRENCY_CODE: String = "EUR"
 
+  def apply(): Money = {
+    Money(0d)
+  }
   def apply(value: Double, currency: Currency): Money = {
     Money(value, currency.getCurrencyCode)
   }
@@ -16,6 +19,7 @@ object Money {
   def apply(value: BigDecimal, currency: Currency): Money = {
     Money(value.doubleValue(), currency.getCurrencyCode)
   }
+
 }
 
 case class Money(

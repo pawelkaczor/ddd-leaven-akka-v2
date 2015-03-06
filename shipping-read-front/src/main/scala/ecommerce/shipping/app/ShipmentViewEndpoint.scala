@@ -1,23 +1,24 @@
-package ecommerce.sales.app
+package ecommerce.shipping.app
 
+import akka.http.server.PathMatchers.Segment
 import akka.http.server.Route
-import ecommerce.sales.SalesValueObjects
-import ecommerce.sales.view.ReservationDao
-import ecommerce.sales.ReadEndpoint
+import ecommerce.shipping
+import ecommerce.shipping.ReadEndpoint
+import ecommerce.shipping.view.ShipmentDao
 import org.json4s.Formats
 
 import scala.concurrent.ExecutionContext
 import scala.slick.driver.JdbcProfile
 import scala.slick.jdbc.JdbcBackend._
 
-case class ReservationViewEndpoint(implicit val ec: ExecutionContext, profile: JdbcProfile) extends ReadEndpoint {
+case class ShipmentViewEndpoint(implicit val ec: ExecutionContext, profile: JdbcProfile) extends ReadEndpoint {
 
-  implicit val formats: Formats = defaultFormats + SalesValueObjects
+  implicit val formats: Formats = defaultFormats + shipping.json.typeHints + shipping.json.formats
 
-  lazy val dao = new ReservationDao
+  lazy val dao = new ShipmentDao
 
   def route(viewStore: Database): Route = {
-    path("reservation" / "all") {
+    path("shipment" / "all") {
       get {
         complete {
           viewStore withSession { implicit s =>
@@ -26,7 +27,7 @@ case class ReservationViewEndpoint(implicit val ec: ExecutionContext, profile: J
         }
       }
     } ~
-    path("reservation" / Segment) { id =>
+    path("shipment" / Segment) { id =>
       get {
         complete {
           viewStore withSession { implicit s =>

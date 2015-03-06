@@ -1,12 +1,11 @@
-package ecommerce.sales.serialization
+package ecommerce.shipping.serialization
 
 import java.nio.ByteBuffer
 import java.nio.charset.Charset
 
 import akka.actor.{ActorRef, ExtendedActorSystem}
 import akka.serialization.Serialization
-import ecommerce.sales
-import ecommerce.sales.ReservationEvents
+import ecommerce.shipping.json.ShippingEvents
 import org.json4s.JsonAST.JString
 import org.json4s._
 import org.json4s.ext.{JodaTimeSerializers, UUIDSerializer}
@@ -18,13 +17,12 @@ import pl.newicom.dddd.messaging.MetaData
 class Json4sSerializer(sys: ExtendedActorSystem) extends akka.serialization.Serializer {
 
   val UTF8 = Charset.forName("UTF-8")
-  val Identifier: Int = ByteBuffer.wrap("sales-json4s".getBytes(UTF8)).getInt
+  val Identifier: Int = ByteBuffer.wrap("shipping-json4s".getBytes(UTF8)).getInt
 
   def identifier = Identifier
 
   implicit val formats: Formats = DefaultFormats ++
-    JodaTimeSerializers.all + UUIDSerializer + ActorRefSerializer +
-    ReservationEvents + sales.typeHints + sales.formats + new
+    JodaTimeSerializers.all + UUIDSerializer + ActorRefSerializer + ShippingEvents
       FullTypeHints(List(
         classOf[MetaData],
         Class.forName("akka.persistence.PersistentImpl"),

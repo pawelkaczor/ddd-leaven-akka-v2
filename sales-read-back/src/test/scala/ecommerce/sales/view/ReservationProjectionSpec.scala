@@ -3,8 +3,9 @@ package ecommerce.sales.view
 import java.sql.Date
 
 import com.typesafe.config.{Config, ConfigFactory}
-import ecommerce.sales.ReservationStatus.{Confirmed, Opened}
-import ecommerce.sales.{ReservationConfirmed, ReservationCreated, ReservationEvent}
+import ecommerce.sales.{ReservationConfirmed, ReservationCreated, ReservationEvent, ReservationStatus}
+import ReservationStatus.{Confirmed, Opened}
+import ecommerce.sales.ReservationConfirmed
 import org.joda.time.DateTime.now
 import org.scalatest._
 import pl.newicom.dddd.messaging.event.{AggregateSnapshotId, DomainEventMessage}
@@ -30,7 +31,7 @@ class ReservationProjectionSpec extends WordSpecLike with Matchers with ViewTest
       // Then
       viewStore withSession { implicit s: Session =>
         val reservations = dao.byId("reservation-1")
-        assert(reservations.head.status == Opened.toString)
+        assert(reservations.head.status == Opened)
       }
     }
   }
@@ -39,17 +40,17 @@ class ReservationProjectionSpec extends WordSpecLike with Matchers with ViewTest
     "consume ReservationConfirmed event" in {
       // Given
       viewStore withSession { implicit s: Session =>
-        dao.createIfNotExists(ReservationView("reservation-1", "client-1", Opened.toString, new Date(now.getMillis)))
+        dao.createIfNotExists(ReservationView("reservation-1", "client-1", Opened, new Date(now.getMillis)))
       }
         // When
       viewStore withSession { implicit s: Session =>
-        projection.consume(ReservationConfirmed("reservation-1", "client-1"))
+        projection.consume(ReservationConfirmed("reservation-1", "client-1", None))
       }
 
       // Then
       viewStore withSession { implicit s: Session =>
         val reservations = dao.byId("reservation-1")
-        assert(reservations.head.status == Confirmed.toString)
+        assert(reservations.head.status == Confirmed)
       }
     }
   }
