@@ -1,9 +1,8 @@
 package ecommerce.sales.app
 
 import akka.http.server.Route
-import ecommerce.sales.SalesValueObjects
 import ecommerce.sales.view.ReservationDao
-import ecommerce.sales.ReadEndpoint
+import ecommerce.sales.{ReadEndpoint, salesOffice}
 import org.json4s.Formats
 
 import scala.concurrent.ExecutionContext
@@ -12,7 +11,7 @@ import scala.slick.jdbc.JdbcBackend._
 
 case class ReservationViewEndpoint(implicit val ec: ExecutionContext, profile: JdbcProfile) extends ReadEndpoint {
 
-  implicit val formats: Formats = defaultFormats + SalesValueObjects
+  implicit val formats: Formats = salesOffice.serializationHints ++ defaultFormats
 
   lazy val dao = new ReservationDao
 

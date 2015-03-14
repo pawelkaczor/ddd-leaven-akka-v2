@@ -5,8 +5,7 @@ import java.nio.charset.Charset
 
 import akka.actor.{ActorRef, ExtendedActorSystem}
 import akka.serialization.Serialization
-import ecommerce.sales
-import ecommerce.sales.ReservationEvents
+import ecommerce.sales.salesOffice
 import org.json4s.JsonAST.JString
 import org.json4s._
 import org.json4s.ext.{JodaTimeSerializers, UUIDSerializer}
@@ -22,9 +21,8 @@ class Json4sSerializer(sys: ExtendedActorSystem) extends akka.serialization.Seri
 
   def identifier = Identifier
 
-  implicit val formats: Formats = DefaultFormats ++
-    JodaTimeSerializers.all + UUIDSerializer + ActorRefSerializer +
-    ReservationEvents + sales.typeHints + sales.formats + new
+  implicit val formats: Formats = salesOffice.serializationHints ++ DefaultFormats ++
+    JodaTimeSerializers.all + UUIDSerializer + ActorRefSerializer + new
       FullTypeHints(List(
         classOf[MetaData],
         Class.forName("akka.persistence.PersistentImpl"),

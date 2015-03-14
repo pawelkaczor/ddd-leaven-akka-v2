@@ -7,8 +7,7 @@ import akka.http.model.StatusCodes
 import akka.http.server.{Directives, Route}
 import akka.stream.scaladsl.ImplicitFlowMaterializer
 import akka.util.Timeout
-import ecommerce.sales
-import ecommerce.sales.{Command => SalesCommand}
+import ecommerce.sales.{Command => SalesCommand, salesOffice}
 import org.json4s.ext.{JodaTimeSerializers, UUIDSerializer}
 import org.json4s.{DefaultFormats, Formats}
 import pl.newicom.dddd.aggregate.Command
@@ -29,7 +28,7 @@ class HttpService(interface: String, port: Int)(implicit askTimeout: Timeout)
   with ActorLogging with ImplicitFlowMaterializer with JsonMarshalling {
 
   import context.dispatcher
-  implicit val formats: Formats = DefaultFormats ++ JodaTimeSerializers.all + UUIDSerializer + sales.typeHints
+  implicit val formats: Formats = salesOffice.serializationHints ++ DefaultFormats ++ JodaTimeSerializers.all + UUIDSerializer
 
   Http()(context.system).bind(interface, port).startHandlingWith(route)
   log.info(s"Listening on $interface:$port")
@@ -38,7 +37,7 @@ class HttpService(interface: String, port: Int)(implicit askTimeout: Timeout)
 
   private def route = pathPrefix("ecommerce") {
     path("sales") {
-      handleCommand[SalesCommand](sales.officeName)
+      handleCommand[SalesCommand](salesOffice.name)
     }
   }
 
