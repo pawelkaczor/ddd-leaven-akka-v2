@@ -1,4 +1,4 @@
-package ecommerce.shipping.eventstore
+package eventstore
 
 import akka.actor.ExtendedActorSystem
 import ecommerce.shipping.shippingOffice
