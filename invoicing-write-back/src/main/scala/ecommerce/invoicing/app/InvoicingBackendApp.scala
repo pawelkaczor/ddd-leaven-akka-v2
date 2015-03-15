@@ -1,41 +1,24 @@
 package ecommerce.invoicing.app
 
-import java.net.InetAddress
-
 import _root_.akka.cluster.Cluster
-import akka.actor.{ActorSystem, AddressFromURIString, Props}
+import akka.actor.{ActorRef, ActorSystem}
 import akka.kernel.Bootable
 import com.typesafe.config.{Config, ConfigFactory}
-import ecommerce.invoicing.Invoice
+import ecommerce.invoicing.{Invoice, InvoicingSaga}
 import org.slf4j.LoggerFactory._
-import pl.newicom.dddd.actor.PassivationConfig
-import pl.newicom.dddd.aggregate.AggregateRootActorFactory
-import pl.newicom.dddd.cluster.DefaultShardResolution
-import pl.newicom.dddd.eventhandling.EventPublisher
-import pl.newicom.dddd.messaging.event.DomainEventMessage
+import pl.newicom.dddd.cluster._
 import pl.newicom.dddd.office.Office._
-import pl.newicom.dddd.cluster.ShardingSupport._
-import scala.io.Source
-import scala.util.Try
+import pl.newicom.dddd.process.SagaSupport._
 
-class InvoicingBackendApp extends Bootable {
+class InvoicingBackendApp extends Bootable with InvoicingBackendConfiguration {
 
-  private lazy val log = getLogger(this.getClass.getName)
+  lazy val log = getLogger(this.getClass.getName)
 
-  private val config: Config = ConfigFactory.load()
-  implicit private val system = ActorSystem("invoicing", config)
+  val config: Config = ConfigFactory.load()
+  implicit val system = ActorSystem("invoicing", config)
 
-  trait LocalPublisher extends EventPublisher {
-    override def publish(em: DomainEventMessage): Unit = {
-      log.debug("Published: " + em)
-    }
-  }
-
-  implicit object InvoiceARFactory extends AggregateRootActorFactory[Invoice] {
-    override def props(pc: PassivationConfig) = Props(new Invoice(pc) with LocalPublisher)
-  }
-
-  implicit object InvoiceShardResolution extends DefaultShardResolution[Invoice]
+  var _invoiceOffice:ActorRef = null
+  def invoiceOffice = _invoiceOffice.path
 
   override def startup() = {
     joinCluster()
@@ -43,7 +26,8 @@ class InvoicingBackendApp extends Bootable {
   }
 
   def openOffices(): Unit = {
-    office[Invoice]
+    _invoiceOffice = office[Invoice]
+    registerSaga[InvoicingSaga]
   }
 
   /**
@@ -53,25 +37,6 @@ class InvoicingBackendApp extends Bootable {
     val seedList = seeds(config)
     log.info(s"Joining cluster with seed nodes: $seedList")
     Cluster(system).joinSeedNodes(seedList.toSeq)
-  }
-
-  def seeds(config: Config) = {
-    // Read cluster seed nodes from the file specified in the configuration
-    Try(config.getString("app.cluster.seedsFile")).toOption match {
-      case Some(seedsFile) =>
-        // Seed file was specified, read it
-        log.info(s"reading seed nodes from file: $seedsFile")
-        Source.fromFile(seedsFile).getLines().map { address =>
-          AddressFromURIString.parse(s"akka.tcp://invoicing@$address")
-        }.toList
-      case None =>
-        // No seed file specified, use this node as the first seed
-        log.info("no seed file found, using default seeds")
-        val port = config.getInt("app.port")
-        val localAddress = Try(config.getString("app.host"))
-          .toOption.getOrElse(InetAddress.getLocalHost.getHostAddress)
-        List(AddressFromURIString.parse(s"akka.tcp://invoicing@$localAddress:$port"))
-    }
   }
 
   override def shutdown() = {
