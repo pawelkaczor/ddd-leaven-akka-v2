@@ -1,6 +1,5 @@
 package ecommerce
 
-import ecommerce.invoicing.Invoice.{CreateInvoice, InvoiceCreated, PaymentReceived, ReceivePayment}
 import ecommerce.sales.Money
 import org.json4s.FullTypeHints
 import pl.newicom.dddd.messaging.event.AggregateSnapshotId
@@ -9,7 +8,7 @@ import pl.newicom.dddd.serialization.JsonSerializationHints
 
 package object invoicing {
 
-  implicit val invoicingOffice: OfficeInfo[Invoice] = OfficeInfo("Invoicing", new JsonSerializationHints {
+  implicit val invoicingOffice: OfficeInfo[InvoicingOffice] = OfficeInfo("Invoicing", new JsonSerializationHints {
 
     override val typeHints = InvoicingCommands + InvoicingEvents + InvoicingValueObjects
     override val serializers = List()

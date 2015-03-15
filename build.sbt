@@ -77,6 +77,15 @@ lazy val `sales-read-front` = project
 //
 // Invoicing subsystem
 //
+lazy val `invoicing-contracts` = project
+  .settings(commonSettings: _*)
+  .settings(
+    libraryDependencies ++= Seq(
+      AkkaDDD.messaging
+    ) ++ Json.`4s`
+  )
+  .dependsOn(`sales-contracts`)
+
 lazy val `invoicing-write-back` = project
   .settings(commonSettings: _*)
   .settings(
@@ -86,7 +95,7 @@ lazy val `invoicing-write-back` = project
       AkkaDDD.eventStore, Eventstore.akkaJournal
     )
   )
-  .dependsOn(`sales-contracts`)
+  .dependsOn(`invoicing-contracts`)
 
 //
 // Shipping subsystem
@@ -98,7 +107,7 @@ lazy val `shipping-contracts` = project
       AkkaDDD.messaging
     ) ++ Json.`4s`
   )
-  .dependsOn(`sales-contracts`)
+  .dependsOn(`invoicing-contracts`)
 
 lazy val `shipping-write-back` = project
   .settings(commonSettings: _*)

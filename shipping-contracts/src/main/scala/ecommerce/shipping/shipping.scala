@@ -1,5 +1,6 @@
 package ecommerce.shipping
 
+import pl.newicom.dddd.aggregate
 import pl.newicom.dddd.aggregate._
 
 trait ShippingOffice
@@ -7,7 +8,13 @@ trait ShippingOffice
 //
 // Commands
 //
-case class CreateShipment(shipmentId: EntityId, orderId: EntityId)
+
+sealed trait Command extends aggregate.Command {
+  def shipmentId: EntityId
+  override def aggregateId = shipmentId
+}
+
+case class CreateShipment(shipmentId: EntityId, orderId: EntityId) extends Command
 
 //
 // Events

@@ -3,7 +3,6 @@ package ecommerce.invoicing
 import java.util.UUID
 
 import akka.actor.ActorPath
-import ecommerce.invoicing.Invoice.{CreateInvoice, PaymentReceived}
 import ecommerce.sales.{ReservationConfirmed, salesOffice}
 import org.joda.time.DateTime.now
 import pl.newicom.dddd.actor.PassivationConfig
@@ -22,7 +21,7 @@ object InvoicingSaga {
 
     def correlationIdResolver = {
       case rc: ReservationConfirmed => UUID.randomUUID().toString // invoiceId
-      case PaymentReceived(invoiceId, _, _) => invoiceId
+      case PaymentReceived(invoiceId, _, _, _) => invoiceId
     }
   }
 
@@ -49,7 +48,7 @@ class InvoicingSaga(val pc: PassivationConfig, invoiceOffice: ActorPath) extends
       } else {
         status = Completed
       }
-    case PaymentReceived(invoiceId, amount, paymentId) =>
+    case PaymentReceived(invoiceId, _, amount, paymentId) =>
       status = Completed
   }
 }
