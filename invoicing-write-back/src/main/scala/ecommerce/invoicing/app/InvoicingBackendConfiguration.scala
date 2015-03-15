@@ -56,10 +56,10 @@ trait InvoicingBackendConfiguration {
   }
 
   //
-  // Receptor and SagaManager factories
+  // SagaManager factory
   //
 
-  implicit val sagaManagerFactory: SagaManagerFactory = (sagaConfig, sagaOffice) => {
+  implicit lazy val sagaManagerFactory: SagaManagerFactory = (sagaConfig, sagaOffice) => {
     new SagaManager(sagaConfig, sagaOffice) with EventstoreSubscriber {
       override implicit val formats: Formats = config.serializationHints ++ defaultFormats
     }

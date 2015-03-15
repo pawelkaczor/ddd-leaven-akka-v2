@@ -19,7 +19,7 @@ lazy val root = (project in file("."))
   .settings(
     updateOptions := updateOptions.value.withCachedResolution(cachedResoluton = true)
   )
-  .aggregate(`sales-contracts`, `sales-write-back`, `sales-write-front`, `sales-read-back`, `sales-read-front`)
+  .aggregate(`sales-contracts`, `sales-write-back`, `sales-write-front`, `sales-read-back`, `sales-read-front`, `sales-contracts`, `shipping-write-back`, `shipping-read-back`, `shipping-read-front`, `shipping-contracts`, `invoicing-write-back`, `invoicing-contracts`)
 
 //
 // Sales subsystem

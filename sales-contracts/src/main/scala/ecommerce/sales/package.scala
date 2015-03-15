@@ -8,7 +8,7 @@ import pl.newicom.dddd.serialization.JsonSerializationHints
 
 package object sales {
 
-  implicit val salesOffice: OfficeInfo[SalesOffice] = OfficeInfo("Sales", new JsonSerializationHints {
+  implicit val salesOffice: OfficeInfo[SalesOffice] = OfficeInfo("sales", new JsonSerializationHints {
     val typeHints = ReservationCommands + ReservationEvents + SalesValueObjects
     val serializers = List(new EnumSerializer(ProductType))
 

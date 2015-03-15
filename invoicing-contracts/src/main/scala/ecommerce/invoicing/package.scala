@@ -8,7 +8,7 @@ import pl.newicom.dddd.serialization.JsonSerializationHints
 
 package object invoicing {
 
-  implicit val invoicingOffice: OfficeInfo[InvoicingOffice] = OfficeInfo("Invoicing", new JsonSerializationHints {
+  implicit val invoicingOffice: OfficeInfo[InvoicingOffice] = OfficeInfo("invoicing", new JsonSerializationHints {
 
     override val typeHints = InvoicingCommands + InvoicingEvents + InvoicingValueObjects
     override val serializers = List()

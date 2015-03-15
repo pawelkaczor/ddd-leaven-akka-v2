@@ -15,10 +15,8 @@ object InvoicingSaga {
     val New, WaitingForPayment, Completed = Value
   }
 
-  implicit object InvoicingSagaConfig extends SagaConfig[InvoicingSaga]("Sales") {
-
+  implicit object PaymentSagaConfig extends SagaConfig[InvoicingSaga](invoicingOffice.streamName) {
     override def serializationHints = salesOffice.serializationHints ++ invoicingOffice.serializationHints
-
     def correlationIdResolver = {
       case rc: ReservationConfirmed => UUID.randomUUID().toString // invoiceId
       case PaymentReceived(invoiceId, _, _, _) => invoiceId

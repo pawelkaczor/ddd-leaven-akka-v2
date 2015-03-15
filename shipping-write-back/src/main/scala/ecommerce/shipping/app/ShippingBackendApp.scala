@@ -1,7 +1,7 @@
 package ecommerce.shipping.app
 
 import _root_.akka.cluster.Cluster
-import akka.actor.{ActorRef, ActorSystem}
+import akka.actor.ActorSystem
 import akka.kernel.Bootable
 import com.typesafe.config.{Config, ConfigFactory}
 import ecommerce.shipping.{PaymentReceptor, Shipment}

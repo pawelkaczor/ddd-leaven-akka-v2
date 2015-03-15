@@ -1,11 +1,10 @@
-package ecommerce.shipping.app
+package ecommerce.sales.app
 
 import java.net.InetAddress
 
 import akka.actor._
 import com.typesafe.config.Config
-import ecommerce.shipping.Shipment
-import org.json4s.Formats
+import ecommerce.sales.Reservation
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory._
 import pl.newicom.dddd.actor.{CreationSupport, PassivationConfig}
@@ -13,9 +12,6 @@ import pl.newicom.dddd.aggregate.AggregateRootActorFactory
 import pl.newicom.dddd.cluster._
 import pl.newicom.dddd.eventhandling.EventPublisher
 import pl.newicom.dddd.messaging.event.DomainEventMessage
-import pl.newicom.dddd.process.Receptor
-import pl.newicom.dddd.process.ReceptorSupport._
-import pl.newicom.eventstore.EventstoreSubscriber
 
 import scala.io.Source
 import scala.util.Try
@@ -30,7 +26,7 @@ trait LocalPublisher extends EventPublisher {
   }
 }
 
-trait ShippingBackendConfiguration {
+trait SalesBackendConfiguration {
 
   def log: Logger
   def config: Config
@@ -38,24 +34,15 @@ trait ShippingBackendConfiguration {
   def creationSupport = implicitly[CreationSupport]
 
   //
-  // Invoicing
+  // Reservation Office
   //
-  implicit object ShipmentARFactory extends AggregateRootActorFactory[Shipment] {
-    override def props(pc: PassivationConfig) = Props(new Shipment(pc) with LocalPublisher)
+  implicit object ReservationARFactory extends AggregateRootActorFactory[Reservation] {
+    override def props(pc: PassivationConfig) = Props(new Reservation(pc) with LocalPublisher)
   }
-  implicit object InvoiceShardResolution extends DefaultShardResolution[Shipment]
 
-  //
-  // Receptor factory
-  //
+  implicit object ReservationShardResolution extends DefaultShardResolution[Reservation]
 
-  implicit val receptorFactory: ReceptorFactory = receptorConfig => {
-    new Receptor with EventstoreSubscriber {
-      override implicit val formats: Formats = config.serializationHints ++ defaultFormats
-      def config = receptorConfig
 
-    }
-  }
 
   def seeds(config: Config) = {
     // Read cluster seed nodes from the file specified in the configuration
@@ -64,7 +51,7 @@ trait ShippingBackendConfiguration {
         // Seed file was specified, read it
         log.info(s"reading seed nodes from file: $seedsFile")
         Source.fromFile(seedsFile).getLines().map { address =>
-          AddressFromURIString.parse(s"akka.tcp://shipping@$address")
+          AddressFromURIString.parse(s"akka.tcp://sales@$address")
         }.toList
       case None =>
         // No seed file specified, use this node as the first seed
@@ -72,7 +59,7 @@ trait ShippingBackendConfiguration {
         val port = config.getInt("app.port")
         val localAddress = Try(config.getString("app.host"))
           .toOption.getOrElse(InetAddress.getLocalHost.getHostAddress)
-        List(AddressFromURIString.parse(s"akka.tcp://shipping@$localAddress:$port"))
+        List(AddressFromURIString.parse(s"akka.tcp://sales@$localAddress:$port"))
     }
   }
 
