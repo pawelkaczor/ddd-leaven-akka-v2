@@ -1,10 +1,8 @@
 package ecommerce.shipping.app
 
-import akka.http.server.PathMatchers.Segment
 import akka.http.server.Route
-import ecommerce.shipping
-import ecommerce.shipping.ReadEndpoint
 import ecommerce.shipping.view.ShipmentDao
+import ecommerce.shipping.{ReadEndpoint, shippingOffice}
 import org.json4s.Formats
 
 import scala.concurrent.ExecutionContext
@@ -13,7 +11,7 @@ import scala.slick.jdbc.JdbcBackend._
 
 case class ShipmentViewEndpoint(implicit val ec: ExecutionContext, profile: JdbcProfile) extends ReadEndpoint {
 
-  implicit val formats: Formats = defaultFormats + shipping.json.typeHints + shipping.json.formats
+  implicit val formats: Formats = shippingOffice.serializationHints ++ defaultFormats
 
   lazy val dao = new ShipmentDao
 

@@ -14,7 +14,7 @@ import pl.newicom.dddd.cluster.DefaultShardResolution
 import pl.newicom.dddd.eventhandling.EventPublisher
 import pl.newicom.dddd.messaging.event.DomainEventMessage
 import pl.newicom.dddd.office.Office._
-
+import pl.newicom.dddd.cluster.ShardingSupport._
 import scala.io.Source
 import scala.util.Try
 

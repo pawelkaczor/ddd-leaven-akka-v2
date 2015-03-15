@@ -6,11 +6,11 @@ import akka.actor.ActorRef
 import ecommerce.invoicing.Invoice._
 import ecommerce.sales._
 import org.joda.time.DateTime
-import org.json4s.{FullTypeHints, TypeHints}
 import pl.newicom.dddd.actor.PassivationConfig
+import pl.newicom.dddd.aggregate
 import pl.newicom.dddd.aggregate.{AggregateRoot, AggregateState, EntityId}
 import pl.newicom.dddd.eventhandling.EventPublisher
-import pl.newicom.dddd.messaging.event.{AggregateSnapshotId, DomainEventMessage}
+import pl.newicom.dddd.messaging.event.DomainEventMessage
 
 import scala.concurrent.duration.DurationInt
 
@@ -19,8 +19,13 @@ object Invoice {
   //
   // Commands
   //
-  case class CreateInvoice(invoiceId: EntityId, orderId: EntityId, customerId: EntityId, totalAmount: Money, createEpoch: DateTime)
-  case class ReceivePayment(invoiceId: EntityId, amount: Money, paymentId: EntityId)
+  sealed trait Command extends aggregate.Command {
+    def invoiceId: EntityId
+    override def aggregateId = invoiceId
+  }
+
+  case class CreateInvoice(invoiceId: EntityId, orderId: EntityId, customerId: EntityId, totalAmount: Money, createEpoch: DateTime) extends Command
+  case class ReceivePayment(invoiceId: EntityId, amount: Money, paymentId: EntityId) extends Command
 
   //
   // Events
@@ -37,28 +42,6 @@ object Invoice {
     }
   }
 
-  object json {
-    implicit val typeHints: TypeHints = ReservationCommands + InvoicingEvents + InvoicingValueObjects
-
-    object InvoicingCommands extends FullTypeHints(
-      List(
-        classOf[CreateInvoice],
-        classOf[ReceivePayment]
-      ))
-
-    object InvoicingEvents extends FullTypeHints(
-      List(
-        classOf[InvoiceCreated],
-        classOf[PaymentReceived]
-      ))
-
-    object InvoicingValueObjects extends FullTypeHints(
-      List(
-        classOf[AggregateSnapshotId],
-        classOf[Money]
-      )
-    )    
-  }
 }
 
 abstract class Invoice(override val pc: PassivationConfig) extends AggregateRoot[State] {

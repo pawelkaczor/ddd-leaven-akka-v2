@@ -6,7 +6,6 @@ import _root_.akka.cluster.Cluster
 import akka.actor.{ActorSystem, AddressFromURIString, Props}
 import akka.kernel.Bootable
 import com.typesafe.config.{Config, ConfigFactory}
-import ecommerce.sales.Shipment
 import ecommerce.shipping.Shipment
 import org.slf4j.LoggerFactory._
 import pl.newicom.dddd.actor.PassivationConfig
@@ -18,6 +17,7 @@ import pl.newicom.dddd.office.Office._
 
 import scala.io.Source
 import scala.util.Try
+import pl.newicom.dddd.cluster.ShardingSupport._
 
 class ShippingBackendApp extends Bootable {
 
@@ -63,7 +63,7 @@ class ShippingBackendApp extends Bootable {
         // Seed file was specified, read it
         log.info(s"reading seed nodes from file: $seedsFile")
         Source.fromFile(seedsFile).getLines().map { address =>
-          AddressFromURIString.parse(s"akka.tcp://sales@$address")
+          AddressFromURIString.parse(s"akka.tcp://shipping@$address")
         }.toList
       case None =>
         // No seed file specified, use this node as the first seed

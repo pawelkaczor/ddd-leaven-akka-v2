@@ -1,7 +1,5 @@
 package ecommerce.shipping
 
-import ecommerce.sales.Shipment._
-import ecommerce.shipping.ShipmentCreated
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.aggregate._
 import pl.newicom.dddd.eventhandling.EventPublisher
@@ -17,6 +15,8 @@ object Shipment {
   }
 
 }
+
+import Shipment._
 
 abstract class Shipment(override val pc: PassivationConfig) extends AggregateRoot[State] {
   this: EventPublisher =>

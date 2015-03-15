@@ -1,7 +1,5 @@
 package ecommerce.shipping
 
-import ecommerce.shipping.ShippingReadBackendConfiguration
-
 import scala.concurrent.duration._
 
 trait ShippingReadFrontConfiguration extends ShippingReadBackendConfiguration {
