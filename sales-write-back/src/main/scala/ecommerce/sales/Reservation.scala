@@ -10,8 +10,6 @@ import pl.newicom.dddd.eventhandling.EventPublisher
 
 object Reservation {
 
-  def persistenceId(aggregateId: EntityId) = "Reservation-" + aggregateId
-
   case class State(
       customerId: EntityId,
       status: ReservationStatus,
@@ -44,7 +42,7 @@ object Reservation {
 abstract class Reservation(override val pc: PassivationConfig) extends AggregateRoot[State] {
   this: EventPublisher =>
 
-  override def persistenceId = Reservation.persistenceId(id)
+  override def persistenceId = s"${salesOffice.name}-$id"
 
   override val factory: AggregateRootFactory = {
     case ReservationCreated(_, customerId) =>

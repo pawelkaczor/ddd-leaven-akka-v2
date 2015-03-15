@@ -11,7 +11,7 @@ class SalesViewUpdateService(override val config: Config)(override implicit val 
 
   override def configuration: Seq[SqlViewUpdateConfig] = {
     List(
-      SqlViewUpdateConfig("sales-reservations", salesOffice.streamName, new ReservationProjection(new ReservationDao))
+      SqlViewUpdateConfig("sales-reservations", salesOffice, new ReservationProjection(new ReservationDao))
     )
   }
 

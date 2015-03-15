@@ -7,7 +7,7 @@ import pl.newicom.dddd.serialization.JsonSerializationHints
 
 package object shipping {
 
-  implicit val shippingOffice: OfficeInfo[ShippingOffice] = OfficeInfo("shipping", new JsonSerializationHints {
+  implicit val shippingOffice: OfficeInfo[ShippingOffice] = OfficeInfo("Shipment", new JsonSerializationHints {
       val typeHints = ShippingCommands + ShippingEvents
       val serializers = List(new EnumSerializer(ShippingStatus))
 

@@ -13,7 +13,7 @@ class ShippingViewUpdateService(override val config: Config)(override implicit v
 
   override def configuration: Seq[SqlViewUpdateConfig] = {
     List(
-      SqlViewUpdateConfig("shipping-shipments", shippingOffice.streamName, new ShipmentProjection(shipmentDao))
+      SqlViewUpdateConfig("shipping-shipments", shippingOffice, new ShipmentProjection(shipmentDao))
     )
   }
 

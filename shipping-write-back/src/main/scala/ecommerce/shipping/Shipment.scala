@@ -6,8 +6,6 @@ import pl.newicom.dddd.eventhandling.EventPublisher
 
 object Shipment {
 
-  def persistenceId(aggregateId: EntityId) = "Shipment-" + aggregateId
-
   case class State() extends AggregateState {
     override def apply = {
       case _ => this
@@ -21,7 +19,7 @@ import Shipment._
 abstract class Shipment(override val pc: PassivationConfig) extends AggregateRoot[State] {
   this: EventPublisher =>
 
-  override def persistenceId = Shipment.persistenceId(id)
+  override def persistenceId = s"${shippingOffice.name}-$id"
 
   override val factory: AggregateRootFactory = {
     case ShipmentCreated(_, _) =>

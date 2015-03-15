@@ -3,7 +3,7 @@ package ecommerce.invoicing
 import java.util.UUID
 
 import akka.actor.ActorPath
-import ecommerce.sales.{ReservationConfirmed, salesOffice}
+import ecommerce.sales.{Money, ReservationConfirmed, salesOffice}
 import org.joda.time.DateTime.now
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.messaging.event.EventMessage
@@ -27,7 +27,7 @@ object InvoicingSaga {
 
 import ecommerce.invoicing.InvoicingSaga.InvoiceStatus._
 
-class InvoicingSaga(val pc: PassivationConfig, invoiceOffice: ActorPath) extends Saga {
+class InvoicingSaga(val pc: PassivationConfig, invoicingOffice: ActorPath) extends Saga {
 
   var status = New
 
@@ -39,13 +39,14 @@ class InvoicingSaga(val pc: PassivationConfig, invoiceOffice: ActorPath) extends
   }
 
   def applyEvent = {
-    case ReservationConfirmed(reservationId, customerId, totalAmount) =>
-      if (totalAmount.isDefined) {
-        deliverCommand(invoiceOffice, CreateInvoice(sagaId, reservationId, customerId, totalAmount.get, now()))
-        status = WaitingForPayment
-      } else {
-        status = Completed
-      }
+    case ReservationConfirmed(reservationId, customerId, totalAmountOpt) =>
+      val totalAmount = totalAmountOpt.getOrElse(Money())
+      deliverCommand(invoicingOffice, CreateInvoice(sagaId, reservationId, customerId, totalAmount, now()))
+      status = WaitingForPayment
+
+      // simulate payment receipt
+      deliverCommand(invoicingOffice, ReceivePayment(sagaId, reservationId, totalAmount, paymentId = UUID.randomUUID().toString))
+
     case PaymentReceived(invoiceId, _, amount, paymentId) =>
       status = Completed
   }
