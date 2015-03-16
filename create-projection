@@ -1,0 +1,3 @@
+#!/bin/bash
+
+http -a admin:changeit :2113/projections/continuous name==${1} type==JS emit==1 < "${2}"
