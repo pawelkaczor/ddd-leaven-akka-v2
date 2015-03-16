@@ -33,6 +33,15 @@ case class ShipmentViewEndpoint(implicit val ec: ExecutionContext, profile: Jdbc
           }
         }
       }
+    } ~
+    path("shipment" / "order" / Segment) { id =>
+      get {
+        complete {
+          viewStore withSession { implicit s =>
+            dao.byOrderId(id)
+          }
+        }
+      }
     }
 
   }
