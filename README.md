@@ -2,27 +2,30 @@ ddd-leaven-akka-v2
 ==================
 Sample e-commerce application built on top of [Akka](akka.io) and [EventStore](geteventstore.com) following a [CQRS/DDDD](http://abdullin.com/post/dddd-cqrs-and-other-enterprise-development-buzz-words)-based approach. Makes use of [Akka DDD framework](https://github.com/pawelkaczor/akka-ddd). 
 
-Currently only basic *Sales/Reservation* **autonomous service** is available. Autonomous service consist of 4 executable units ([Akka Microkernel](http://doc.akka.io/docs/akka/snapshot/scala/microkernel.html) bundles). 
+System currently consists of the following subsystems (aka. autonomous services):
 
+* Sales/Reservation - accepting/confirming reservations (orders)
+* Invoicing - handling payment process
+* Shipping - handling shipping process
 
-### Sales service - executable units 
+Each autonomous service consist of 4 executable units ([Akka Microkernel](http://doc.akka.io/docs/akka/snapshot/scala/microkernel.html) bundles).
 
-##### sales-write-back 
+##### write-back
 Business logic encapsulated inside Aggregate Roots. Starts as backend cluster node.
 
 *Technologies:* Akka Persistence, Akka Cluster Sharding
 
-##### sales-write-front 
+##### write-front
 Http server forwarding commands to backend cluster. 
 
 *Technologies:* Akka-Http, Akka Cluster Client
 
-##### sales-read-back
+##### read-back
 Service that consumes events from event store and updates view store (Postgresql database).
 
 *Technologies:* [EventStore JVM Client](https://github.com/EventStore/EventStore.JVM), [Slick](http://slick.typesafe.com/)
 
-##### sales-read-front
+##### read-front
 Http server providing rest endpoint for accessing view-store. 
 
 *Technologies:* Akka-Http, Slick
@@ -33,9 +36,9 @@ Http server providing rest endpoint for accessing view-store.
 ##### Eventstore
 
 ~~~
-docker run --name ecommerce-event-store -d -p 2113:2113 -p 1113:1113 jmkelly/eventstore
+docker run --name ecommerce-event-store -d -p 2113:2113 -p 1113:1113 newion/eventstore:3.0.1
 ~~~
-Go to http://127.0.0.1:2113/web/index.html#/projections and click `Enable All` button to enable system projections.
+Run [enable-projections](https://github.com/pawelkaczor/ddd-leaven-akka-v2/blob/master/enable-projections) script.
 
 ##### Postgresql
 ~~~
@@ -58,16 +61,28 @@ sbt stage
 
 For each sales-* bundle there is a corresponding run script: run-sales-{unit name}
 
-### Manual testing of Sales/Reservation service using httpie
+### Manual testing of Reservation process using httpie
 
 - Create reservation
 
 ~~~
-http POST http://127.0.0.1:9100/ecommerce/sales Command-Type:ecommerce.sales.CreateReservation reservationId="reservation-200" clientId="client-1"
+http :9100/ecommerce/sales Command-Type:ecommerce.sales.CreateReservation reservationId="r1" customerId="customer-1"
 ~~~
 
-- Display all reservations
+- Confirm reservation
 
 ~~~
-http GET localhost:9300/ecommerce/sales/reservation/all
+http :9100/ecommerce/sales Command-Type:ecommerce.sales.ConfirmReservation reservationId="r1"
+~~~
+
+- Display reservation
+
+~~~
+http :9110/ecommerce/sales/reservation/r1
+~~~
+
+- Display shipment status
+
+~~~
+http :9310/ecommerce/shipping/shipment/order/r1
 ~~~
