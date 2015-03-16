@@ -142,6 +142,7 @@ lazy val `shipping-read-front` = project
   .dependsOn(`shipping-read-back` % "test->test;compile->compile")
 
 lazy val commonSettings: Seq[Setting[_]] = Seq(
+  updateOptions := updateOptions.value.withCachedResolution(cachedResoluton = true),
   resolvers ++= Seq("Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"),
   libraryDependencies ++= Seq(
     "com.github.nscala-time" %% "nscala-time" % "1.4.0",
