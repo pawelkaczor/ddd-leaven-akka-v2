@@ -11,7 +11,7 @@ System currently consists of the following subsystems (aka. autonomous services)
 Each autonomous service consist of 4 executable units ([Akka Microkernel](http://doc.akka.io/docs/akka/snapshot/scala/microkernel.html) bundles).
 
 ##### write-back
-Business logic encapsulated inside Aggregate Roots. Starts as backend cluster node.
+Business logic encapsulated inside Aggregate Roots, Receptors and Process Managers (Sagas). Application starts as backend cluster node.
 
 *Technologies:* Akka Persistence, Akka Cluster Sharding
 
@@ -57,11 +57,14 @@ http://httpie.org/
 sbt stage
 ~~~
 
-### Running Sales/Reservations service
+### Running services
+As there are multiply applications per service, running/monitoring the whole system is not straightforward.
+You can use run scripts (located in [run-scripts](https://github.com/pawelkaczor/ddd-leaven-akka-v2/blob/master/run-scripts) directory)
+to quickly start the system and execute sample [Reservation process](#manual-testing). But you'd better configure [supervisord](http://supervisord.org/)
+to include [supervisord-configs](https://github.com/pawelkaczor/ddd-leaven-akka-v2/blob/master/supervisord-configs) dir and
+manage (start/restart/stop) services using supervisorctrl tool.
 
-For each sales-* bundle there is a corresponding run script: run-sales-{unit name}
-
-### Manual testing of Reservation process using httpie
+### Manual testing of Reservation process using httpie (#manual-testing)
 
 - Create reservation
 
