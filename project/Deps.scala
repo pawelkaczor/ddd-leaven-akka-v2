@@ -52,7 +52,7 @@ object Deps {
 
   object SqlDb {
     val slick = "com.typesafe.slick" %% "slick" % Version.slick
-    val `slick-for-pg` = "com.github.tminglei" %% "slick-pg" % "0.8.2"
+    val `slick-for-pg` = "com.github.tminglei" %% "slick-pg" % "0.8.2" exclude("org.slf4j", "slf4j-simple")
     val testDriver = "com.h2database" % "h2" % "1.3.170" % "test"
 
     def prod = Seq(`slick-for-pg`)
