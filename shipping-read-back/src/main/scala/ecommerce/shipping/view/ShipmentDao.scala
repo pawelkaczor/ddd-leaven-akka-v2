@@ -62,7 +62,13 @@ class ShipmentDao(implicit val profile: JdbcProfile)  {
     view
   }
 
-  def update(view: ShipmentView)(implicit s: Session) = shipments.update(view)
+  def update(view: ShipmentView)(implicit s: Session) = {
+    val query = by_id(view.id)
+    if (query.run.headOption.isDefined)
+      query.update(view)
+    else
+      throw new RuntimeException("view does not exist")
+  }
 
   def all(implicit s: Session) =  shipments.list
 

@@ -63,7 +63,13 @@ class ReservationDao(implicit val profile: JdbcProfile)  {
     view
   }
 
-  def update(view: ReservationView)(implicit s: Session) = reservations.update(view)
+  def update(view: ReservationView)(implicit s: Session) = {
+    val query = by_id(view.id)
+    if (query.run.headOption.isDefined)
+      query.update(view)
+    else
+      throw new RuntimeException("view does not exist")
+  }
 
   def all(implicit s: Session) =  reservations.list
 

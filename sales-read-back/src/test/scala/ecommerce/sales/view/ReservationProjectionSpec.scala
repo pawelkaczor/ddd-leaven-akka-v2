@@ -3,7 +3,7 @@ package ecommerce.sales.view
 import java.sql.Date
 
 import com.typesafe.config.{Config, ConfigFactory}
-import ecommerce.sales.{ReservationConfirmed, ReservationCreated, ReservationEvent, ReservationStatus}
+import ecommerce.sales.{ReservationCreated, ReservationEvent, ReservationStatus}
 import ReservationStatus.{Confirmed, Opened}
 import ecommerce.sales.ReservationConfirmed
 import org.joda.time.DateTime.now
