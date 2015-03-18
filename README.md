@@ -64,7 +64,7 @@ to quickly start the system and execute sample [Reservation process](#manual-tes
 to include [supervisord-configs](https://github.com/pawelkaczor/ddd-leaven-akka-v2/blob/master/supervisord-configs) dir and
 manage (start/restart/stop) services using supervisorctrl tool.
 
-### Manual testing of Reservation process using httpie (#manual-testing)
+### <a name="manual-testing"></a>Manual testing of Reservation process using httpie
 
 - Create reservation
 
