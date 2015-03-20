@@ -1,10 +1,9 @@
 package ecommerce.sales.view
 
 import com.typesafe.config.{Config, ConfigFactory}
-import ecommerce.shipping.view.{ShipmentProjection, ShipmentDao}
-import ecommerce.shipping.{ShippingStatus, ShipmentCreated}
-import ShippingStatus.Waiting
 import ecommerce.shipping.ShipmentCreated
+import ecommerce.shipping.ShippingStatus.Waiting
+import ecommerce.shipping.view.{ShipmentDao, ShipmentProjection}
 import org.scalatest._
 import pl.newicom.dddd.messaging.event.{AggregateSnapshotId, DomainEventMessage}
 
@@ -16,13 +15,12 @@ class ShipmentProjectionSpec extends WordSpecLike with Matchers with ViewTestSup
 
   val dao = new ShipmentDao
   val projection = new ShipmentProjection(dao)
-
   import dao.profile.simple._
 
   "ShipmentProjection" should {
     "consume ShipmentCreated event" in {
       // When
-      viewStore withSession { implicit s: Session =>
+      viewStore withSession { implicit s: JdbcBackend.Session =>
         projection.consume(ShipmentCreated("shipment-1", "order-1"))
       }
 
@@ -34,12 +32,12 @@ class ShipmentProjectionSpec extends WordSpecLike with Matchers with ViewTestSup
     }
   }
 
-  override def dropSchema(session: JdbcBackend.Session): Unit = {
-    dao.dropSchema(session)
+  override def dropSchema(implicit s: JdbcBackend.Session): Unit = {
+    dao.dropSchema
   }
 
-  override def createSchema(session: JdbcBackend.Session): Unit = {
-    dao.createSchema(session)
+  override def createSchema(implicit s: JdbcBackend.Session): Unit = {
+    dao.createSchema
   }
 
   implicit def toEventMessage(event: ShipmentCreated): DomainEventMessage = DomainEventMessage(AggregateSnapshotId(event.shipmentId), event)

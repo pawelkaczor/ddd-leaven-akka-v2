@@ -24,7 +24,7 @@ class ReservationProjectionSpec extends WordSpecLike with Matchers with ViewTest
   "ReservationProjection" should {
     "consume ReservationCreated event" in {
       // When
-      viewStore withSession { implicit s: Session =>
+      viewStore withSession { implicit s: JdbcBackend.Session =>
         projection.consume(ReservationCreated("reservation-1", "client-1"))
       }
 
@@ -43,7 +43,7 @@ class ReservationProjectionSpec extends WordSpecLike with Matchers with ViewTest
         dao.createIfNotExists(ReservationView("reservation-1", "client-1", Opened, new Date(now.getMillis)))
       }
         // When
-      viewStore withSession { implicit s: Session =>
+      viewStore withSession { implicit s: JdbcBackend.Session =>
         projection.consume(ReservationConfirmed("reservation-1", "client-1", None))
       }
 
@@ -55,12 +55,12 @@ class ReservationProjectionSpec extends WordSpecLike with Matchers with ViewTest
     }
   }
 
-  override def dropSchema(session: JdbcBackend.Session): Unit = {
-    dao.dropSchema(session)
+  override def dropSchema(implicit s: JdbcBackend.Session): Unit = {
+    dao.dropSchema
   }
 
-  override def createSchema(session: JdbcBackend.Session): Unit = {
-    dao.createSchema(session)
+  override def createSchema(implicit s: JdbcBackend.Session): Unit = {
+    dao.createSchema
   }
 
   implicit def toEventMessage(event: ReservationEvent): DomainEventMessage = DomainEventMessage(AggregateSnapshotId(event.reservationId), event)

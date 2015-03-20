@@ -12,7 +12,7 @@ import scala.slick.jdbc.JdbcBackend
 
 class ReservationProjection(dao: ReservationDao) extends Projection {
 
-  override def consume(eventMessage: DomainEventMessage)(implicit s: JdbcBackend#Session) {
+  override def consume(eventMessage: DomainEventMessage)(implicit s: JdbcBackend.Session) {
     eventMessage.event match {
       case ReservationCreated(id, clientId) =>
         dao.createIfNotExists(ReservationView(id, clientId, Opened, new Date(now().getMillis)))

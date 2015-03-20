@@ -17,7 +17,7 @@ class SalesViewUpdateService(override val config: Config)(override implicit val 
 
   override def onUpdateStart(): Unit = {
     viewStore withSession { implicit s =>
-      new ViewMetadataDao().create
+      new ViewMetadataDao().createSchema
       new ReservationDao().createSchema
     }
   }

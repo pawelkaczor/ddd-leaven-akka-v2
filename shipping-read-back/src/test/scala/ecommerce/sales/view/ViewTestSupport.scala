@@ -14,8 +14,8 @@ trait ViewTestSupport extends SqlViewStoreConfiguration with BeforeAndAfterAll {
 
   implicit val profile = H2Driver
 
-  def dropSchema(session: JdbcBackend.Session)
-  def createSchema(session: JdbcBackend.Session)
+  def dropSchema(implicit s: JdbcBackend.Session)
+  def createSchema(implicit s: JdbcBackend.Session)
 
   override def beforeAll() {
     log.debug("Starting views")
