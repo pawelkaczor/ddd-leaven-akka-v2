@@ -25,16 +25,16 @@ lazy val root = (project in file("."))
 // Sales subsystem
 //
 lazy val `sales-contracts` = project
-  .settings(commonSettings: _*)
   .settings(
+    commonSettings,
     libraryDependencies ++= Seq(
       AkkaDDD.messaging
     ) ++ Json.`4s`
   )
 
 lazy val `sales-write-back` = project
-  .settings(commonSettings ++ multiNodeTestingSettings: _*)
   .settings(
+      commonSettings ++ multiNodeTestingSettings,
       libraryDependencies ++= Seq(
         Akka.kernel, Akka.testkit,
         AkkaDDD.messaging, AkkaDDD.core, AkkaDDD.test,
@@ -45,8 +45,8 @@ lazy val `sales-write-back` = project
     .configs(MultiJvm)
 
 lazy val `sales-write-front` = project
-  .settings(commonSettings: _*)
   .settings(
+    commonSettings,
     libraryDependencies ++= SqlDb() ++ Seq(
       AkkaDDD.writeFront, Akka.kernel, Akka.slf4j
     )
@@ -54,8 +54,8 @@ lazy val `sales-write-front` = project
   .dependsOn(`sales-contracts`)
 
 lazy val `sales-read-back` = project
-  .settings(commonSettings: _*)
   .settings(
+    commonSettings,
     parallelExecution in Test := false,
     libraryDependencies ++= SqlDb() ++ Seq(
       AkkaDDD.viewUpdateSql,
@@ -65,8 +65,8 @@ lazy val `sales-read-back` = project
   .dependsOn(`sales-contracts`)
 
 lazy val `sales-read-front` = project
-  .settings(commonSettings: _*)
   .settings(
+    commonSettings,
     parallelExecution in Test := false,
     libraryDependencies ++= Seq(
       Akka.testkit, Akka.httpTestKit, AkkaDDD.httpSupport
@@ -78,8 +78,8 @@ lazy val `sales-read-front` = project
 // Invoicing subsystem
 //
 lazy val `invoicing-contracts` = project
-  .settings(commonSettings: _*)
   .settings(
+    commonSettings,
     libraryDependencies ++= Seq(
       AkkaDDD.messaging
     ) ++ Json.`4s`
@@ -87,8 +87,8 @@ lazy val `invoicing-contracts` = project
   .dependsOn(`sales-contracts`)
 
 lazy val `invoicing-write-back` = project
-  .settings(commonSettings: _*)
   .settings(
+    commonSettings,
     libraryDependencies ++= Seq(
       Akka.kernel, Akka.testkit,
       AkkaDDD.messaging, AkkaDDD.core, AkkaDDD.test,
@@ -101,8 +101,8 @@ lazy val `invoicing-write-back` = project
 // Shipping subsystem
 //
 lazy val `shipping-contracts` = project
-  .settings(commonSettings: _*)
   .settings(
+    commonSettings,
     libraryDependencies ++= Seq(
       AkkaDDD.messaging
     ) ++ Json.`4s`
@@ -110,8 +110,8 @@ lazy val `shipping-contracts` = project
   .dependsOn(`invoicing-contracts`)
 
 lazy val `shipping-write-back` = project
-  .settings(commonSettings: _*)
   .settings(
+    commonSettings,
     libraryDependencies ++= Seq(
       Akka.kernel, Akka.testkit,
       AkkaDDD.messaging, AkkaDDD.core, AkkaDDD.test,
@@ -121,8 +121,8 @@ lazy val `shipping-write-back` = project
   .dependsOn(`shipping-contracts`)
 
 lazy val `shipping-read-back` = project
-  .settings(commonSettings: _*)
   .settings(
+    commonSettings,
     parallelExecution in Test := false,
     libraryDependencies ++= SqlDb() ++ Seq(
       AkkaDDD.viewUpdateSql,
@@ -132,8 +132,8 @@ lazy val `shipping-read-back` = project
   .dependsOn(`shipping-contracts`)
 
 lazy val `shipping-read-front` = project
-  .settings(commonSettings: _*)
   .settings(
+    commonSettings,
     parallelExecution in Test := false,
     libraryDependencies ++= Seq(
       Akka.testkit, Akka.httpTestKit, AkkaDDD.httpSupport
