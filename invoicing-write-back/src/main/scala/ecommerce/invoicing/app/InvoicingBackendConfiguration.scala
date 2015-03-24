@@ -5,7 +5,6 @@ import java.net.InetAddress
 import akka.actor._
 import com.typesafe.config.Config
 import ecommerce.invoicing.{Invoice, InvoicingSaga}
-import org.json4s.Formats
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory._
 import pl.newicom.dddd.actor.{CreationSupport, PassivationConfig}
@@ -60,9 +59,7 @@ trait InvoicingBackendConfiguration {
   //
 
   implicit lazy val sagaManagerFactory: SagaManagerFactory = (sagaConfig, sagaOffice) => {
-    new SagaManager(sagaConfig, sagaOffice) with EventstoreSubscriber {
-      override implicit val formats: Formats = config.serializationHints ++ defaultFormats
-    }
+    new SagaManager(sagaConfig, sagaOffice) with EventstoreSubscriber
   }
 
   def seeds(config: Config) = {

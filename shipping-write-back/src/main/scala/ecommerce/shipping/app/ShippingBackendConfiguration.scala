@@ -51,9 +51,7 @@ trait ShippingBackendConfiguration {
 
   implicit val receptorFactory: ReceptorFactory = receptorConfig => {
     new Receptor with EventstoreSubscriber {
-      override implicit val formats: Formats = config.serializationHints ++ defaultFormats
       def config = receptorConfig
-
     }
   }
 

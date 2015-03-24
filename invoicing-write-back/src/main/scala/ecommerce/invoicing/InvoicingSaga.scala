@@ -4,7 +4,7 @@ import java.util.UUID
 
 import akka.actor.ActorPath
 import ecommerce.invoicing.InvoicingSaga.InvoicingSagaConfig
-import ecommerce.sales.{Money, ReservationConfirmed, salesOffice}
+import ecommerce.sales.{Money, ReservationConfirmed}
 import org.joda.time.DateTime.now
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.messaging.event.EventMessage
@@ -18,7 +18,6 @@ object InvoicingSaga {
   }
 
   implicit object InvoicingSagaConfig extends SagaConfig[InvoicingSaga](invoicingOffice.streamName) {
-    override def serializationHints = salesOffice.serializationHints ++ invoicingOffice.serializationHints
     def correlationIdResolver = {
       case rc: ReservationConfirmed => s"$uuid" // invoiceId
       case PaymentReceived(invoiceId, _, _, _) => invoiceId
