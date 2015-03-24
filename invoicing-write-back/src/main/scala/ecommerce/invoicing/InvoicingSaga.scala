@@ -3,11 +3,13 @@ package ecommerce.invoicing
 import java.util.UUID
 
 import akka.actor.ActorPath
+import ecommerce.invoicing.InvoicingSaga.InvoicingSagaConfig
 import ecommerce.sales.{Money, ReservationConfirmed, salesOffice}
 import org.joda.time.DateTime.now
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.messaging.event.EventMessage
 import pl.newicom.dddd.process.{Saga, SagaConfig}
+import pl.newicom.dddd.utils.UUIDSupport.uuid
 
 object InvoicingSaga {
   object InvoiceStatus extends Enumeration {
@@ -15,10 +17,10 @@ object InvoicingSaga {
     val New, WaitingForPayment, Completed = Value
   }
 
-  implicit object PaymentSagaConfig extends SagaConfig[InvoicingSaga](invoicingOffice.streamName) {
+  implicit object InvoicingSagaConfig extends SagaConfig[InvoicingSaga](invoicingOffice.streamName) {
     override def serializationHints = salesOffice.serializationHints ++ invoicingOffice.serializationHints
     def correlationIdResolver = {
-      case rc: ReservationConfirmed => UUID.randomUUID().toString // invoiceId
+      case rc: ReservationConfirmed => s"$uuid" // invoiceId
       case PaymentReceived(invoiceId, _, _, _) => invoiceId
     }
   }
@@ -28,6 +30,8 @@ object InvoicingSaga {
 import ecommerce.invoicing.InvoicingSaga.InvoiceStatus._
 
 class InvoicingSaga(val pc: PassivationConfig, invoicingOffice: ActorPath) extends Saga {
+
+  override def persistenceId = s"${InvoicingSagaConfig.name}Saga-$id"
 
   var status = New
 
