@@ -9,7 +9,7 @@ import pl.newicom.dddd.serialization.JsonSerializationHints
 package object invoicing {
 
   implicit val invoicingOffice: OfficeInfo[InvoicingOffice] =
-    OfficeInfo("Invoice", "invoicing", ecommerce.sales.salesOffice.serializationHints ++ new JsonSerializationHints {
+    OfficeInfo("Invoice", ecommerce.sales.salesOffice.serializationHints ++ new JsonSerializationHints {
 
     override val typeHints = InvoicingCommands + InvoicingEvents + InvoicingValueObjects
     override val serializers = List()
@@ -23,7 +23,8 @@ package object invoicing {
     object InvoicingEvents extends FullTypeHints(
       List(
         classOf[InvoiceCreated],
-        classOf[PaymentReceived]
+        classOf[PaymentReceived],
+        classOf[PaymentFailed]
       ))
 
     object InvoicingValueObjects extends FullTypeHints(

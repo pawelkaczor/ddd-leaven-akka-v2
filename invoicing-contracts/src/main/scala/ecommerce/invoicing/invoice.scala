@@ -23,3 +23,4 @@ case class ReceivePayment(invoiceId: EntityId, orderId: EntityId, amount: Money,
 //
 case class InvoiceCreated(invoiceId: EntityId, orderId: EntityId, customerId: EntityId, totalAmount: Money, createEpoch: DateTime)
 case class PaymentReceived(invoiceId: EntityId, orderId: EntityId, amount: Money, paymentId: EntityId)
+case class PaymentFailed(invoiceId: EntityId, orderId: EntityId)

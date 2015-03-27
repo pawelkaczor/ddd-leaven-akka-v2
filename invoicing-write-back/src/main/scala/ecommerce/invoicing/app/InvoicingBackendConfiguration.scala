@@ -2,7 +2,7 @@ package ecommerce.invoicing.app
 
 import java.net.InetAddress
 
-import akka.actor._
+import akka.actor.{Actor, ActorSystem, ActorPath, Props, AddressFromURIString}
 import com.typesafe.config.Config
 import ecommerce.invoicing.{Invoice, InvoicingSaga}
 import org.slf4j.Logger
@@ -12,8 +12,10 @@ import pl.newicom.dddd.aggregate.AggregateRootActorFactory
 import pl.newicom.dddd.cluster._
 import pl.newicom.dddd.eventhandling.EventPublisher
 import pl.newicom.dddd.messaging.event.DomainEventMessage
+import pl.newicom.dddd.process.ReceptorSupport.ReceptorFactory
 import pl.newicom.dddd.process.SagaSupport._
-import pl.newicom.dddd.process.{SagaActorFactory, SagaManager}
+import pl.newicom.dddd.process.{Receptor, SagaActorFactory, SagaManager}
+import pl.newicom.dddd.scheduling.Scheduler
 import pl.newicom.eventstore.EventstoreSubscriber
 
 import scala.io.Source
@@ -37,7 +39,16 @@ trait InvoicingBackendConfiguration {
   def creationSupport = implicitly[CreationSupport]
 
   def invoiceOffice: ActorPath
+  def schedulingOffice: ActorPath
 
+
+  //
+  // Scheduling
+  //
+  implicit object SchedulerFactory extends AggregateRootActorFactory[Scheduler] {
+    override def props(pc: PassivationConfig) = Props(new Scheduler(pc, "global") with LocalPublisher)
+  }
+  implicit object SchedulerShardResolution extends DefaultShardResolution[Scheduler]
 
   //
   // Invoicing
@@ -50,7 +61,7 @@ trait InvoicingBackendConfiguration {
 
   implicit object InvoicingSagaActorFactory extends SagaActorFactory[InvoicingSaga] {
     def props(pc: PassivationConfig): Props = {
-      Props(new InvoicingSaga(pc, invoiceOffice))
+      Props(new InvoicingSaga(pc, invoiceOffice, Some(schedulingOffice)))
     }
   }
 
@@ -60,6 +71,16 @@ trait InvoicingBackendConfiguration {
 
   implicit lazy val sagaManagerFactory: SagaManagerFactory = (sagaConfig, sagaOffice) => {
     new SagaManager(sagaConfig, sagaOffice) with EventstoreSubscriber
+  }
+
+  //
+  // Receptor factory
+  //
+
+  implicit val receptorFactory: ReceptorFactory = receptorConfig => {
+    new Receptor with EventstoreSubscriber {
+      def config = receptorConfig
+    }
   }
 
   def seeds(config: Config) = {

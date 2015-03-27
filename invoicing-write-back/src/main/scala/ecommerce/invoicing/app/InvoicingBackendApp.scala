@@ -8,7 +8,9 @@ import ecommerce.invoicing.{Invoice, InvoicingSaga}
 import org.slf4j.LoggerFactory._
 import pl.newicom.dddd.cluster._
 import pl.newicom.dddd.office.Office._
+import pl.newicom.dddd.process.ReceptorSupport.registerReceptor
 import pl.newicom.dddd.process.SagaSupport._
+import pl.newicom.dddd.scheduling.{Scheduler, DeadlinesReceptor}
 
 class InvoicingBackendApp extends Bootable with InvoicingBackendConfiguration {
 
@@ -17,8 +19,10 @@ class InvoicingBackendApp extends Bootable with InvoicingBackendConfiguration {
   val config: Config = ConfigFactory.load()
   implicit val system = ActorSystem("invoicing", config)
 
-  var _invoiceOffice:ActorRef = null
+  var _invoiceOffice: ActorRef = null
+  var _schedulingOffice: ActorRef = null
   def invoiceOffice = _invoiceOffice.path
+  def schedulingOffice = _schedulingOffice.path
 
   override def startup() = {
     joinCluster()
@@ -27,7 +31,9 @@ class InvoicingBackendApp extends Bootable with InvoicingBackendConfiguration {
 
   def openOffices(): Unit = {
     _invoiceOffice = office[Invoice]
+    _schedulingOffice = office[Scheduler]
     registerSaga[InvoicingSaga]
+    registerReceptor(DeadlinesReceptor("global"))
   }
 
   /**

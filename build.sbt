@@ -91,7 +91,7 @@ lazy val `invoicing-write-back` = project
     commonSettings,
     libraryDependencies ++= Seq(
       Akka.kernel, Akka.testkit,
-      AkkaDDD.messaging, AkkaDDD.core, AkkaDDD.test,
+      AkkaDDD.messaging, AkkaDDD.core, AkkaDDD.scheduling, AkkaDDD.test,
       AkkaDDD.eventStore, Eventstore.akkaJournal
     )
   )

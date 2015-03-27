@@ -30,6 +30,7 @@ object Deps {
     val httpSupport = "pl.newicom.dddd" %% s"http-support" % Version.akkaDDD withSources()
     val viewUpdateSql = "pl.newicom.dddd" %% "view-update-sql" % Version.akkaDDD withSources()
     val eventStore = "pl.newicom.dddd" %% "eventstore-akka-persistence" % Version.akkaDDD withSources()
+    val scheduling = apply("scheduling")
     val test = apply("test") % "test"
     private def apply(moduleName: String) = "pl.newicom.dddd" %% s"akka-ddd-$moduleName" % Version.akkaDDD withSources()
   }
