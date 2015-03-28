@@ -6,4 +6,5 @@ http -a admin:changeit POST ':2113/projection/$stream_by_category/command/enable
 http -a admin:changeit POST ':2113/projection/$streams/command/enable'
 
 ./create-projection invoicing_process ./invoicing-write-back/src/main/resources/projections/invoicing-process.js
-./create-projection clock ./invoicing-write-back/src/main/resources/projections/clock.js
+./create-projection clock_proj ./invoicing-write-back/src/main/resources/projections/clock.js
+./create-projection current_deadlines_proj ./invoicing-write-back/src/main/resources/projections/current-deadlines.js
