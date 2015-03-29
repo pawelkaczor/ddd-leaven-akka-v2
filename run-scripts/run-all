@@ -7,6 +7,7 @@ LOGS="../target"
 ./run-sales-write-back > ${LOGS}/sales-write-back.log 2>&1 &
 ./run-sales-write-front > ${LOGS}/sales-write-front.log 2>&1 &
 ./run-invoicing-write-back > ${LOGS}/invoicing-write-back.log 2>&1 &
+./run-invoicing-write-front> ${LOGS}/invoicing-write-front.log 2>&1 &
 ./run-shipping-read-back > ${LOGS}/shipping-read-back.log 2>&1 &
 ./run-shipping-read-front > ${LOGS}/shipping-read-front.log 2>&1 &
 ./run-shipping-write-back > ${LOGS}/shipping-write-back.log 2>&1 &

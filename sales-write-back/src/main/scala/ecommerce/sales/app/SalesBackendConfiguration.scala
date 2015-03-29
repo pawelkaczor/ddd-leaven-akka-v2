@@ -4,7 +4,7 @@ import java.net.InetAddress
 
 import akka.actor._
 import com.typesafe.config.Config
-import ecommerce.sales.Reservation
+import ecommerce.sales.{OrderSaga, Reservation}
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory._
 import pl.newicom.dddd.actor.{CreationSupport, PassivationConfig}
@@ -12,6 +12,9 @@ import pl.newicom.dddd.aggregate.AggregateRootActorFactory
 import pl.newicom.dddd.cluster._
 import pl.newicom.dddd.eventhandling.EventPublisher
 import pl.newicom.dddd.messaging.event.DomainEventMessage
+import pl.newicom.dddd.process.{SagaActorFactory, SagaManager}
+import pl.newicom.dddd.process.SagaSupport._
+import pl.newicom.eventstore.EventstoreSubscriber
 
 import scala.io.Source
 import scala.util.Try
@@ -32,6 +35,7 @@ trait SalesBackendConfiguration {
   def config: Config
   implicit def system: ActorSystem
   def creationSupport = implicitly[CreationSupport]
+  def reservationOffice: ActorPath
 
   //
   // Reservation Office
@@ -42,7 +46,21 @@ trait SalesBackendConfiguration {
 
   implicit object ReservationShardResolution extends DefaultShardResolution[Reservation]
 
+  implicit object OrderSagaShardResolution extends DefaultShardResolution[OrderSaga]
 
+  implicit object OrderSagaActorFactory extends SagaActorFactory[OrderSaga] {
+    def props(pc: PassivationConfig): Props = {
+      Props(new OrderSaga(pc, reservationOffice))
+    }
+  }
+
+  //
+  // SagaManager factory
+  //
+
+  implicit lazy val sagaManagerFactory: SagaManagerFactory = (sagaConfig, sagaOffice) => {
+    new SagaManager(sagaConfig, sagaOffice) with EventstoreSubscriber
+  }
 
   def seeds(config: Config) = {
     // Read cluster seed nodes from the file specified in the configuration

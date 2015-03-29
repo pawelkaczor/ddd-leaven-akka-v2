@@ -72,11 +72,25 @@ manage (start/restart/stop) services using supervisorctrl tool.
 http :9100/ecommerce/sales Command-Type:ecommerce.sales.CreateReservation reservationId="r1" customerId="customer-1"
 ~~~
 
+- Add product
+
+~~~
+echo '{"reservationId": "r1", "product": { "snapshotId": { "aggregateId": "123456789", "sequenceNr": 0 }, "name": "DDDD For Dummies - 7th Edition", "productType": 1, "price": { "doubleValue": 10.0, "currencyCode": "USD"}}, "quantity": 1}' | http :9100/ecommerce/sales Command-Type:ecommerce.sales.ReserveProduct
+~~~
+
 - Confirm reservation
 
 ~~~
 http :9100/ecommerce/sales Command-Type:ecommerce.sales.ConfirmReservation reservationId="r1"
 ~~~
+
+- Pay
+
+~~~
+echo '{"invoiceId": "{{INVOICE_ID}}", "orderId": "r1", "amount": { "doubleValue": 10.0, "currencyCode": "USD"}, "paymentId": "230982342"}' | http :9200/ecommerce/invoicing Command-Type:ecommerce.invoicing.ReceivePayment
+~~~
+
+If you do not pay within ~ 3 minutes, reservation will be cancelled.
 
 - Display reservation
 

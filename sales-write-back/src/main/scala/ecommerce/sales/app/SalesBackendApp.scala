@@ -1,13 +1,14 @@
 package ecommerce.sales.app
 
 import _root_.akka.cluster.Cluster
-import akka.actor.ActorSystem
+import akka.actor.{ActorRef, ActorSystem}
 import akka.kernel.Bootable
 import com.typesafe.config.{Config, ConfigFactory}
-import ecommerce.sales.Reservation
+import ecommerce.sales.{OrderSaga, Reservation}
 import org.slf4j.LoggerFactory._
 import pl.newicom.dddd.office.Office._
 import pl.newicom.dddd.cluster._
+import pl.newicom.dddd.process.SagaSupport.registerSaga
 
 class SalesBackendApp extends Bootable with SalesBackendConfiguration {
 
@@ -16,13 +17,17 @@ class SalesBackendApp extends Bootable with SalesBackendConfiguration {
   val config: Config = ConfigFactory.load()
   implicit val system = ActorSystem("sales", config)
 
+  var _reservationOffice: ActorRef = null
+  def reservationOffice = _reservationOffice.path
+
   override def startup() = {
     joinCluster()
     openOffices()
   }
 
   def openOffices(): Unit = {
-    office[Reservation]
+    _reservationOffice = office[Reservation]
+    registerSaga[OrderSaga]
   }
 
   /**

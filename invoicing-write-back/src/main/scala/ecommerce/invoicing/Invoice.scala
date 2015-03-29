@@ -10,8 +10,10 @@ object Invoice {
 
  case class State(amountPaid: Option[Money]) extends AggregateState {
     override def apply = {
-      case PaymentReceived(_, _, amount, _) =>
+      case OrderBilled(_, _, amount, _) =>
         copy(amountPaid = Some(amountPaid.getOrElse(Money()) + amount))
+      case OrderBillingFailed(_, _) =>
+        this
     }
   }
 }
@@ -36,10 +38,18 @@ abstract class Invoice(override val pc: PassivationConfig) extends AggregateRoot
 
     case ReceivePayment(invoiceId, orderId, amount, paymentId) =>
       if (initialized) {
-        raise(PaymentReceived(invoiceId, orderId, amount, paymentId))
+        raise(OrderBilled(invoiceId, orderId, amount, paymentId))
       } else {
         throw new RuntimeException(s"Unknown invoice")
       }
+
+    case CancelInvoice(invoiceId, orderId) =>
+      if (initialized) {
+        raise(OrderBillingFailed(invoiceId, orderId))
+      } else {
+        throw new RuntimeException(s"Unknown invoice")
+      }
+
   }
 
 }

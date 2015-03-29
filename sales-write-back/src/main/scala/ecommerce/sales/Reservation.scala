@@ -28,8 +28,14 @@ object Reservation {
         }
         copy(items = newItems)
 
-      case ReservationConfirmed(_, _, _) => copy(status = Confirmed)
-      case ReservationClosed(_) => copy(status = Closed)
+      case ReservationConfirmed(_, _, _) =>
+        copy(status = Confirmed)
+
+      case ReservationCanceled(_) =>
+        copy(status = Canceled)
+
+      case ReservationClosed(_) =>
+        copy(status = Closed)
     }
 
     def totalAmount: Option[Money] = {
@@ -65,11 +71,14 @@ abstract class Reservation(override val pc: PassivationConfig) extends Aggregate
       }
 
     case ConfirmReservation(reservationId) =>
-      if (state.status eq Closed) {
-        throw new RuntimeException(s"Reservation $reservationId is closed")
+      if ((state.status eq Closed) || (state.status eq Canceled)) {
+        throw new RuntimeException(s"Reservation $reservationId is ${state.status}")
       } else {
         raise(ReservationConfirmed(reservationId, state.customerId, state.totalAmount))
       }
+
+    case CancelReservation(reservationId) =>
+      raise(ReservationCanceled(reservationId))
 
     case CloseReservation(reservationId) =>
       raise(ReservationClosed(reservationId))

@@ -17,6 +17,7 @@ sealed trait Command extends aggregate.Command {
 case class CreateReservation(reservationId: EntityId, customerId: EntityId) extends Command
 case class ReserveProduct(reservationId: EntityId, product: Product, quantity: Int) extends Command
 case class ConfirmReservation(reservationId: EntityId) extends Command
+case class CancelReservation(reservationId: EntityId) extends Command
 case class CloseReservation(reservationId: EntityId) extends Command
 
 
@@ -31,13 +32,14 @@ sealed trait ReservationEvent extends DomainEvent {
 case class ReservationCreated(reservationId: EntityId, customerId: EntityId) extends ReservationEvent
 case class ProductReserved(reservationId: EntityId, product: Product, quantity: Int) extends ReservationEvent
 case class ReservationConfirmed(reservationId: EntityId, customerId: EntityId, totalAmount: Option[Money]) extends ReservationEvent
+case class ReservationCanceled(reservationId: EntityId) extends ReservationEvent
 case class ReservationClosed(reservationId: EntityId) extends ReservationEvent
 
 // Value Objects
 
 object ReservationStatus extends Enumeration {
   type ReservationStatus = Value
-  val Opened, Confirmed, Closed = Value
+  val Opened, Confirmed, Canceled, Closed = Value
 }
 
 case class ReservationItem(product: Product, quantity: Int) extends BusinessEntity {

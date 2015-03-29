@@ -18,7 +18,8 @@ object InvoicingSaga {
   implicit object InvoicingSagaConfig extends SagaConfig[InvoicingSaga]("invoicing") {
     def correlationIdResolver = {
       case rc: ReservationConfirmed => s"$uuid" // invoiceId
-      case PaymentReceived(invoiceId, _, _, _) => invoiceId
+      case OrderBilled(invoiceId, _, _, _) => invoiceId
+      case OrderBillingFailed(invoiceId, _) => invoiceId
     }
   }
 
@@ -35,9 +36,15 @@ class InvoicingSaga(val pc: PassivationConfig, invoicingOffice: ActorPath, overr
   def receiveEvent = {
     case em @ EventMessage(_, e: ReservationConfirmed) if status == New =>
       raise(em)
-    case em @ EventMessage(_, e: PaymentReceived) if status == WaitingForPayment =>
+    case em @ EventMessage(_, e: OrderBilled) if status == WaitingForPayment =>
       raise(em)
-    case em @ EventMessage(_, e: PaymentFailed) if status == WaitingForPayment =>
+    case em @ EventMessage(_, e: PaymentExpired) =>
+      if (status == WaitingForPayment) {
+        raise(em)
+      } else {
+        // receive and drop (invoice already paid)
+      }
+    case em @ EventMessage(_, e: OrderBillingFailed) if status == WaitingForPayment =>
       raise(em)
   }
 
@@ -47,13 +54,19 @@ class InvoicingSaga(val pc: PassivationConfig, invoicingOffice: ActorPath, overr
       deliverCommand(invoicingOffice, CreateInvoice(sagaId, reservationId, customerId, totalAmount, now()))
       status = WaitingForPayment
       // schedule payment deadline
-      schedule(PaymentFailed(sagaId, reservationId), now.plusMinutes(1))
+      schedule(PaymentExpired(sagaId, reservationId), now.plusMinutes(3))
 
-    case PaymentFailed(invoiceId, orderId) =>
-      // send fake payment request (to continue the process for testing purposes)
-      deliverCommand(invoicingOffice, ReceivePayment(invoiceId, orderId, amount = Money(10), paymentId = uuid))
+    case PaymentExpired(invoiceId, orderId) =>
+      // cancel invoice
+      log.debug("Payment expired for order '{}'.", orderId)
+      deliverCommand(invoicingOffice, CancelInvoice(invoiceId, orderId))
 
-    case PaymentReceived(invoiceId, _, amount, paymentId) =>
+    case OrderBilled(_, orderId, _, _) =>
+      log.debug("InvoicingSaga for order '{}' completed.", orderId)
       status = Completed
+
+    case OrderBillingFailed(_, orderId) =>
+      log.debug("InvoicingSaga for order '{}' failed.", orderId)
+      status = Failed
   }
 }

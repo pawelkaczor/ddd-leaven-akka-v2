@@ -19,7 +19,7 @@ lazy val root = (project in file("."))
   .settings(
     updateOptions := updateOptions.value.withCachedResolution(cachedResoluton = true)
   )
-  .aggregate(`sales-contracts`, `sales-write-back`, `sales-write-front`, `sales-read-back`, `sales-read-front`, `sales-contracts`, `shipping-write-back`, `shipping-read-back`, `shipping-read-front`, `shipping-contracts`, `invoicing-write-back`, `invoicing-contracts`)
+  .aggregate(`sales-contracts`, `sales-write-back`, `sales-write-front`, `sales-read-back`, `sales-read-front`, `sales-contracts`, `shipping-write-back`, `shipping-read-back`, `shipping-read-front`, `shipping-contracts`, `invoicing-write-back`, `invoicing-write-front`, `invoicing-contracts`)
 
 //
 // Sales subsystem
@@ -41,7 +41,7 @@ lazy val `sales-write-back` = project
         AkkaDDD.eventStore
       )
     )
-    .dependsOn(`sales-contracts`)
+    .dependsOn(`sales-contracts`, `invoicing-contracts`)
     .configs(MultiJvm)
 
 lazy val `sales-write-front` = project
@@ -93,6 +93,15 @@ lazy val `invoicing-write-back` = project
       Akka.kernel, Akka.testkit,
       AkkaDDD.messaging, AkkaDDD.core, AkkaDDD.scheduling, AkkaDDD.test,
       AkkaDDD.eventStore, Eventstore.akkaJournal
+    )
+  )
+  .dependsOn(`invoicing-contracts`)
+
+lazy val `invoicing-write-front` = project
+  .settings(
+    commonSettings,
+    libraryDependencies ++= SqlDb() ++ Seq(
+      AkkaDDD.writeFront, Akka.kernel, Akka.slf4j
     )
   )
   .dependsOn(`invoicing-contracts`)

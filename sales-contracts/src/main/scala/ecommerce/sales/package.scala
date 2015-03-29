@@ -17,6 +17,7 @@ package object sales {
         classOf[CreateReservation],
         classOf[ReserveProduct],
         classOf[ConfirmReservation],
+        classOf[CancelReservation],
         classOf[CloseReservation]
       ))
 
@@ -25,6 +26,7 @@ package object sales {
         classOf[ReservationCreated],
         classOf[ProductReserved],
         classOf[ReservationConfirmed],
+        classOf[ReservationCanceled],
         classOf[ReservationClosed]
       ))
 

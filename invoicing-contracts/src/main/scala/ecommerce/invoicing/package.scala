@@ -23,8 +23,9 @@ package object invoicing {
     object InvoicingEvents extends FullTypeHints(
       List(
         classOf[InvoiceCreated],
-        classOf[PaymentReceived],
-        classOf[PaymentFailed]
+        classOf[OrderBilled],
+        classOf[PaymentExpired],
+        classOf[OrderBillingFailed]
       ))
 
     object InvoicingValueObjects extends FullTypeHints(
