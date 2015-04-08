@@ -64,7 +64,7 @@ to quickly start the system and execute sample [Reservation process](#manual-tes
 to include [supervisord-configs](https://github.com/pawelkaczor/ddd-leaven-akka-v2/blob/master/supervisord-configs) dir and
 manage (start/restart/stop) services using supervisorctrl tool.
 
-### <a name="manual-testing"></a>Manual testing of Reservation process using httpie
+### <a name="manual-testing"></a>Manual testing of Reservation process
 
 - Create reservation
 
@@ -78,7 +78,10 @@ http :9100/ecommerce/sales Command-Type:ecommerce.sales.CreateReservation reserv
 echo '{"reservationId": "r1", "product": { "snapshotId": { "aggregateId": "123456789", "sequenceNr": 0 }, "name": "DDDD For Dummies - 7th Edition", "productType": 1, "price": { "doubleValue": 10.0, "currencyCode": "USD"}}, "quantity": 1}' | http :9100/ecommerce/sales Command-Type:ecommerce.sales.ReserveProduct
 ~~~
 
+
 - Confirm reservation
+
+See: ![Ordering process overview](https://raw.githubusercontent.com/pawelkaczor/akka-leaven-akka-v2/master/project/diagrams/OrderingSystem.png)
 
 ~~~
 http :9100/ecommerce/sales Command-Type:ecommerce.sales.ConfirmReservation reservationId="r1"
