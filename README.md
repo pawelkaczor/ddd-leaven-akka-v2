@@ -81,7 +81,7 @@ echo '{"reservationId": "r1", "product": { "snapshotId": { "aggregateId": "12345
 
 - Confirm reservation
 
-See: ![Ordering process overview](https://raw.githubusercontent.com/pawelkaczor/akka-leaven-akka-v2/master/project/diagrams/OrderingSystem.png)
+See: ![Ordering process overview](https://raw.githubusercontent.com/pawelkaczor/ddd-leaven-akka-v2/master/project/diagrams/OrderingSystem.png)
 
 ~~~
 http :9100/ecommerce/sales Command-Type:ecommerce.sales.ConfirmReservation reservationId="r1"
