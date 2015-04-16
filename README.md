@@ -17,15 +17,15 @@ All these capabilities are obviously supported by the underlying technology stac
 
 * [Akka](akka.io) - actor-based, reactive middleware implemented in Scala,
 
-* [Akka HTTP](http://typesafe.com/blog/akka-http-preview) - HTTP server build upon [Akka Stream]() (Akka's implementation of [Reactive Streams Specification](http://www.reactive-streams.org/)).
+* [Akka HTTP](http://typesafe.com/blog/akka-http-preview) - HTTP server build upon [Akka Stream]() (Akka's implementation of [Reactive Streams Specification](http://www.reactive-streams.org/)),
 
-* [Akka Persistence](http://doc.akka.io/docs/akka/current/scala/persistence.html) - infrastructure for building durable (event sourced) actors, which has a pluggable journal.
+* [Akka Persistence](http://doc.akka.io/docs/akka/current/scala/persistence.html) - infrastructure for building durable (event sourced) actors, which has a pluggable journal,
 
 * [Event Store](http://geteventstore.com) - scalable, highly available event store with akka-persistence journal implementation. Provides engine for running user-defined projections (javascript functions) over single or multiple  event streams. Projections allow the system to group or combine events into new event streams that can represent domain-level journals such as office journals (events grouped by emitter (`Aggregate Root`) class) or business process journals (events related to concrete business process). Domain journals are topic of interest for services such as:
   * view updaters - responsible for updating the read side of the system 
-  * receptors - allow event-driven interaction between subsystems (event choreography), including long-running processes (sagas)
+  * receptors - allow event-driven interaction between subsystems (event choreography), including long-running processes (sagas), and
 
-* [Akka-DDD](http://github.com/pawelkaczor/akka-ddd) - umbrella project containing glue-code and all building blocks.
+* [Akka-DDD](http://github.com/pawelkaczor/akka-ddd) - framework containing glue-code and all building blocks
 
 Subsystems
 --------------------
