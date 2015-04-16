@@ -15,7 +15,7 @@ This sample e-commerce system has a set of properties that makes it unique among
 
 All these capabilities are obviously supported by the underlying technology stack, which includes:
 
-* [Akka](akka.io) - actor-based, reactive middleware implemented in Scala,
+* [Akka](http://akka.io) - actor-based, reactive middleware implemented in Scala,
 
 * [Akka HTTP](http://typesafe.com/blog/akka-http-preview) - HTTP server build upon [Akka Stream]() (Akka's implementation of [Reactive Streams Specification](http://www.reactive-streams.org/)),
 
