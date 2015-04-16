@@ -8,8 +8,7 @@
 
 <p><em>Reactive DDD with Akka</em></p>
 <div>
-<h2>
-<a id="user-content-overview" class="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview</h2>
+<h2>Overview</h2>
 
 <p>This sample e-commerce system has a set of properties that makes it unique among similar systems. It is:</p>
 
@@ -39,8 +38,7 @@
 </ul>
 </div>
 <div>
-<h2>
-<a id="user-content-subsystems" class="anchor" href="#subsystems" aria-hidden="true"><span class="octicon octicon-link"></span></a>Subsystems</h2>
+<h2>Subsystems</h2>
 
 <p>The system currently consists of the following subsystems:</p>
 
@@ -51,79 +49,66 @@
 </ul>
 </div>
 <div>
-<h2>
-<a id="user-content-applications" class="anchor" href="#applications" aria-hidden="true"><span class="octicon octicon-link"></span></a>Applications</h2>
+<h2>Applications</h2>
 
 <p>Each subsystem is divided into <strong>write</strong> and <strong>read</strong> side, each side containing <strong>back-end</strong> and <strong>front-end</strong> application: </p>
 
 <hr>
 
-<h4>
-<a id="user-content-write-back" class="anchor" href="#write-back" aria-hidden="true"><span class="octicon octicon-link"></span></a>write-back</h4>
+<h4>write-back</h4>
 
 <p>Backend cluster node hosting <code>Aggregate Roots</code>, <code>Receptors</code> and <code>Process Managers (Sagas)</code>.</p>
 
-<h4>
-<a id="user-content-write-front" class="anchor" href="#write-front" aria-hidden="true"><span class="octicon octicon-link"></span></a>write-front</h4>
+<h4>write-front</h4>
 
 <p>HTTP server forwarding commands to backend cluster. </p>
 
 <hr>
 
-<h4>
-<a id="user-content-read-back" class="anchor" href="#read-back" aria-hidden="true"><span class="octicon octicon-link"></span></a>read-back</h4>
+<h4>read-back</h4>
 
 <p>View update service that consumes events from event store and updates view store (PostgreSQL database).</p>
 
-<h4>
-<a id="user-content-read-front" class="anchor" href="#read-front" aria-hidden="true"><span class="octicon octicon-link"></span></a>read-front</h4>
+<h4>read-front</h4>
 
 <p>HTTP server providing rest endpoint for accessing view store. </p>
 </div>
 <div>
-<h2>
-<a id="user-content-installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+<h2>Installation</h2>
 
-<h5>
-<a id="user-content-install-event-store" class="anchor" href="#install-event-store" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install Event Store</h5>
+<h5>Install Event Store</h5>
 
 <pre><code>docker run --name ecommerce-event-store -d -p 2113:2113 -p 1113:1113 newion/eventstore:3.0.1
 </code></pre>
 
-<h5>
-<a id="user-content-install-postgresql" class="anchor" href="#install-postgresql" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install PostgreSQL</h5>
+<h5>Install PostgreSQL</h5>
 
 <pre><code>docker run --name sales-view-store -d -p 5432:5432 postgres
 </code></pre>
 
-<p><img class="emoji" title=":bulb:" alt=":bulb:" src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f4a1.png" height="20" width="20" align="absmiddle"> Postgresql console: <code>psql -h localhost -p 5432 -U postgres</code></p>
+<p><img class="emoji" title=":bulb:" src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f4a1.png" height="20" width="20" align="absmiddle"> Postgresql console: <code>psql -h localhost -p 5432 -U postgres</code></p>
 
-<h5>
-<a id="user-content-checkout-the-project" class="anchor" href="#checkout-the-project" aria-hidden="true"><span class="octicon octicon-link"></span></a>Checkout the project</h5>
+<h5>Checkout the project</h5>
 
 <pre><code>git clone https://github.com/pawelkaczor/ddd-leaven-akka-v2.git
 </code></pre>
 
-<h5>
-<a id="user-content-register-projections" class="anchor" href="#register-projections" aria-hidden="true"><span class="octicon octicon-link"></span></a>Register projections</h5>
+<h5>Register projections</h5>
 
 <p>Run <a href="#code/enable-projections">enable-projections</a> script.</p>
 
-<h5>
-<a id="user-content-install-command-line-http-client" class="anchor" href="#install-command-line-http-client" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install Command line HTTP client</h5>
+<h5>Install Command line HTTP client</h5>
 
 <p><a href="http://httpie.org/">http://httpie.org/</a></p>
 </div>
 <div>
-<h2>
-<a id="user-content-building-the-project" class="anchor" href="#building-the-project" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building the project</h2>
+<h2>Building the project</h2>
 
 <pre><code>sbt stage
 </code></pre>
 </div>
 <div>
-<h2>
-<a id="user-content-running-subsystems" class="anchor" href="#running-subsystems" aria-hidden="true"><span class="octicon octicon-link"></span></a>Running subsystems</h2>
+<h2>Running subsystems</h2>
 
 <p>As there are multiple applications per subsystem, running/monitoring the whole system is not straightforward.
 You can use run scripts (located in <a href="#code/run-scripts">run-scripts</a> directory)
@@ -133,8 +118,7 @@ manage (start/restart/stop) services using supervisorctrl tool.</p>
 </div>
 <div>
 <h2>
-<a id="user-content-manual-testing-of-reservation-process" class="anchor" href="#manual-testing-of-reservation-process" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="user-content-manual-testing"></a>Manual testing of Reservation process</h2>
+<a name="manual-testing"></a>Manual testing of Reservation process</h2>
 
 <ol class="task-list">
 <li>
@@ -152,8 +136,8 @@ manage (start/restart/stop) services using supervisorctrl tool.</p>
 </ul>
 </li>
 <li>
-<p>Confirm reservation
-<a href="https://raw.githubusercontent.com/pawelkaczor/ddd-leaven-akka-v2/master/project/diagrams/OrderingSystem.png" target="_blank"><img src="diagrams/OrderingSystem.png" alt="" style="max-width:100%;"></a></p>
+<p>Confirm reservation</p>
+<img src="tutorial/OrderingSystem.png" style="max-width:100%;">
 
 <ul class="task-list">
 <li><code>http :9100/ecommerce/sales Command-Type:ecommerce.sales.ConfirmReservation reservationId="r1"</code></li>
@@ -165,7 +149,7 @@ manage (start/restart/stop) services using supervisorctrl tool.</p>
 <ul class="task-list">
 <li><code>echo '{"invoiceId": "{{INVOICE_ID}}", "orderId": "r1", "amount": { "doubleValue": 10.0, "currencyCode": "USD"}, "paymentId": "230982342"}' | http :9200/ecommerce/invoicing Command-Type:ecommerce.invoicing.ReceivePayment</code></li>
 <li>
-<img class="emoji" title=":bulb:" alt=":bulb:" src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f4a1.png" height="20" width="20" align="absmiddle"> If you do not pay within ~ 3 minutes, reservation will be canceled</li>
+<img class="emoji" src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f4a1.png" height="20" width="20" align="absmiddle"> If you do not pay within ~ 3 minutes, reservation will be canceled</li>
 </ul>
 </li>
 <li>
