@@ -3,8 +3,7 @@
         <title>Reactive DDD with Akka</title>
     </head>
     <body>
-<h1>
-<a id="user-content-ddd-leaven-akka-v2" class="anchor" href="#ddd-leaven-akka-v2" aria-hidden="true"><span class="octicon octicon-link"></span></a>ddd-leaven-akka-v2</h1>
+<h1>ddd-leaven-akka-v2</h1>
 
 <p><em>Reactive DDD with Akka</em></p>
 <div>
@@ -24,7 +23,7 @@
 
 <ul class="task-list">
 <li><p><a href="http://akka.io">Akka</a> - actor-based, reactive middleware implemented in Scala,</p></li>
-<li><p><a href="http://typesafe.com/blog/akka-http-preview">Akka HTTP</a> - HTTP server build upon <a href="tutorial">Akka Stream</a> (Akka's implementation of <a href="http://www.reactive-streams.org/">Reactive Streams Specification</a>),</p></li>
+<li><p><a href="http://typesafe.com/blog/akka-http-preview">Akka HTTP</a> - HTTP server build upon Akka Stream (Akka's implementation of <a href="http://www.reactive-streams.org/">Reactive Streams Specification</a>),</p></li>
 <li><p><a href="http://doc.akka.io/docs/akka/current/scala/persistence.html">Akka Persistence</a> - infrastructure for building durable (event sourced) actors, which has a pluggable journal,</p></li>
 <li>
 <p><a href="http://geteventstore.com">Event Store</a> - scalable, highly available event store with akka-persistence journal implementation. Provides engine for running user-defined projections (javascript functions) over single or multiple  event streams. Projections allow the system to group or combine events into new event streams that can represent domain-level journals such as office journals (events grouped by emitter (<code>Aggregate Root</code>) class) or business process journals (events related to concrete business process). Domain journals are topic of interest for services such as:</p>
@@ -112,7 +111,7 @@
 
 <p>As there are multiple applications per subsystem, running/monitoring the whole system is not straightforward.
 You can use run scripts (located in <a href="#code/run-scripts">run-scripts</a> directory)
-to quickly start the system and execute sample <a href="#manual-testing">Reservation process</a>. However, it s recommended you configure supervisord <a href="http://supervisord.org/">supervisord</a>
+to quickly start the system and execute sample Reservation process (see below). However, it s recommended you configure supervisord <a href="http://supervisord.org/">supervisord</a>
 to include <a href="#code/supervisord-configs">supervisord-configs</a> dir and
 manage (start/restart/stop) services using supervisorctrl tool.</p>
 </div>
