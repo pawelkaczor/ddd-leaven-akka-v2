@@ -1,3 +1,2 @@
-packageArchetype.akka_application
-
-mainClass in Compile := Some("ecommerce.sales.app.SalesReadFrontApp")
+enablePlugins(JavaAppPackaging)
+mainClass in Compile := Some("akka.kernel.Main ecommerce.sales.app.SalesReadFrontApp")
