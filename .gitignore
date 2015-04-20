@@ -15,3 +15,5 @@ dist
 /.settings
 .project
 .settings
+.vagrant
+/journal

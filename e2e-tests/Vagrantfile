@@ -1,0 +1,30 @@
+VAGRANTFILE_API_VERSION = "2"
+
+ENV['VAGRANT_DEFAULT_PROVIDER'] = 'docker'
+
+require 'yaml'
+
+containers = YAML.load_file('sales.yml')
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  containers.each do |container|
+    config.vm.define container["name"] do |cntnr|
+
+      # Disable synced folders for the Docker container (prevents an NFS error on "vagrant up")
+      cntnr.vm.synced_folder ".", "/vagrant", disabled: true
+
+      cntnr.vm.provider "docker" do |docker|
+
+        # docker.force_host_vm = true
+        # docker.vagrant_vagrantfile = "./host/Vagrantfile"
+
+        docker.name = container["name"]
+        docker.build_dir = "../" + container["name"] + "/target/docker/stage"
+        docker.create_args = ['--net=host']
+        docker.ports = container["ports"]
+      end
+    end
+  end
+
+end

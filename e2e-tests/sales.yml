@@ -1,0 +1,5 @@
+---
+- name: sales-write-back
+  ports: ['9101:9101']
+- name: sales-write-front
+  ports: ['9100:9100']
