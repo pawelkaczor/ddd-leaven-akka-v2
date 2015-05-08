@@ -4,27 +4,67 @@ ENV['VAGRANT_DEFAULT_PROVIDER'] = 'docker'
 
 require 'yaml'
 
-containers = YAML.load_file('sales.yml')
+subsystems = ['sales', 'invoicing', 'shipping']
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-  containers.each do |container|
-    config.vm.define container["name"] do |cntnr|
+  config.vm.define "ecommerce-eventstore" do |es|
+    es.vm.provider "docker" do |docker|
 
-      # Disable synced folders for the Docker container (prevents an NFS error on "vagrant up")
-      cntnr.vm.synced_folder ".", "/vagrant", disabled: true
+      # docker.force_host_vm = true
+      # docker.vagrant_vagrantfile = "./host/Vagrantfile"
 
-      cntnr.vm.provider "docker" do |docker|
+      docker.name     = "ecommerce-eventstore"
+      docker.image    = "newion/eventstore:3.0.3"
+      docker.ports    = ['2113:2113', '1113:1113']
+    end
+  end
 
-        # docker.force_host_vm = true
-        # docker.vagrant_vagrantfile = "./host/Vagrantfile"
+  config.vm.define "ecommerce-view-store" do |vs|
+    vs.vm.provider "docker" do |docker|
 
-        docker.name = container["name"]
-        docker.build_dir = "../" + container["name"] + "/target/docker/stage"
-        docker.create_args = ['--net=host']
-        docker.ports = container["ports"]
+      # docker.force_host_vm = true
+      # docker.vagrant_vagrantfile = "./host/Vagrantfile"
+
+      docker.name     = "ecommerce-view-store"
+      docker.image    = "postgres"
+      docker.ports    = ['5432:5432']
+    end
+  end
+
+  subsystems.each do |subsystem|
+    containers = YAML.load_file("../" + subsystem + '/containers.yml')
+
+    containers.each do |container|
+      config.vm.define container["name"] do |cntnr|
+
+        # Disable synced folders for the Docker container (prevents an NFS error on "vagrant up")
+        cntnr.vm.synced_folder ".", "/vagrant", disabled: true
+
+        cntnr.vm.provider "docker" do |docker|
+
+          # docker.force_host_vm = true
+          # docker.vagrant_vagrantfile = "./host/Vagrantfile"
+
+          docker.name = container["name"]
+          docker.build_dir = "../" + subsystem + "/" + container["role"] + "/target/docker/stage"
+          docker.create_args = ['--net=host']
+          docker.ports = container["ports"]
+        end
       end
     end
+  end
+
+  # triggers (https://github.com/emyl/vagrant-triggers)
+
+  config.trigger.after :up, :vm => ["ecommerce-eventstore"] do
+    info "Enabling system projections"
+    sleep(5)
+    run "curl -v -u admin:changeit --data '' 'http://localhost:2113/projection/$by_category/command/enable'"
+    run "curl -v -u admin:changeit --data '' 'http://localhost:2113/projection/$by_event_type/command/enable'"
+
+    #info "Installing user projections"
+    #run "curl -v -H 'Content-Type: application/json' -u admin:changeit --data @../ed-write-back/src/main/resources/projections/enrolment-process.js http://127.0.0.1:2113/projections/continuous?name=enrolment_process_proj&type=JS&emit=1"
   end
 
 end

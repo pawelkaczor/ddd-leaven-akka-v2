@@ -1,0 +1,10 @@
+---
+- name: shipping-write-back
+  role: write-back
+  ports: ['9301:9301']
+- name: shipping-read-back
+  role: read-back
+  ports: []
+- name: shipping-read-front
+  role: read-front
+  ports: ['9310:9310']

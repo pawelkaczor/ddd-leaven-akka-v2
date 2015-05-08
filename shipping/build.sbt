@@ -1,7 +1,7 @@
 import Deps._
 import sbt.Keys._
 
-lazy val shipping = (project in file(".")).aggregate(`shipping-read-back`, `shipping-read-front`, `shipping-contracts`)
+lazy val shipping = (project in file(".")).aggregate(`shipping-contracts`, `shipping-write-back`, `shipping-read-back`, `shipping-read-front`)
 
 lazy val `shipping-contracts` = (project in file("contracts"))
   .settings(
