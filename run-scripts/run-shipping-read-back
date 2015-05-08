@@ -1,4 +1,4 @@
 #!/bin/bash
 
-../shipping-read-back/target/universal/stage/bin/shipping-read-back
+../shipping/read-back/target/universal/stage/bin/shipping-read-back
 

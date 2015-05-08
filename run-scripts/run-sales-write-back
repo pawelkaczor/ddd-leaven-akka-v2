@@ -1,4 +1,4 @@
 #!/bin/bash
 
-../sales-write-back/target/universal/stage/bin/sales-write-back
+../sales/write-back/target/universal/stage/bin/sales-write-back
 

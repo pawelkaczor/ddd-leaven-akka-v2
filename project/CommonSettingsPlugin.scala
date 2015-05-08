@@ -4,13 +4,19 @@ import com.typesafe.sbt.packager.docker.{Cmd, DockerKeys}
 
 object CommonSettingsPlugin extends AutoPlugin with DockerKeys {
   override def trigger = allRequirements
-  override def requires = com.typesafe.sbt.packager.docker.DockerPlugin
   override lazy val projectSettings = Seq(
-      dockerBaseImage := "dockerfile/java:oracle-java8",
-      dockerCommands ++= Seq(
-        Cmd("MAINTAINER", "Pawel Kaczor <newion@o2.pl>"),
-        Cmd("ENV", "ES_HOST=127.0.0.1"),
-        Cmd("ENV", "ES_PASSWORD=changeit")
-      )
+  updateOptions := updateOptions.value.withCachedResolution(cachedResoluton = true),
+    resolvers ++= Seq(
+      "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
+      "Akka Snapshot Repository" at "http://repo.akka.io/snapshots/"
+    ),
+    libraryDependencies ++= Seq(
+      "com.github.nscala-time" %% "nscala-time" % "1.4.0",
+      "ch.qos.logback" % "logback-classic" % "1.1.2",
+      "org.scalatest" %% "scalatest" % "2.2.4" % "test",
+      "org.mockito" % "mockito-core" % "1.9.5" % "test",
+      "commons-io" % "commons-io" % "2.4" % "test",
+      "org.scalacheck" %% "scalacheck" % "1.11.6" % "test"
+    )
   )
 }

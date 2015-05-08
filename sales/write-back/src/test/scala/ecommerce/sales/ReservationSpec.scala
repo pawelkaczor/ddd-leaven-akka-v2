@@ -6,14 +6,12 @@ import pl.newicom.dddd.aggregate.AggregateRootActorFactory
 import pl.newicom.dddd.eventhandling.LocalPublisher
 import pl.newicom.dddd.messaging.event.AggregateSnapshotId
 import pl.newicom.dddd.test.support.OfficeSpec
-import test.support.TestConfig._
 import scala.concurrent.duration._
 
 import scala.concurrent.duration.Duration
 import ReservationSpec._
 
 object ReservationSpec {
-  implicit val as = testSystem
   implicit def factory(implicit it: Duration = 1.minute): AggregateRootActorFactory[Reservation] =
     new AggregateRootActorFactory[Reservation] {
       override def props(pc: PassivationConfig): Props = Props(new Reservation(pc) with LocalPublisher)

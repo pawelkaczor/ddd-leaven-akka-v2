@@ -1,4 +1,4 @@
 #!/bin/bash
 
-../sales-read-back/target/universal/stage/bin/sales-read-back
+../sales/read-back/target/universal/stage/bin/sales-read-back
 

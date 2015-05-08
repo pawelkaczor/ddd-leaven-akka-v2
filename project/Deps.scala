@@ -7,6 +7,15 @@ object Deps {
     val akkaHttp =          "1.0-M3"
     val akkaDDD =           "1.0.2-SNAPSHOT"
     val slick =             "2.1.0"
+    val ecommerce =         "0.1-SNAPSHOT"
+  }
+
+  object Ecommerce {
+    val sales     =         apply("sales-contracts")
+    val invoicing =         apply("invoicing-contracts")
+    val shipping  =         apply("shipping-contracts")
+
+    private def apply(moduleName: String) = "pl.newicom" %% s"$moduleName" % Version.ecommerce withSources()
   }
 
   object Akka {
