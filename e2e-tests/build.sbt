@@ -1,4 +1,3 @@
-import Deps._
 import sbt._
 import sbt.Keys._
 import Vagrant._
@@ -10,9 +9,9 @@ lazy val `e2e-tests` = (project in file("."))
     vagrantFile := baseDirectory.value / "Vagrantfile",
     libraryDependencies ++= Seq(
       "org.yaml" % "snakeyaml" % "1.14",
-      "pl.newicom" %% "resttest" % "0.2.0-SNAPSHOT",
-      Ecommerce.salesContract, Ecommerce.invoicingContract, Ecommerce.shippingContract
+      "pl.newicom" %% "resttest" % "0.2.0-SNAPSHOT"
     )
   )
   .configs(E2ETest)
+  .dependsOn("sales-contracts")
 

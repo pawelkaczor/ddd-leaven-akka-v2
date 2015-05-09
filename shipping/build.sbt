@@ -6,9 +6,10 @@ lazy val shipping = (project in file(".")).aggregate(`shipping-contracts`, `ship
 lazy val `shipping-contracts` = (project in file("contracts"))
   .settings(
     libraryDependencies ++= Seq(
-      AkkaDDD.messaging, Ecommerce.invoicingContract
+      AkkaDDD.messaging
     ) ++ Json.`4s`
   )
+  .dependsOn("invoicing-contracts")
 
 lazy val `shipping-write-back` = (project in file("write-back"))
   .settings(

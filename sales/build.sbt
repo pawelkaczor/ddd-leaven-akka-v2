@@ -17,11 +17,10 @@ lazy val `sales-write-back` = (project in file("write-back"))
       multiNodeTestingSettings,
       libraryDependencies ++= Seq(
         Akka.kernel, Akka.testkit,
-        AkkaDDD.messaging, AkkaDDD.core, AkkaDDD.test, AkkaDDD.eventStore, 
-        Ecommerce.invoicingContract
+        AkkaDDD.messaging, AkkaDDD.core, AkkaDDD.test, AkkaDDD.eventStore
       )
     )
-    .dependsOn(`sales-contracts`)
+    .dependsOn(`sales-contracts`, "invoicing-contracts")
     .configs(MultiJvm)
 
 lazy val `sales-write-front` = (project in file("write-front"))

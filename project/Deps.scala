@@ -10,14 +10,6 @@ object Deps {
     val ecommerce =         "0.1-SNAPSHOT"
   }
 
-  object Ecommerce {
-    val salesContract     =         apply("sales-contracts")
-    val invoicingContract =         apply("invoicing-contracts")
-    val shippingContract  =         apply("shipping-contracts")
-
-    private def apply(moduleName: String) = "pl.newicom" %% s"$moduleName" % Version.ecommerce withSources()
-  }
-
   object Akka {
     val actor =            apply("actor")
     val httpCore =         "com.typesafe.akka" %% "akka-http-experimental" % Version.akkaHttp
