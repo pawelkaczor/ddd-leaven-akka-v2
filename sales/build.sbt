@@ -18,7 +18,7 @@ lazy val `sales-write-back` = (project in file("write-back"))
       libraryDependencies ++= Seq(
         Akka.kernel, Akka.testkit,
         AkkaDDD.messaging, AkkaDDD.core, AkkaDDD.test, AkkaDDD.eventStore, 
-        Ecommerce.invoicing
+        Ecommerce.invoicingContract
       )
     )
     .dependsOn(`sales-contracts`)

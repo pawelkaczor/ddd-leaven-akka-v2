@@ -10,9 +10,10 @@ scalacOptions in ThisBuild := Seq("-encoding", "utf8", "-feature", "-language:po
 
 sourcesInBase in ThisBuild := false
 
-lazy val root = (project in file(".")).aggregate(sales, shipping, invoicing)
-
+lazy val root = (project in file(".")).aggregate(sales, shipping, invoicing, `e2e-tests`)
 
 lazy val sales = project
 lazy val invoicing = project
 lazy val shipping = project
+
+lazy val `e2e-tests` = project

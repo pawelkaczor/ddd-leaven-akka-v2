@@ -11,9 +11,9 @@ object Deps {
   }
 
   object Ecommerce {
-    val sales     =         apply("sales-contracts")
-    val invoicing =         apply("invoicing-contracts")
-    val shipping  =         apply("shipping-contracts")
+    val salesContract     =         apply("sales-contracts")
+    val invoicingContract =         apply("invoicing-contracts")
+    val shippingContract  =         apply("shipping-contracts")
 
     private def apply(moduleName: String) = "pl.newicom" %% s"$moduleName" % Version.ecommerce withSources()
   }
