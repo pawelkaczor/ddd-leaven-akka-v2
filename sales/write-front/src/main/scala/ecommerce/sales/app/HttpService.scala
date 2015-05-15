@@ -1,10 +1,10 @@
 package ecommerce.sales.app
 
 import akka.actor.{Actor, ActorLogging, Props}
-import akka.http.Http
-import akka.http.marshalling.ToResponseMarshallable
-import akka.http.model.StatusCodes
-import akka.http.server.{Directives, Route}
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.marshalling.ToResponseMarshallable
+import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.server.{Directives, Route}
 import akka.stream.scaladsl.ImplicitFlowMaterializer
 import akka.util.Timeout
 import ecommerce.sales.{Command => SalesCommand, salesOffice}
@@ -12,7 +12,8 @@ import org.json4s.ext.{JodaTimeSerializers, UUIDSerializer}
 import org.json4s.{DefaultFormats, Formats}
 import pl.newicom.dddd.aggregate.Command
 import pl.newicom.dddd.messaging.command.CommandMessage
-import pl.newicom.dddd.writefront.{CommandDirective, CommandHandler, JsonMarshalling}
+import pl.newicom.dddd.writefront.{CommandDirective, CommandHandler}
+import pl.newicom.dddd.http.JsonMarshalling
 
 import scala.concurrent.duration.FiniteDuration
 import scala.util.{Failure, Success}
@@ -30,7 +31,7 @@ class HttpService(interface: String, port: Int)(implicit askTimeout: Timeout)
   import context.dispatcher
   implicit val formats: Formats = salesOffice.serializationHints ++ DefaultFormats ++ JodaTimeSerializers.all + UUIDSerializer
 
-  Http()(context.system).bind(interface, port).startHandlingWith(route)
+  Http(context.system).bindAndHandle(route, interface, port)
   log.info(s"Listening on $interface:$port")
 
   override def receive = Actor.emptyBehavior

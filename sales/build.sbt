@@ -44,8 +44,8 @@ lazy val `sales-read-back` = (project in file("read-back"))
 lazy val `sales-read-front` = (project in file("read-front"))
   .settings(
     parallelExecution in Test := false,
-    libraryDependencies ++= Seq(
-      Akka.testkit, Akka.httpTestKit, AkkaDDD.httpSupport
+    libraryDependencies ++= AkkaDDD.httpSupport ++ Seq(
+      Akka.testkit
     )
   )
   .dependsOn(`sales-read-back` % "test->test;compile->compile")

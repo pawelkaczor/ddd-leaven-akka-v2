@@ -25,8 +25,7 @@ lazy val `shipping-read-back` = (project in file("read-back"))
   .settings(
     parallelExecution in Test := false,
     libraryDependencies ++= SqlDb() ++ Seq(
-      AkkaDDD.viewUpdateSql,
-      Akka.kernel
+      AkkaDDD.viewUpdateSql, Akka.kernel
     )
   )
   .dependsOn(`shipping-contracts`)
@@ -34,8 +33,8 @@ lazy val `shipping-read-back` = (project in file("read-back"))
 lazy val `shipping-read-front` = (project in file("read-front"))
   .settings(
     parallelExecution in Test := false,
-    libraryDependencies ++= Seq(
-      Akka.testkit, Akka.httpTestKit, AkkaDDD.httpSupport
+    libraryDependencies ++= AkkaDDD.httpSupport ++ Seq(
+      Akka.testkit
     )
   )
   .dependsOn(`shipping-read-back` % "test->test;compile->compile")

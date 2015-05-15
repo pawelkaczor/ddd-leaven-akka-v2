@@ -4,7 +4,7 @@ object Deps {
 
   object Version {
     val akka =              "2.4-SNAPSHOT"
-    val akkaHttp =          "1.0-M3"
+    val akkaHttp =          "1.0-RC2"
     val akkaDDD =           "1.0.2-SNAPSHOT"
     val slick =             "2.1.0"
     val ecommerce =         "0.1-SNAPSHOT"
@@ -12,33 +12,29 @@ object Deps {
 
   object Akka {
     val actor =            apply("actor")
-    val httpCore =         "com.typesafe.akka" %% "akka-http-experimental" % Version.akkaHttp
-    val httpTestKit =      "com.typesafe.akka" %% "akka-http-testkit-experimental" % Version.akkaHttp % "test"
+    val httpTestKit =      "com.typesafe.akka" %% "akka-http-testkit-scala-experimental" % Version.akkaHttp % "test"
     val persistence =      apply("persistence-experimental")
-    val contrib =          apply("contrib")
     val kernel =           apply("kernel")
     val slf4j =            apply("slf4j")
     val testkit =          apply("testkit") % "test"
     val multiNodeTestkit = apply("multi-node-testkit") % "test"
 
-    private def apply(moduleName: String) = "com.typesafe.akka" %% s"akka-$moduleName" % Version.akka withSources()
+    private def apply(moduleName: String) = "com.typesafe.akka" %% s"akka-$moduleName" % Version.akka
   }
 
   object AkkaDDD {
     val messaging = apply("messaging")
     val core = apply("core")
     val writeFront = apply("write-front")
-    val httpSupport = "pl.newicom.dddd" %% s"http-support" % Version.akkaDDD withSources()
-    val viewUpdateSql = "pl.newicom.dddd" %% "view-update-sql" % Version.akkaDDD withSources()
-    val eventStore = "pl.newicom.dddd" %% "eventstore-akka-persistence" % Version.akkaDDD withSources()
+    val httpSupport = Seq(
+      "pl.newicom.dddd" %% s"http-support" % Version.akkaDDD,
+      Akka.httpTestKit
+    )
+    val viewUpdateSql = "pl.newicom.dddd" %% "view-update-sql" % Version.akkaDDD
+    val eventStore = "pl.newicom.dddd" %% "eventstore-akka-persistence" % Version.akkaDDD
     val scheduling = apply("scheduling")
     val test = apply("test") % "test"
-    private def apply(moduleName: String) = "pl.newicom.dddd" %% s"akka-ddd-$moduleName" % Version.akkaDDD withSources()
-  }
-
-  object Eventstore {
-    val client = "pl.newicom.dddd" %% "eventstore-client" % "2.0.2-SNAPSHOT" withSources()
-    val akkaJournal = "pl.newicom.dddd" %% "akka-persistence-eventstore" % "2.0.2-SNAPSHOT" withSources()
+    private def apply(moduleName: String) = "pl.newicom.dddd" %% s"akka-ddd-$moduleName" % Version.akkaDDD
   }
 
   object Json {
@@ -49,7 +45,7 @@ object Deps {
     val native = apply("native")
     val ext = apply("ext")
 
-    private def apply(moduleName: String) = "org.json4s" %% s"json4s-$moduleName" % "3.2.11" withSources()
+    private def apply(moduleName: String) = "org.json4s" %% s"json4s-$moduleName" % "3.2.11"
   }
 
   object SqlDb {

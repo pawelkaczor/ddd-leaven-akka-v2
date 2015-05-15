@@ -1,8 +1,8 @@
 package ecommerce.sales
 
 import akka.actor.{Actor, ActorLogging, Props}
-import akka.http.Http
-import akka.http.server.Directives
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.server.Directives
 import akka.stream.scaladsl.ImplicitFlowMaterializer
 import akka.util.Timeout
 import com.typesafe.config.Config
@@ -23,7 +23,8 @@ class HttpService(interface: String, port: Int)(implicit askTimeout: Timeout) ex
 
   implicit val profile = PostgresDriver
 
-  Http()(context.system).bind(interface, port).startHandlingWith(route)
+  Http(context.system).bindAndHandle(route, interface, port)
+
   log.info(s"Listening on $interface:$port")
 
   override def receive = Actor.emptyBehavior

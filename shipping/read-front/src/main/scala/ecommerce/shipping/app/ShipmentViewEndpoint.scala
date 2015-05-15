@@ -1,6 +1,6 @@
 package ecommerce.shipping.app
 
-import akka.http.server.Route
+import akka.http.scaladsl.server.Route
 import ecommerce.shipping.view.ShipmentDao
 import ecommerce.shipping.{ReadEndpoint, shippingOffice}
 import org.json4s.Formats

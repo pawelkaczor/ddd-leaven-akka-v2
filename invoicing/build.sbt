@@ -14,8 +14,7 @@ lazy val `invoicing-write-back` = (project in file("write-back"))
   .settings(
     libraryDependencies ++= Seq(
       Akka.kernel, Akka.testkit,
-      AkkaDDD.messaging, AkkaDDD.core, AkkaDDD.scheduling, AkkaDDD.test,
-      AkkaDDD.eventStore, Eventstore.akkaJournal
+      AkkaDDD.messaging, AkkaDDD.core, AkkaDDD.scheduling, AkkaDDD.test, AkkaDDD.eventStore
     )
   )
   .dependsOn(`invoicing-contracts`)

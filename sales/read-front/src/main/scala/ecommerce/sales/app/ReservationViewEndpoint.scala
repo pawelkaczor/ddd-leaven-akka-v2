@@ -1,6 +1,6 @@
 package ecommerce.sales.app
 
-import akka.http.server.Route
+import akka.http.scaladsl.server.Route
 import ecommerce.sales.view.ReservationDao
 import ecommerce.sales.{ReadEndpoint, salesOffice}
 import org.json4s.Formats
