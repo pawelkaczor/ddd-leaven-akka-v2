@@ -21,6 +21,8 @@ trait TestDriver extends WordSpecLike with Dsl with Matchers with RestMatchers {
   implicit class CommandRequestBuilder(builder: RequestBuilder) extends RichRequestBuilder(builder) {
     def command(c: Command)(implicit formats: Formats) =
       builder.withBody(write(c)).addHeaders(("Command-Type", c.getClass.getName))
+
+    def /(subPath: String) = builder.withUrl(s"${builder.url.get}/$subPath")
   }
 
 }

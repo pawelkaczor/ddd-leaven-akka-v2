@@ -37,9 +37,9 @@ class SystemSpec extends EcommerceSystemTestDriver with Eventually {
       }
     }
 
-    using(sales_read / s"reservation/$reservationId") { implicit b =>
+    using(sales_read) { implicit b =>
       "respond to reservation/{reservationId} query" in {
-        GET should have (StatusCode(OK))
+        GET / s"reservation/$reservationId" should have (StatusCode(OK))
       }
     }
 
