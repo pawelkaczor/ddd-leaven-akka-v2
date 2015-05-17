@@ -1,8 +1,9 @@
 package ecommerce.tests.e2e
 
-import ecommerce.sales.{CreateReservation, salesOffice}
+import ecommerce.invoicing.{invoicingOffice, ReceivePayment}
+import ecommerce.sales._
+import ecommerce.shipping.shippingOffice
 import ecommerce.tests.e2e.SystemSpec._
-import org.iainhull.resttest.Api.Status.OK
 import org.json4s.ext.{JodaTimeSerializers, UUIDSerializer}
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatest.concurrent.Eventually
@@ -10,11 +11,19 @@ import org.scalatest.time.{Seconds, Span}
 
 object SystemSpec {
 
-  val sales = EndpointConfig(path = "ecommerce/sales")
+  val sales = EndpointConfig(path = "ecommerce/sales", officeInfo = salesOffice)
   val sales_write = sales.copy(port = 9100)
   val sales_read = sales.copy(port = 9110)
 
-  implicit val formats: Formats = salesOffice.serializationHints ++ DefaultFormats ++ JodaTimeSerializers.all + UUIDSerializer
+  val invoicing = EndpointConfig(path = "ecommerce/invoicing", officeInfo = invoicingOffice)
+  val invoicing_write = invoicing.copy(port = 9200)
+
+  val shipping = EndpointConfig(path = "ecommerce/shipping", officeInfo = shippingOffice)
+  val shipping_read = shipping.copy(port = 9310)
+
+  implicit val formats: Formats = sales.serializationHints ++ invoicing.serializationHints ++ shipping.serializationHints ++
+    DefaultFormats ++ JodaTimeSerializers.all + UUIDSerializer
+
 }
 
 class SystemSpec extends EcommerceSystemTestDriver with Eventually {
@@ -27,19 +36,54 @@ class SystemSpec extends EcommerceSystemTestDriver with Eventually {
   "Ecommerce system" should {
 
     val reservationId = uuid7
+    val invoiceId = reservationId
     val customerId = uuid7
 
     using(sales_write) { implicit b =>
-      "create reservation" in {
-        eventually {
-          POST command CreateReservation(reservationId, customerId) should have(StatusCode(OK))
-        }
+      "create reservation" in eventually {
+        POST command {
+          CreateReservation(reservationId, customerId)
+        } should succeed
       }
     }
 
     using(sales_read) { implicit b =>
-      "respond to reservation/{reservationId} query" in {
-        GET / s"reservation/$reservationId" should have (StatusCode(OK))
+      "respond to reservation/{reservationId} query" in eventually {
+        GET / s"reservation/$reservationId" should succeed
+      }
+    }
+
+    using(sales_write) { implicit b =>
+      "reserve product" in {
+        val product = Product(
+          productId     = uuid7,
+          name          = "DDDD For Dummies - 7th Edition",
+          productType   = ProductType.Standard,
+          price         = Some(Money(10.0))
+        )
+        POST command {
+          ReserveProduct(reservationId, product, quantity = 1)
+        } should succeed
+      }
+
+      "confirm reservation" in {
+        POST command {
+          ConfirmReservation(reservationId)
+        } should succeed
+      }
+    }
+
+    using(invoicing_write) { implicit b =>
+      "pay" in eventually {
+        POST command {
+          ReceivePayment(invoiceId, reservationId, Money(10.0), paymentId = "230982342")
+        } should succeed
+      }
+    }
+
+    using(shipping_read) { implicit b =>
+      "respond to /shipment/order/{orderId}" in eventually {
+        GET / s"shipment/order/$reservationId" should succeed
       }
     }
 

@@ -13,5 +13,5 @@ lazy val `e2e-tests` = (project in file("."))
     )
   )
   .configs(E2ETest)
-  .dependsOn("sales-contracts")
+  .dependsOn("sales-contracts", "invoicing-contracts", "shipping-contracts")
 

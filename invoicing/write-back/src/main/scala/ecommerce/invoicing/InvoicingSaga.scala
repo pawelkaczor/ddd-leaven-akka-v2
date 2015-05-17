@@ -7,7 +7,6 @@ import org.joda.time.DateTime.now
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.messaging.event.EventMessage
 import pl.newicom.dddd.process.{Saga, SagaConfig}
-import pl.newicom.dddd.utils.UUIDSupport.uuid
 
 object InvoicingSaga {
   object InvoiceStatus extends Enumeration {
@@ -17,7 +16,7 @@ object InvoicingSaga {
 
   implicit object InvoicingSagaConfig extends SagaConfig[InvoicingSaga]("invoicing") {
     def correlationIdResolver = {
-      case rc: ReservationConfirmed => s"$uuid" // invoiceId
+      case ReservationConfirmed(reservationId, _, _) => reservationId
       case OrderBilled(invoiceId, _, _, _) => invoiceId
       case OrderBillingFailed(invoiceId, _) => invoiceId
     }
