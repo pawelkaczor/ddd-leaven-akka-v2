@@ -35,9 +35,9 @@ class SystemSpec extends EcommerceSystemTestDriver with Eventually {
 
   "Ecommerce system" should {
 
-    val reservationId = uuid7
-    val invoiceId = reservationId
-    val customerId = uuid7
+    val reservationId   = uuid7
+    val invoiceId       = reservationId
+    val customerId      = uuid7
 
     using(sales_write) { implicit b =>
       "create reservation" in eventually {

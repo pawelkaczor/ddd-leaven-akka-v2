@@ -63,7 +63,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     run "curl -v -u admin:changeit --data '' 'http://localhost:2113/projection/$by_category/command/enable'"
     run "curl -v -u admin:changeit --data '' 'http://localhost:2113/projection/$by_event_type/command/enable'"
 
-    #info "Installing user projections"
+    info "Installing user projections"
     run "curl -v -H 'Content-Type: application/json' -u admin:changeit --data @../invoicing/write-back/src/main/resources/projections/clock.js http://127.0.0.1:2113/projections/continuous?name=clock_proj&type=JS&emit=1"
     run "curl -v -H 'Content-Type: application/json' -u admin:changeit --data @../invoicing/write-back/src/main/resources/projections/invoicing-process.js http://127.0.0.1:2113/projections/continuous?name=invoicing_process_proj&type=JS&emit=1"
     run "curl -v -H 'Content-Type: application/json' -u admin:changeit --data @../invoicing/write-back/src/main/resources/projections/current-deadlines.js http://127.0.0.1:2113/projections/continuous?name=current_deadlines_proj&type=JS&emit=1"
