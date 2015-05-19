@@ -55,69 +55,11 @@ View update service that consumes events from event store and updates view store
 #### read-front
 HTTP server providing rest endpoint for accessing view store. 
 
-Installation
-------------------------
 
-##### Install Event Store
+Running and testing the system
+--------------------
+- [Running the system on physical server](https://github.com/pawelkaczor/ddd-leaven-akka-v2/wiki/Running-the-system-on-physical-server)
+- [Running virtualized system](https://github.com/pawelkaczor/ddd-leaven-akka-v2/wiki/Running-virtualized-system)
+- [Manual testing of order process](https://github.com/pawelkaczor/ddd-leaven-akka-v2/wiki/Manual-testing-of-order-process)
+- [End-to-end test of order process](https://github.com/pawelkaczor/ddd-leaven-akka-v2/wiki/End-to-end-test-of-order-process)
 
-~~~
-docker run --name ecommerce-event-store -d -p 2113:2113 -p 1113:1113 newion/eventstore:3.0.1
-~~~
-
-##### Install PostgreSQL
-~~~
-docker run --name sales-view-store -d -p 5432:5432 postgres
-~~~
-
-:bulb: Postgresql console: `psql -h localhost -p 5432 -U postgres`
-
-
-##### Checkout the project
-~~~
-git clone https://github.com/pawelkaczor/ddd-leaven-akka-v2.git
-~~~
-
-##### Register projections
-Run [enable-projections](enable-projections) script.
-
-##### Install Command line HTTP client
-
-http://httpie.org/
-
-Building the project
-------------------------------
-
-~~~
-sbt stage
-~~~
-
-Running subsystems
-------------------------------
-
-As there are multiple applications per subsystem, running/monitoring the whole system is not straightforward.
-You can use run scripts (located in [run-scripts](run-scripts) directory)
-to quickly start the system and execute sample [Reservation process](#manual-testing). However, it s recommended you configure supervisord [supervisord](http://supervisord.org/)
-to include [supervisord-configs](supervisord-configs) dir and
-manage (start/restart/stop) services using supervisorctrl tool.
-
-<a name="manual-testing"></a>Manual testing of Reservation process
-----------------------------
-
-1. Create reservation
-  * `http :9100/ecommerce/sales Command-Type:ecommerce.sales.CreateReservation reservationId="r1" customerId="customer-1"`
-
-
-2. Add product
-  * `echo '{"reservationId": "r1", "product": { "snapshotId": { "aggregateId": "123456789", "sequenceNr": 0 }, "name": "DDDD For Dummies - 7th Edition", "productType": 1, "price": { "doubleValue": 10.0, "currencyCode": "USD"}}, "quantity": 1}' | http :9100/ecommerce/sales Command-Type:ecommerce.sales.ReserveProduct`
-
-3. Confirm reservation
-  ![](https://raw.githubusercontent.com/pawelkaczor/ddd-leaven-akka-v2/master/project/diagrams/OrderingSystem.png)
-  * `http :9100/ecommerce/sales Command-Type:ecommerce.sales.ConfirmReservation reservationId="r1"`
-
-4. Pay
-  * `echo '{"invoiceId": "{{INVOICE_ID}}", "orderId": "r1", "amount": { "doubleValue": 10.0, "currencyCode": "USD"}, "paymentId": "230982342"}' | http :9200/ecommerce/invoicing Command-Type:ecommerce.invoicing.ReceivePayment`
-  * :bulb: If you do not pay within ~ 3 minutes, reservation will be canceled
-
-5. Check read side
-  * display reservation: `http :9110/ecommerce/sales/reservation/r1`
-  * display shipment status: `http :9310/ecommerce/shipping/shipment/order/r1`
