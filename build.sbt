@@ -4,6 +4,8 @@ name := "ddd-leaven-akka-v2"
 
 organization in ThisBuild := "pl.newicom"
 
+version in ThisBuild := "0.1-M1"
+
 scalaVersion in ThisBuild := "2.11.6"
 
 scalacOptions in ThisBuild := Seq("-encoding", "utf8", "-feature", "-language:postfixOps", "-language:implicitConversions"/*, "-Xlog-implicits"*/)
