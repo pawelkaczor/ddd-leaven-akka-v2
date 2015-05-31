@@ -5,7 +5,7 @@ object Deps {
   object Version {
     val akka =              "2.4-M1"
     val akkaHttp =          "1.0-RC2"
-    val akkaDDD =           "1.0.2-M1"
+    val akkaDDD =           "1.0.3-M1"
     val slick =             "2.1.0"
     val ecommerce =         "0.1-M1"
   }

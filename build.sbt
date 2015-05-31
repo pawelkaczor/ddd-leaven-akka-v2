@@ -4,7 +4,7 @@ name := "ddd-leaven-akka-v2"
 
 organization in ThisBuild := "pl.newicom"
 
-version in ThisBuild := "0.1-M1"
+version in ThisBuild := "0.1-M2"
 
 scalaVersion in ThisBuild := "2.11.6"
 
