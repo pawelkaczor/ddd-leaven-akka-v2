@@ -9,7 +9,7 @@ lazy val `e2e-tests` = (project in file("."))
     vagrantFile := baseDirectory.value / "Vagrantfile",
     libraryDependencies ++= Seq(
       "org.yaml" % "snakeyaml" % "1.14",
-      "pl.newicom" %% "resttest" % "0.2.0"
+      "pl.newicom" %% "resttest" % "0.3.0-SNAPSHOT"
     )
   )
   .configs(E2ETest)
