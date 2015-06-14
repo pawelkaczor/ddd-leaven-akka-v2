@@ -5,21 +5,21 @@ object Deps {
   object Version {
     val akka =              "2.4-M1"
     val akkaHttp =          "1.0-RC2"
-    val akkaDDD =           "1.0.3-M1"
+    val akkaDDD =           "1.0.4-M1"
     val slick =             "2.1.0"
     val ecommerce =         "0.1-M1"
   }
 
   object Akka {
     val actor =            apply("actor")
-    val httpTestKit =      "com.typesafe.akka" %% "akka-http-testkit-scala-experimental" % Version.akkaHttp % "test"
+    val httpTestKit =      apply("http-testkit-scala-experimental", Version.akkaHttp) % "test"
     val persistence =      apply("persistence-experimental")
     val kernel =           apply("kernel")
     val slf4j =            apply("slf4j")
     val testkit =          apply("testkit") % "test"
     val multiNodeTestkit = apply("multi-node-testkit") % "test"
 
-    private def apply(moduleName: String) = "com.typesafe.akka" %% s"akka-$moduleName" % Version.akka
+    private def apply(moduleName: String, version: String = Version.akka) = "com.typesafe.akka" %% s"akka-$moduleName" % version
   }
 
   object AkkaDDD {
