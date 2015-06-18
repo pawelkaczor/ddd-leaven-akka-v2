@@ -10,8 +10,9 @@
     <logger name="Remoting" level="off"/>
     <logger name="akka.remote.EndpointWriter" level="off"/>
     <logger name="akka.cluster.ClusterHeartbeatSender" level="off"/>
+    <logger name="akka.cluster.ClusterRemoteWatcher" level="info"/>
 
-    <root level="info">
+    <root level="debug">
         <appender-ref ref="console"/>
     </root>
 

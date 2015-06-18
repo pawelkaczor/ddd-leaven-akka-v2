@@ -36,9 +36,11 @@ class HttpService(interface: String, port: Int)(implicit askTimeout: Timeout)
 
   override def receive = Actor.emptyBehavior
 
-  private def route = pathPrefix("ecommerce") {
-    path("sales") {
-      handleCommand[SalesCommand](salesOffice.name)
+  private def route = logRequestResult("sales") {
+    pathPrefix("ecommerce") {
+      path("sales") {
+        handleCommand[SalesCommand](salesOffice.name)
+      }
     }
   }
 
