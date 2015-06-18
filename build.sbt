@@ -1,7 +1,5 @@
 import sbt.Keys._
 
-name := "ddd-leaven-akka-v2"
-
 organization in ThisBuild := "pl.newicom"
 
 version in ThisBuild := "0.2-M2"
@@ -22,3 +20,6 @@ lazy val invoicing = project
 lazy val shipping = project
 
 lazy val `e2e-tests` = project
+
+addCommandAlias("redeploy", ";stage;docker:stage;restart")
+
