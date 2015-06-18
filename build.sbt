@@ -21,5 +21,6 @@ lazy val shipping = project
 
 lazy val `e2e-tests` = project
 
+// Rebuilds and restarts current application (or whole system if called from root project)
 addCommandAlias("redeploy", ";stage;docker:stage;restart")
 
