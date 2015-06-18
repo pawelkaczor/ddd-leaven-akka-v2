@@ -10,9 +10,12 @@ object RestartCommand {
   }
 
   private def doRestart(appName: String): Int = {
-    println(s"Restarting: ${appName}")
-
-    
-    s"./restart $appName" !
+    if (appName == "ddd-leaven-akka-v2" || appName == "root") {
+      println(s"Restarting all applications")
+      "./restart" !
+    } else {
+      println(s"Restarting: ${appName}")
+      s"./restart $appName" !
+    }
   }
 }
