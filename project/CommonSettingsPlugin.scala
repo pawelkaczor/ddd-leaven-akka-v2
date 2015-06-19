@@ -13,7 +13,7 @@ object CommonSettingsPlugin extends AutoPlugin with DockerKeys {
     ),
     libraryDependencies ++= Seq(
       "com.github.nscala-time" %% "nscala-time" % "2.0.0",
-      "ch.qos.logback" % "logback-classic" % "1.1.2",
+      "ch.qos.logback" % "logback-classic" % "1.1.3",
       "org.scalatest" %% "scalatest" % "2.2.4" % "test",
       "org.mockito" % "mockito-core" % "1.9.5" % "test",
       "commons-io" % "commons-io" % "2.4" % "test",

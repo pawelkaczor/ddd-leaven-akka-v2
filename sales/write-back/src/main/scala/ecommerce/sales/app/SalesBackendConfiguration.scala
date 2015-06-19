@@ -6,26 +6,24 @@ import akka.actor._
 import com.typesafe.config.Config
 import ecommerce.sales.{OrderSaga, Reservation}
 import org.slf4j.Logger
-import org.slf4j.LoggerFactory._
 import pl.newicom.dddd.actor.{CreationSupport, PassivationConfig}
 import pl.newicom.dddd.aggregate.AggregateRootActorFactory
 import pl.newicom.dddd.cluster._
 import pl.newicom.dddd.eventhandling.EventPublisher
 import pl.newicom.dddd.messaging.event.DomainEventMessage
-import pl.newicom.dddd.process.{SagaActorFactory, SagaManager}
 import pl.newicom.dddd.process.SagaSupport._
+import pl.newicom.dddd.process.{SagaActorFactory, SagaManager}
 import pl.newicom.eventstore.EventstoreSubscriber
 
 import scala.io.Source
 import scala.util.Try
 
 trait LocalPublisher extends EventPublisher {
-  this: Actor =>
-  lazy val _log: Logger = getLogger(this.getClass.getName)
+  this: Actor with ActorLogging =>
 
   override def publish(em: DomainEventMessage): Unit = {
     context.system.eventStream.publish(em.event)
-    _log.debug(s"Published: $em")
+    log.debug(s"Published: $em")
   }
 }
 

@@ -2,7 +2,7 @@
 
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%X{akkaTimestamp} %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%gray(%X{akkaTimestamp}) %highlight(%-5level) %cyan(%X{akkaSource}) - %msg%n</pattern>
         </encoder>
     </appender>
 

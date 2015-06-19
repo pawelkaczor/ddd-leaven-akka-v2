@@ -2,11 +2,10 @@ package ecommerce.invoicing.app
 
 import java.net.InetAddress
 
-import akka.actor.{Actor, ActorSystem, ActorPath, Props, AddressFromURIString}
+import akka.actor._
 import com.typesafe.config.Config
 import ecommerce.invoicing.{Invoice, InvoicingSaga}
 import org.slf4j.Logger
-import org.slf4j.LoggerFactory._
 import pl.newicom.dddd.actor.{CreationSupport, PassivationConfig}
 import pl.newicom.dddd.aggregate.AggregateRootActorFactory
 import pl.newicom.dddd.cluster._
@@ -22,12 +21,11 @@ import scala.io.Source
 import scala.util.Try
 
 trait LocalPublisher extends EventPublisher {
-  this: Actor =>
-  lazy val _log: Logger = getLogger(this.getClass.getName)
+  this: Actor with ActorLogging =>
 
   override def publish(em: DomainEventMessage): Unit = {
     context.system.eventStream.publish(em.event)
-    _log.debug(s"Published: $em")
+    log.debug(s"Published: $em")
   }
 }
 
