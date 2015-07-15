@@ -5,15 +5,15 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.{Directives, Route}
-import akka.stream.scaladsl.ImplicitFlowMaterializer
+import akka.stream.scaladsl.ImplicitMaterializer
 import akka.util.Timeout
 import ecommerce.invoicing.{Command => InvoicingCommand, invoicingOffice}
 import org.json4s.ext.{JodaTimeSerializers, UUIDSerializer}
 import org.json4s.{DefaultFormats, Formats}
 import pl.newicom.dddd.aggregate.Command
+import pl.newicom.dddd.http.JsonMarshalling
 import pl.newicom.dddd.messaging.command.CommandMessage
 import pl.newicom.dddd.writefront.{CommandDirective, CommandHandler}
-import pl.newicom.dddd.http.JsonMarshalling
 
 import scala.concurrent.duration.FiniteDuration
 import scala.util.{Failure, Success}
@@ -26,7 +26,7 @@ object HttpService {
 class HttpService(interface: String, port: Int)(implicit askTimeout: Timeout)
   extends Actor with InvoicingFrontConfiguration with CommandHandler
   with CommandDirective with Directives
-  with ActorLogging with ImplicitFlowMaterializer with JsonMarshalling {
+  with ActorLogging with ImplicitMaterializer with JsonMarshalling {
 
   import context.dispatcher
   implicit val formats: Formats = invoicingOffice.serializationHints ++ DefaultFormats ++ JodaTimeSerializers.all + UUIDSerializer

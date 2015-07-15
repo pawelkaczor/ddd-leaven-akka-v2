@@ -4,15 +4,15 @@ object Deps {
 
   object Version {
     val akka =              "2.4-M1"
-    val akkaHttp =          "1.0-RC2"
-    val akkaDDD =           "1.0.4-M1"
+    val akkaHttp =          "1.0"
+    val akkaDDD =           "1.0.4-M2"
     val slick =             "2.1.0"
     val ecommerce =         "0.1-M1"
   }
 
   object Akka {
     val actor =            apply("actor")
-    val httpTestKit =      apply("http-testkit-scala-experimental", Version.akkaHttp) % "test"
+    val httpTestKit =      apply("http-testkit-experimental", Version.akkaHttp) % "test"
     val persistence =      apply("persistence-experimental")
     val kernel =           apply("kernel")
     val slf4j =            apply("slf4j")
