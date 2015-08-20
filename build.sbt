@@ -2,7 +2,7 @@ import sbt.Keys._
 
 organization in ThisBuild := "pl.newicom"
 
-version in ThisBuild := "0.2-M2"
+version in ThisBuild := "0.2-M3"
 
 scalaVersion in ThisBuild := "2.11.6"
 
