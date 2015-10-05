@@ -23,7 +23,7 @@
 
 <ul class="task-list">
 <li><p><a href="http://akka.io">Akka</a> - actor-based, reactive middleware implemented in Scala,</p></li>
-<li><p><a href="http://typesafe.com/blog/akka-http-preview">Akka HTTP</a> - HTTP server build upon Akka Stream (Akka's implementation of <a href="http://www.reactive-streams.org/">Reactive Streams Specification</a>),</p></li>
+<li><p><a href="http://doc.akka.io/docs/akka-stream-and-http-experimental/1.0/scala/http/introduction.html">Akka HTTP</a> - HTTP server build upon Akka Stream (Akka's implementation of <a href="http://www.reactive-streams.org/">Reactive Streams Specification</a>),</p></li>
 <li><p><a href="http://doc.akka.io/docs/akka/current/scala/persistence.html">Akka Persistence</a> - infrastructure for building durable (event sourced) actors, which has a pluggable journal,</p></li>
 <li>
 <p><a href="http://geteventstore.com">Event Store</a> - scalable, highly available event store with akka-persistence journal implementation. Provides engine for running user-defined projections (javascript functions) over single or multiple  event streams. Projections allow the system to group or combine events into new event streams that can represent domain-level journals such as office journals (events grouped by emitter (<code>Aggregate Root</code>) class) or business process journals (events related to concrete business process). Domain journals are topic of interest for services such as:</p>
@@ -73,95 +73,13 @@
 <p>HTTP server providing rest endpoint for accessing view store. </p>
 </div>
 <div>
-<h2>Installation</h2>
-
-<h5>Install Event Store</h5>
-
-<pre><code>docker run --name ecommerce-event-store -d -p 2113:2113 -p 1113:1113 newion/eventstore:3.0.1
-</code></pre>
-
-<h5>Install PostgreSQL</h5>
-
-<pre><code>docker run --name sales-view-store -d -p 5432:5432 postgres
-</code></pre>
-
-<p><img class="emoji" title=":bulb:" src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f4a1.png" height="20" width="20" align="absmiddle"> Postgresql console: <code>psql -h localhost -p 5432 -U postgres</code></p>
-
-<h5>Checkout the project</h5>
-
-<pre><code>git clone https://github.com/pawelkaczor/ddd-leaven-akka-v2.git
-</code></pre>
-
-<h5>Register projections</h5>
-
-<p>Run <a href="#code/enable-projections">enable-projections</a> script.</p>
-
-<h5>Install Command line HTTP client</h5>
-
-<p><a href="http://httpie.org/">http://httpie.org/</a></p>
+    <h2><a href="#running-and-testing-the-system"></a>Running and testing the system</h2>
+    <ul>
+        <li><a href="https://github.com/pawelkaczor/ddd-leaven-akka-v2/wiki/Running-the-system-on-physical-server">Running the system on physical server</a></li>
+        <li><a href="https://github.com/pawelkaczor/ddd-leaven-akka-v2/wiki/Running-virtualized-system">Running virtualized system</a></li>
+        <li><a href="https://github.com/pawelkaczor/ddd-leaven-akka-v2/wiki/Manual-testing-of-order-process">Manual testing of order process</a></li>
+        <li><a href="https://github.com/pawelkaczor/ddd-leaven-akka-v2/wiki/End-to-end-test-of-order-process">End-to-end test of order process</a></li>
+    </ul>
 </div>
-<div>
-<h2>Building the project</h2>
-
-<pre><code>sbt stage
-</code></pre>
-</div>
-<div>
-<h2>Running subsystems</h2>
-
-<p>As there are multiple applications per subsystem, running/monitoring the whole system is not straightforward.
-You can use run scripts (located in run-scripts directory)
-to quickly start the system and execute sample Reservation process (see below). However, it s recommended you configure supervisord <a href="http://supervisord.org/">supervisord</a>
-to include <a href="#code/supervisord-configs/!README.md">supervisord-configs</a> dir and
-manage (start/restart/stop) services using supervisorctrl tool.</p>
-</div>
-<div>
-<h2>
-<a name="manual-testing"></a>Manual testing of Reservation process</h2>
-
-<ol class="task-list">
-<li>
-<p>Create reservation</p>
-
-<ul class="task-list">
-<li><code>http :9100/ecommerce/sales Command-Type:ecommerce.sales.CreateReservation reservationId="r1" customerId="customer-1"</code></li>
-</ul>
-</li>
-<li>
-<p>Add product</p>
-
-<ul class="task-list">
-<li><code>echo '{"reservationId": "r1", "product": { "snapshotId": { "aggregateId": "123456789", "sequenceNr": 0 }, "name": "DDDD For Dummies - 7th Edition", "productType": 1, "price": { "doubleValue": 10.0, "currencyCode": "USD"}}, "quantity": 1}' | http :9100/ecommerce/sales Command-Type:ecommerce.sales.ReserveProduct</code></li>
-</ul>
-</li>
-<li>
-<p>Confirm reservation</p>
-<img src="tutorial/OrderingSystem.png" style="max-width:100%;">
-
-<ul class="task-list">
-<li><code>http :9100/ecommerce/sales Command-Type:ecommerce.sales.ConfirmReservation reservationId="r1"</code></li>
-</ul>
-</li>
-<li>
-<p>Pay</p>
-
-<ul class="task-list">
-<li><code>echo '{"invoiceId": "{{INVOICE_ID}}", "orderId": "r1", "amount": { "doubleValue": 10.0, "currencyCode": "USD"}, "paymentId": "230982342"}' | http :9200/ecommerce/invoicing Command-Type:ecommerce.invoicing.ReceivePayment</code></li>
-<li>
-<img class="emoji" src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f4a1.png" height="20" width="20" align="absmiddle"> If you do not pay within ~ 3 minutes, reservation will be canceled</li>
-</ul>
-</li>
-<li>
-<p>Check read side</p>
-
-<ul class="task-list">
-<li>display reservation: <code>http :9110/ecommerce/sales/reservation/r1</code>
-</li>
-<li>display shipment status: <code>http :9310/ecommerce/shipping/shipment/order/r1</code>
-</li>
-</ul>
-</li>
-</ol>
-</div>
-    </body>
+</body>
 </html>
