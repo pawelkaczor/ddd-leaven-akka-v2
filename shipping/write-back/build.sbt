@@ -1,4 +1,4 @@
 enablePlugins(JavaAppPackaging)
-mainClass in Compile := Some("akka.kernel.Main ecommerce.shipping.app.ShippingBackendApp")
+mainClass in Compile := Some("akka.kernel.Main")
 
 dockerExposedPorts := Seq(9301)

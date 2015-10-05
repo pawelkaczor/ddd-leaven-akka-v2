@@ -16,30 +16,29 @@ lazy val `sales-write-back` = (project in file("write-back"))
   .settings(
       multiNodeTestingSettings,
       libraryDependencies ++= Seq(
-        Akka.kernel, Akka.testkit,
+        Akka.testkit,
         AkkaDDD.messaging, AkkaDDD.core, AkkaDDD.test, AkkaDDD.eventStore
       )
     )
-    .dependsOn(`sales-contracts`, "invoicing-contracts")
+    .dependsOn(`sales-contracts`, "invoicing-contracts", "commons")
     .configs(MultiJvm)
 
 lazy val `sales-write-front` = (project in file("write-front"))
   .settings(
     libraryDependencies ++= SqlDb() ++ Seq(
-      AkkaDDD.writeFront, Akka.kernel, Akka.slf4j
+      AkkaDDD.writeFront, Akka.slf4j
     )
   )
-  .dependsOn(`sales-contracts`)
+  .dependsOn(`sales-contracts`, "commons")
 
 lazy val `sales-read-back` = (project in file("read-back"))
   .settings(
     parallelExecution in Test := false,
     libraryDependencies ++= SqlDb() ++ Seq(
-      AkkaDDD.viewUpdateSql,
-      Akka.kernel
+      AkkaDDD.viewUpdateSql
     )
   )
-  .dependsOn(`sales-contracts`)
+  .dependsOn(`sales-contracts`, "commons")
 
 lazy val `sales-read-front` = (project in file("read-front"))
   .settings(
@@ -48,7 +47,7 @@ lazy val `sales-read-front` = (project in file("read-front"))
       Akka.testkit
     )
   )
-  .dependsOn(`sales-read-back` % "test->test;compile->compile")
+  .dependsOn(`sales-read-back` % "test->test;compile->compile", "commons")
 
 lazy val multiNodeTestingSettings: Seq[Setting[_]] = SbtMultiJvm.multiJvmSettings ++ Seq(
   // make sure that MultiJvm test are compiled by the default test compilation

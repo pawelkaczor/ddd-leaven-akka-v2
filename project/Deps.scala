@@ -3,18 +3,16 @@ import sbt._
 object Deps {
 
   object Version {
-    val akka =              "2.4-M1"
-    val akkaHttp =          "1.0"
-    val akkaDDD =           "1.0.4-M2"
-    val slick =             "2.1.0"
-    val ecommerce =         "0.1-M1"
+    val akka =                  "2.4.0"
+    val akkaHttp =              "1.0"
+    val akkaDDD =               "1.0.4"
+    val slick =                 "2.1.0"
   }
 
   object Akka {
     val actor =            apply("actor")
     val httpTestKit =      apply("http-testkit-experimental", Version.akkaHttp) % "test"
-    val persistence =      apply("persistence-experimental")
-    val kernel =           apply("kernel")
+    val persistence =      apply("persistence")
     val slf4j =            apply("slf4j")
     val testkit =          apply("testkit") % "test"
     val multiNodeTestkit = apply("multi-node-testkit") % "test"
@@ -45,13 +43,13 @@ object Deps {
     val native = apply("native")
     val ext = apply("ext")
 
-    private def apply(moduleName: String) = "org.json4s" %% s"json4s-$moduleName" % "3.2.11"
+    private def apply(moduleName: String) = "org.json4s" %% s"json4s-$moduleName" % "3.3.0"
   }
 
   object SqlDb {
     val slick = "com.typesafe.slick" %% "slick" % Version.slick
     val `slick-for-pg` = "com.github.tminglei" %% "slick-pg" % "0.8.2" exclude("org.slf4j", "slf4j-simple")
-    val testDriver = "com.h2database" % "h2" % "1.3.170" % "test"
+    val testDriver = "com.h2database" % "h2" % "1.4.189" % "test"
 
     def prod = Seq(`slick-for-pg`)
 

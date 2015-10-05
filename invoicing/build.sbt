@@ -13,16 +13,16 @@ lazy val `invoicing-contracts` = (project in file("contracts"))
 lazy val `invoicing-write-back` = (project in file("write-back"))
   .settings(
     libraryDependencies ++= Seq(
-      Akka.kernel, Akka.testkit,
+      Akka.testkit,
       AkkaDDD.messaging, AkkaDDD.core, AkkaDDD.scheduling, AkkaDDD.test, AkkaDDD.eventStore
     )
   )
-  .dependsOn(`invoicing-contracts`)
+  .dependsOn(`invoicing-contracts`, "commons")
 
 lazy val `invoicing-write-front` = (project in file("write-front"))
   .settings(
     libraryDependencies ++= SqlDb() ++ Seq(
-      AkkaDDD.writeFront, Akka.kernel, Akka.slf4j
+      AkkaDDD.writeFront, Akka.slf4j
     )
   )
-  .dependsOn(`invoicing-contracts`)
+  .dependsOn(`invoicing-contracts`, "commons")
