@@ -7,6 +7,7 @@ lazy val `e2e-tests` = (project in file("."))
   .settings(e2eTestingSettings ++ Vagrant.settings)
   .settings(
     vagrantFile := baseDirectory.value / "Vagrantfile",
+    vagrantContainersLogFile := target.value / "e2e-tests.log",
     libraryDependencies ++= Seq(
       "org.yaml" % "snakeyaml" % "1.14",
       "pl.newicom" %% "resttest" % "0.3.0"

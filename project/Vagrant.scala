@@ -7,13 +7,17 @@ import E2EConfig._
 object Vagrant {
 
   lazy val vagrantFile = settingKey[File]("vagrant-file")
+  lazy val vagrantContainersLogFile = settingKey[File]("vagrant-containers-log-file")
   private lazy val vagrant = settingKey[Vagrant]("vagrant")
 
   lazy val settings = Seq(
     vagrant := new Vagrant(vagrantFile.value),
     testOptions in E2ETest ++= Seq(
       Tests.Setup(()   => if ((definedTests in E2ETest).value.nonEmpty) vagrant.value.setup()),
-      Tests.Cleanup(() => if ((definedTests in E2ETest).value.nonEmpty) vagrant.value.cleanup())
+      Tests.Cleanup(() => if ((definedTests in E2ETest).value.nonEmpty) {
+        vagrant.value.collectLogs(vagrantContainersLogFile.value)
+        vagrant.value.cleanup()
+      })
     )
   )
 }
@@ -43,6 +47,7 @@ class Vagrant(vagrantFile: File) {
   }
 
   private def up(): Unit = Process("vagrant" :: "up" :: Nil, vagrantDir)!
+  private def collectLogs(logFile: File): Unit = Process("vagrant" :: "docker-logs" :: Nil, vagrantDir) #> logFile !
   private def reload(): Unit = Process("vagrant" :: "reload" :: Nil, vagrantDir)!
   private def provision(): Unit = Process("vagrant" :: "provision" :: Nil, vagrantDir)!
   private def suspend(): Unit = Process("vagrant" :: "suspend" :: Nil, vagrantDir)!
