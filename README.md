@@ -1,5 +1,8 @@
 ddd-leaven-akka-v2
 ==================
+
+[![Join Akka-DDD chat at https://gitter.im/pawelkaczor/akka-ddd](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/pawelkaczor/akka-ddd?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Sample e-commerce application built on top of [Akka](http://akka.io) and [EventStore](http://geteventstore.com) following a [CQRS/DDDD](http://abdullin.com/post/dddd-cqrs-and-other-enterprise-development-buzz-words)-based approach.
 
 Overview
