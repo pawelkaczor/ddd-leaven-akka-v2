@@ -8,7 +8,5 @@ case class EndpointConfig(host: String = "localhost", officeInfo: OfficeInfo[_],
 
   def /(subPath: String) = withSubPath(subPath)
 
-  def serializationHints = officeInfo.serializationHints
-
   def toUrl = s"http://$host:$port/$path"
 }

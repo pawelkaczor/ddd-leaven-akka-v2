@@ -1,13 +1,13 @@
 package ecommerce.tests.e2e
 
-import ecommerce.invoicing.{invoicingOffice, ReceivePayment}
+import ecommerce.invoicing.{InvoicingSerializationHintsProvider, ReceivePayment, invoicingOffice}
 import ecommerce.sales._
-import ecommerce.shipping.shippingOffice
+import ecommerce.shipping.{ShippingSerializationHintsProvider, shippingOffice}
 import ecommerce.tests.e2e.SystemSpec._
-import org.json4s.ext.{JodaTimeSerializers, UUIDSerializer}
-import org.json4s.{DefaultFormats, Formats}
+import org.json4s.Formats
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Seconds, Span}
+import pl.newicom.dddd.serialization.JsonSerHints._
 
 object SystemSpec {
 
@@ -21,8 +21,10 @@ object SystemSpec {
   val shipping = EndpointConfig(path = "ecommerce/shipping", officeInfo = shippingOffice)
   val shipping_read = shipping.copy(port = 9310)
 
-  implicit val formats: Formats = sales.serializationHints ++ invoicing.serializationHints ++ shipping.serializationHints ++
-    DefaultFormats ++ JodaTimeSerializers.all + UUIDSerializer
+  implicit val formats: Formats =
+    new SalesSerializationHintsProvider().hints() ++
+    new InvoicingSerializationHintsProvider().hints() ++
+    new ShippingSerializationHintsProvider().hints()
 
 }
 

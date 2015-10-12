@@ -1,11 +1,11 @@
 package ecommerce.sales
 
-import org.json4s.FullTypeHints
+import org.json4s.{Formats, FullTypeHints}
 import org.json4s.ext.EnumSerializer
 import pl.newicom.dddd.messaging.event.AggregateSnapshotId
-import pl.newicom.dddd.serialization.JsonSerializationHints
+import pl.newicom.dddd.serialization.{JsonExtraSerHints, JsonSerializationHintsProvider}
 
-class SalesSerializationHints extends JsonSerializationHints {
+class SalesSerializationHintsProvider extends JsonSerializationHintsProvider {
 
   val typeHints = ReservationCommands + ReservationEvents + SalesValueObjects
   val serializers = List(new EnumSerializer(ProductType))
@@ -37,4 +37,5 @@ class SalesSerializationHints extends JsonSerializationHints {
     )
   )
 
+  override def hints(default: Formats) = JsonExtraSerHints(typeHints, serializers)
 }

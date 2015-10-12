@@ -1,8 +1,10 @@
 package ecommerce.sales
 
-import scala.slick.jdbc.JdbcBackend.Database
+import org.json4s.Formats
 import pl.newicom.dddd.http.Endpoint
 
-abstract class ReadEndpoint extends Endpoint[Database] {
+import scala.slick.jdbc.JdbcBackend.Database
+
+abstract class ReadEndpoint(implicit formats: Formats) extends Endpoint[Database] {
 
 }

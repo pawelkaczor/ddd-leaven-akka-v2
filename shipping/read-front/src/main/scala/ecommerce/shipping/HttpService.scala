@@ -7,6 +7,8 @@ import akka.stream.scaladsl.ImplicitMaterializer
 import akka.util.Timeout
 import com.typesafe.config.Config
 import ecommerce.shipping.app.ShipmentViewEndpoint
+import org.json4s.Formats
+import pl.newicom.dddd.serialization.JsonSerHints._
 
 import scala.concurrent.duration.FiniteDuration
 import scala.slick.driver.PostgresDriver
@@ -21,6 +23,7 @@ class HttpService(interface: String, port: Int)(implicit askTimeout: Timeout) ex
 
   import context.dispatcher
 
+  implicit val formats: Formats = fromConfig(config)
   implicit val profile = PostgresDriver
 
   Http(context.system).bindAndHandle(route, interface, port)

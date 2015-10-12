@@ -8,11 +8,11 @@ import akka.http.scaladsl.server.{Directives, Route}
 import akka.stream.scaladsl.ImplicitMaterializer
 import akka.util.Timeout
 import ecommerce.invoicing.{Command => InvoicingCommand, invoicingOffice}
-import org.json4s.ext.{JodaTimeSerializers, UUIDSerializer}
-import org.json4s.{DefaultFormats, Formats}
+import org.json4s.Formats
 import pl.newicom.dddd.aggregate.Command
 import pl.newicom.dddd.http.JsonMarshalling
 import pl.newicom.dddd.messaging.command.CommandMessage
+import pl.newicom.dddd.serialization.JsonSerHints.fromConfig
 import pl.newicom.dddd.writefront.{CommandDirective, CommandHandler}
 
 import scala.concurrent.duration.FiniteDuration
@@ -29,7 +29,7 @@ class HttpService(interface: String, port: Int)(implicit askTimeout: Timeout)
   with ActorLogging with ImplicitMaterializer with JsonMarshalling {
 
   import context.dispatcher
-  implicit val formats: Formats = invoicingOffice.serializationHints ++ DefaultFormats ++ JodaTimeSerializers.all + UUIDSerializer
+  implicit val formats: Formats = fromConfig(config)
 
   Http(context.system).bindAndHandle(route, interface, port)
   log.info(s"Listening on $interface:$port")
