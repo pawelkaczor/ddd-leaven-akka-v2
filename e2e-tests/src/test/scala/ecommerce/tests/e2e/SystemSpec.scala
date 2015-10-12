@@ -1,6 +1,6 @@
 package ecommerce.tests.e2e
 
-import ecommerce.invoicing.{InvoicingSerializationHintsProvider, ReceivePayment, invoicingOffice}
+import ecommerce.invoicing.{ReceivePayment, invoicingOffice}
 import ecommerce.sales._
 import ecommerce.shipping.{ShippingSerializationHintsProvider, shippingOffice}
 import ecommerce.tests.e2e.SystemSpec._
@@ -23,7 +23,6 @@ object SystemSpec {
 
   implicit val formats: Formats =
     new SalesSerializationHintsProvider().hints() ++
-    new InvoicingSerializationHintsProvider().hints() ++
     new ShippingSerializationHintsProvider().hints()
 
 }
