@@ -7,6 +7,9 @@ object CommonSettingsPlugin extends AutoPlugin with DockerKeys {
   override def trigger = allRequirements
   override lazy val projectSettings = Seq(
     updateOptions := updateOptions.value.withCachedResolution(cachedResoluton = true),
+    resolvers ++= Seq(
+      "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+    ),
     libraryDependencies ++= Seq(
       "com.github.nscala-time" %% "nscala-time" % "2.2.0",
       "ch.qos.logback" % "logback-classic" % "1.1.3",
