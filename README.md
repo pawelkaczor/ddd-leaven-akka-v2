@@ -1,4 +1,4 @@
-ddd-leaven-akka-v2
+ddd-leaven-akka-v2[![Build Status](https://travis-ci.org/pawelkaczor/ddd-leaven-akka-v2.svg?branch=master)](https://travis-ci.org/pawelkaczor/ddd-leaven-akka-v2)
 ==================
 
 [![Join Akka-DDD chat at https://gitter.im/pawelkaczor/akka-ddd](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/pawelkaczor/akka-ddd?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
