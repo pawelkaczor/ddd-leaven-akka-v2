@@ -11,7 +11,7 @@ import org.json4s.Formats
 import pl.newicom.dddd.serialization.JsonSerHints._
 
 import scala.concurrent.duration.FiniteDuration
-import scala.slick.driver.PostgresDriver
+import slick.driver.PostgresDriver
 
 object HttpService {
   def props(interface: String, port: Int, askTimeout: FiniteDuration): Props =

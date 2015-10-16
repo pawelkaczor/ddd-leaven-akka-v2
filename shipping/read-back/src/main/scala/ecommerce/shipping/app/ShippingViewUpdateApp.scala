@@ -5,7 +5,7 @@ import akka.kernel.Bootable
 import com.typesafe.config.ConfigFactory
 import ecommerce.shipping.ShippingViewUpdateService
 
-import scala.slick.driver.{JdbcProfile, PostgresDriver}
+import slick.driver.{JdbcProfile, PostgresDriver}
 
 class ShippingViewUpdateApp extends Bootable {
   private val config = ConfigFactory.load()

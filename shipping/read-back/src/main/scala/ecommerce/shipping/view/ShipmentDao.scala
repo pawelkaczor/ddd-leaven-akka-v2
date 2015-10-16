@@ -1,40 +1,31 @@
 package ecommerce.shipping.view
 
 import ecommerce.shipping.ShippingStatus
-import ShippingStatus.ShippingStatus
-import ecommerce.shipping.ShippingStatus
+import ecommerce.shipping.ShippingStatus.ShippingStatus
 import pl.newicom.dddd.aggregate.EntityId
+import slick.driver.JdbcProfile
+import slick.jdbc.meta.MTable._
 
-import scala.slick.driver.JdbcProfile
-import scala.slick.jdbc.meta.MTable
+import scala.concurrent.ExecutionContext
 
-class ShipmentDao(implicit val profile: JdbcProfile)  {
-  import profile.simple._
+class ShipmentDao(implicit val profile: JdbcProfile, ex: ExecutionContext) {
+  import profile.api._
 
   implicit val shipmentStatusColumnType = MappedColumnType.base[ShippingStatus, String](
     { c => c.toString },
     { s => ShippingStatus.withName(s)}
   )
 
-  object Shipments {
-    val TableName = "shippings"
-  }
+  val shipmentsTableName = "shippings"
 
-  class Shipments(tag: Tag) extends Table[ShipmentView](tag, Shipments.TableName) {
-    def id = column[EntityId]("ID", O.PrimaryKey, O.NotNull)
-    def orderId = column[EntityId]("ORDER_ID", O.NotNull)
-    def status = column[ShippingStatus]("STATUS", O.NotNull)
+  class Shipments(tag: Tag) extends Table[ShipmentView](tag, shipmentsTableName) {
+    def id = column[EntityId]("ID", O.PrimaryKey)
+    def orderId = column[EntityId]("ORDER_ID")
+    def status = column[ShippingStatus]("STATUS")
     def * = (id, orderId, status) <> (ShipmentView.tupled, ShipmentView.unapply)
   }
 
   val shipments = TableQuery[Shipments]
-
-  def createSchema(implicit s: Session) =
-    if (MTable.getTables(Shipments.TableName).list.isEmpty) {
-      shipments.ddl.create
-    }
-
-  def dropSchema(implicit s: Session) = shipments.ddl.drop
 
   /**
    * Queries impl
@@ -46,34 +37,46 @@ class ShipmentDao(implicit val profile: JdbcProfile)  {
   /**
    * Public interface
    */
+  def all =  shipments.result
+
+  def byId(id: EntityId) = by_id(id).result.headOption
+
+  def byOrderId(orderId: EntityId) = by_order_id(orderId).result
+
+/*
   def createIfNotExists(view: ShipmentView)(implicit s: Session): ShipmentView = {
-    by_id(view.id).run.headOption.orElse {
+    byId(view.id).run.headOption.orElse {
       shipments.insert(view)
       Some(view)
     }.get
   }
+*/
 
-  def createOrUpdate(view: ShipmentView)(implicit s: Session): ShipmentView = {
-    val query = by_id(view.id)
-    if (query.run.headOption.isDefined)
-      query.update(view)
-    else
-      shipments.insert(view)
-    view
+  def createOrUpdate(view: ShipmentView) = {
+    shipments.insertOrUpdate(view)
   }
 
-  def update(view: ShipmentView)(implicit s: Session) = {
+/*
+  def update(view: ShipmentView) = {
     val query = by_id(view.id)
     if (query.run.headOption.isDefined)
       query.update(view)
     else
       throw new RuntimeException("view does not exist")
   }
+*/
 
-  def all(implicit s: Session) =  shipments.list
 
-  def byId(id: EntityId)(implicit s: Session) = by_id(id).run.headOption
+  def ensureSchemaDropped =
+    getTables(shipmentsTableName).headOption.flatMap {
+      case Some(table) => shipments.schema.drop.map(_ => ())
+      case None => DBIO.successful(())
+    }
 
-  def byOrderId(orderId: EntityId)(implicit s: Session) = by_order_id(orderId).run.toList
+  def ensureSchemaCreated =
+    getTables(shipmentsTableName).headOption.flatMap {
+      case Some(table) => DBIO.successful(())
+      case None => shipments.schema.create.map(_ => ())
+    }
 
 }

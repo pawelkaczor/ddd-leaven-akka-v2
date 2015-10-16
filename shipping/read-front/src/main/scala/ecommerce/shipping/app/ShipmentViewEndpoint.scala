@@ -6,8 +6,8 @@ import ecommerce.shipping.ReadEndpoint
 import org.json4s.Formats
 
 import scala.concurrent.ExecutionContext
-import scala.slick.driver.JdbcProfile
-import scala.slick.jdbc.JdbcBackend._
+import slick.driver.JdbcProfile
+import slick.jdbc.JdbcBackend._
 
 case class ShipmentViewEndpoint(implicit val ec: ExecutionContext, profile: JdbcProfile, formats: Formats) extends ReadEndpoint {
 
@@ -17,7 +17,7 @@ case class ShipmentViewEndpoint(implicit val ec: ExecutionContext, profile: Jdbc
     path("shipment" / "all") {
       get {
         complete {
-          viewStore withSession { implicit s =>
+          viewStore.run {
             dao.all
           }
         }
@@ -26,7 +26,7 @@ case class ShipmentViewEndpoint(implicit val ec: ExecutionContext, profile: Jdbc
     path("shipment" / Segment) { id =>
       get {
         complete {
-          viewStore withSession { implicit s =>
+          viewStore.run {
             dao.byId(id)
           }
         }
@@ -35,7 +35,7 @@ case class ShipmentViewEndpoint(implicit val ec: ExecutionContext, profile: Jdbc
     path("shipment" / "order" / Segment) { id =>
       get {
         complete {
-          viewStore withSession { implicit s =>
+          viewStore.run {
             dao.byOrderId(id)
           }
         }

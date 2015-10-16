@@ -9,7 +9,7 @@
     <root level="DEBUG">
         <appender-ref ref="CONSOLE"/>
     </root>
-    <logger name="scala.slick" level="INFO"/>
-    <logger name="scala.slick.jdbc.JdbcBackend.statement" level="DEBUG"/>
+    <logger name="slick" level="INFO"/>
+    <logger name="slick.jdbc.JdbcBackend.statement" level="DEBUG"/>
 
 </configuration>

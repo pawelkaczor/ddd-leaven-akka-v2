@@ -5,7 +5,7 @@ object Deps {
   object Version {
     val akka =                  "2.4.0"
     val akkaHttp =              "1.0"
-    val akkaDDD =               "1.0.5"
+    val akkaDDD =               "1.0.6"
     val slick =                 "2.1.0"
   }
 
@@ -48,7 +48,7 @@ object Deps {
 
   object SqlDb {
     val slick = "com.typesafe.slick" %% "slick" % Version.slick
-    val `slick-for-pg` = "com.github.tminglei" %% "slick-pg" % "0.8.2" exclude("org.slf4j", "slf4j-simple")
+    val `slick-for-pg` = "com.github.tminglei" %% "slick-pg" % "0.10.0" exclude("org.slf4j", "slf4j-simple")
     val testDriver = "com.h2database" % "h2" % "1.4.189" % "test"
 
     def prod = Seq(`slick-for-pg`)

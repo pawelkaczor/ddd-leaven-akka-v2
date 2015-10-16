@@ -9,8 +9,7 @@ import ecommerce.sales.ReservationStatus.{Confirmed, Opened}
 import org.joda.time.DateTime.now
 import org.scalatest._
 import pl.newicom.dddd.messaging.event.{AggregateSnapshotId, DomainEventMessage}
-
-import scala.slick.jdbc.JdbcBackend
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class ReservationProjectionSpec extends WordSpecLike with Matchers with ViewTestSupport {
 
@@ -22,48 +21,32 @@ class ReservationProjectionSpec extends WordSpecLike with Matchers with ViewTest
   "ReservationProjection" should {
     "consume ReservationCreated event" in {
       // When
-      viewStore withSession { implicit s: JdbcBackend.Session =>
-        projection.consume(ReservationCreated("reservation-1", "client-1"))
-      }
-
-      import dao.profile.simple._
+      projection.consume(ReservationCreated("reservation-1", "client-1")).run()
 
       // Then
-      viewStore withSession { implicit s: Session =>
-        val reservations = dao.byId("reservation-1")
-        assert(reservations.head.status == Opened)
-      }
+      val reservation = dao.byId("reservation-1").result
+      assert(reservation.map(_.status) == Some(Opened))
     }
   }
 
   "ReservationProjection" should {
     "consume ReservationConfirmed event" in {
       // Given
-      import dao.profile.simple._
 
-      viewStore withSession { implicit s: Session =>
-        dao.createIfNotExists(ReservationView("reservation-1", "client-1", Opened, new Date(now.getMillis)))
-      }
-        // When
-      viewStore withSession { implicit s: JdbcBackend.Session =>
-        projection.consume(ReservationConfirmed("reservation-1", "client-1", None))
-      }
+      dao.createOrUpdate(ReservationView("reservation-1", "client-1", Opened, new Date(now.getMillis))).run()
+
+      // When
+      projection.consume(ReservationConfirmed("reservation-1", "client-1", None)).run()
 
       // Then
-      viewStore withSession { implicit s: Session =>
-        val reservations = dao.byId("reservation-1")
-        assert(reservations.head.status == Confirmed)
-      }
+      val reservation = dao.byId("reservation-1").result
+      assert(reservation.map(_.status) == Some(Confirmed))
     }
   }
 
-  override def dropSchema(implicit s: JdbcBackend.Session): Unit = {
-    dao.dropSchema
-  }
+  override def ensureSchemaDropped = dao.ensureSchemaDropped
 
-  override def createSchema(implicit s: JdbcBackend.Session): Unit = {
-    dao.createSchema
-  }
+  override def ensureSchemaCreated = dao.ensureSchemaCreated
 
   implicit def toEventMessage(event: ReservationCreated): DomainEventMessage = DomainEventMessage(AggregateSnapshotId(event.reservationId), event)
   implicit def toEventMessage(event: ReservationConfirmed): DomainEventMessage = DomainEventMessage(AggregateSnapshotId(event.reservationId), event)

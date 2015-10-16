@@ -4,38 +4,29 @@ import java.sql.Date
 import ecommerce.sales.ReservationStatus
 import ReservationStatus.ReservationStatus
 import pl.newicom.dddd.aggregate.EntityId
+import slick.jdbc.meta.MTable._
+import scala.concurrent.ExecutionContext
+import slick.driver.JdbcProfile
 
-import scala.slick.driver.JdbcProfile
-import scala.slick.jdbc.meta.MTable
-
-class ReservationDao(implicit val profile: JdbcProfile)  {
-  import profile.simple._
+class ReservationDao(implicit val profile: JdbcProfile, ec: ExecutionContext)  {
+  import profile.api._
 
   implicit val reservationStatusColumnType = MappedColumnType.base[ReservationStatus, String](
     { c => c.toString },
     { s => ReservationStatus.withName(s)}
   )
 
-  object Reservations {
-    val TableName = "reservations"
-  }
+  val ReservationsTableName = "reservations"
 
-  class Reservations(tag: Tag) extends Table[ReservationView](tag, Reservations.TableName) {
-    def id = column[EntityId]("ID", O.PrimaryKey, O.NotNull)
-    def clientId = column[EntityId]("CLIENT_ID", O.NotNull)
-    def status = column[ReservationStatus]("STATUS", O.NotNull)
-    def createDate = column[Date]("CREATE_DATE", O.NotNull)
+  class Reservations(tag: Tag) extends Table[ReservationView](tag, ReservationsTableName) {
+    def id = column[EntityId]("ID", O.PrimaryKey)
+    def clientId = column[EntityId]("CLIENT_ID")
+    def status = column[ReservationStatus]("STATUS")
+    def createDate = column[Date]("CREATE_DATE")
     def * = (id, clientId, status, createDate) <> (ReservationView.tupled, ReservationView.unapply)
   }
 
   val reservations = TableQuery[Reservations]
-
-  def createSchema(implicit s: Session) =
-    if (MTable.getTables(Reservations.TableName).list.isEmpty) {
-      reservations.ddl.create
-    }
-
-  def dropSchema(implicit s: Session) = reservations.ddl.drop
 
   /**
    * Queries impl
@@ -47,35 +38,42 @@ class ReservationDao(implicit val profile: JdbcProfile)  {
   /**
    * Public interface
    */
+
+/*
   def createIfNotExists(view: ReservationView)(implicit s: Session): ReservationView = {
     by_id(view.id).run.headOption.orElse {
       reservations.insert(view)
       Some(view)
     }.get
   }
+*/
 
-  def createOrUpdate(view: ReservationView)(implicit s: Session): ReservationView = {
-    val query = by_id(view.id)
-    if (query.run.headOption.isDefined)
-      query.update(view)
-    else
-      reservations.insert(view)
-    view
+  def createOrUpdate(view: ReservationView) = {
+    reservations.insertOrUpdate(view)
   }
 
-  def update(view: ReservationView)(implicit s: Session) = {
-    val query = by_id(view.id)
-    if (query.run.headOption.isDefined)
-      query.update(view)
-    else
-      throw new RuntimeException("view does not exist")
+  def updateStatus(viewId: EntityId, status: ReservationStatus.Value) = {
+    reservations.filter(_.id === viewId).map(_.status).update(status)
   }
 
-  def all(implicit s: Session) =  reservations.list
+  def all =  reservations.result
 
-  def byId(id: EntityId)(implicit s: Session) = by_id(id).run.headOption
+  def byId(id: EntityId) = by_id(id).result.headOption
 
-  def byClientId(clientId: EntityId)(implicit s: Session) = by_client_id(clientId).run.toList
+  def byClientId(clientId: EntityId) = by_client_id(clientId).result
 
-  def remove(id: EntityId)(implicit s: Session) = by_id(id).delete
+  def remove(id: EntityId) = by_id(id).delete
+
+  def ensureSchemaDropped =
+    getTables(ReservationsTableName).headOption.flatMap {
+      case Some(table) => reservations.schema.drop.map(_ => ())
+      case None => DBIO.successful(())
+    }
+
+  def ensureSchemaCreated =
+    getTables(ReservationsTableName).headOption.flatMap {
+      case Some(table) => DBIO.successful(())
+      case None => reservations.schema.create.map(_ => ())
+    }
+
 }

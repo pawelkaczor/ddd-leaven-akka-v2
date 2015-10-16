@@ -1,14 +1,13 @@
 package ecommerce.sales.app
 
 import akka.http.scaladsl.server.Route
-import com.typesafe.config.Config
 import ecommerce.sales.ReadEndpoint
 import ecommerce.sales.view.ReservationDao
 import org.json4s.Formats
 
 import scala.concurrent.ExecutionContext
-import scala.slick.driver.JdbcProfile
-import scala.slick.jdbc.JdbcBackend._
+import slick.driver.JdbcProfile
+import slick.jdbc.JdbcBackend._
 
 case class ReservationViewEndpoint(implicit ec: ExecutionContext, profile: JdbcProfile, formats: Formats) extends ReadEndpoint {
 
@@ -18,7 +17,7 @@ case class ReservationViewEndpoint(implicit ec: ExecutionContext, profile: JdbcP
     path("reservation" / "all") {
       get {
         complete {
-          viewStore withSession { implicit s =>
+          viewStore.run {
             dao.all
           }
         }
@@ -27,7 +26,7 @@ case class ReservationViewEndpoint(implicit ec: ExecutionContext, profile: JdbcP
     path("reservation" / Segment) { id =>
       get {
         complete {
-          viewStore withSession { implicit s =>
+          viewStore.run {
             dao.byId(id)
           }
         }

@@ -7,23 +7,28 @@ import ecommerce.sales._
 import org.joda.time.DateTime.now
 import pl.newicom.dddd.messaging.event.DomainEventMessage
 import pl.newicom.dddd.view.sql.Projection
+import pl.newicom.dddd.view.sql.Projection.ProjectionAction
+import slick.dbio.DBIOAction
+import slick.dbio.Effect.Write
 
-import scala.slick.jdbc.JdbcBackend
+import scala.concurrent.ExecutionContext
 
-class ReservationProjection(dao: ReservationDao) extends Projection {
+class ReservationProjection(dao: ReservationDao)(implicit ec: ExecutionContext) extends Projection {
 
-  override def consume(eventMessage: DomainEventMessage)(implicit s: JdbcBackend.Session) {
+  override def consume(eventMessage: DomainEventMessage): ProjectionAction[Write] = {
     eventMessage.event match {
       case ReservationCreated(id, clientId) =>
-        dao.createIfNotExists(ReservationView(id, clientId, Opened, new Date(now().getMillis)))
+        val newView = ReservationView(id, clientId, Opened, new Date(now().getMillis))
+        dao.createOrUpdate(newView)
       case ReservationConfirmed(id, clientId, _) =>
-        dao.byId(id).foreach { old => dao.update(old.copy(status = Confirmed)) }
+          dao.updateStatus(id, Confirmed)
       case ReservationCanceled(id) =>
-        dao.byId(id).foreach { old => dao.update(old.copy(status = Canceled)) }
+        dao.updateStatus(id, Canceled)
       case ReservationClosed(id) =>
-        dao.byId(id).foreach { old => dao.update(old.copy(status = Closed)) }
+        dao.updateStatus(id, Closed)
       case ProductReserved(id, product, quantity) =>
         // TODO handle
+        DBIOAction.successful(())
     }
   }
 }

@@ -4,15 +4,17 @@ import ecommerce.shipping.ShipmentCreated
 import ecommerce.shipping.ShippingStatus.Waiting
 import pl.newicom.dddd.messaging.event.DomainEventMessage
 import pl.newicom.dddd.view.sql.Projection
+import pl.newicom.dddd.view.sql.Projection.ProjectionAction
+import slick.dbio.Effect.Write
 
-import scala.slick.jdbc.JdbcBackend
+import scala.concurrent.ExecutionContext
 
-class ShipmentProjection(dao: ShipmentDao) extends Projection {
+class ShipmentProjection(dao: ShipmentDao)(implicit ex: ExecutionContext) extends Projection {
 
-  override def consume(eventMessage: DomainEventMessage)(implicit s: JdbcBackend.Session) {
+  override def consume(eventMessage: DomainEventMessage): ProjectionAction[Write] = {
     eventMessage.event match {
       case ShipmentCreated(id, orderId) =>
-        dao.createIfNotExists(ShipmentView(id, orderId, Waiting))
+        dao.createOrUpdate(ShipmentView(id, orderId, Waiting))
     }
   }
 }
