@@ -4,10 +4,10 @@ import akka.http.scaladsl.server.Route
 import ecommerce.sales.ReadEndpoint
 import ecommerce.sales.view.ReservationDao
 import org.json4s.Formats
-
-import scala.concurrent.ExecutionContext
 import slick.driver.JdbcProfile
 import slick.jdbc.JdbcBackend._
+
+import scala.concurrent.ExecutionContext
 
 case class ReservationViewEndpoint(implicit ec: ExecutionContext, profile: JdbcProfile, formats: Formats) extends ReadEndpoint {
 

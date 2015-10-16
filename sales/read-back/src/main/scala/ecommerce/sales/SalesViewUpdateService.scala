@@ -5,6 +5,8 @@ import ecommerce.sales.view.{ReservationDao, ReservationProjection}
 import pl.newicom.dddd.view.sql.{SqlViewUpdateConfig, SqlViewUpdateService, ViewMetadataDao}
 import slick.driver.JdbcProfile
 
+import scala.concurrent.Future
+
 class SalesViewUpdateService(override val config: Config)(override implicit val profile: JdbcProfile)
   extends SqlViewUpdateService with SalesReadBackendConfiguration {
 
@@ -14,10 +16,10 @@ class SalesViewUpdateService(override val config: Config)(override implicit val 
     )
   }
 
-  override def onUpdateStart(): Unit = {
-    viewStore.run {
-      new ViewMetadataDao().ensureSchemaCreated
+  override def onUpdateStart: Future[Unit] = {
+    viewStore.run(
+      new ViewMetadataDao().ensureSchemaCreated >>
       new ReservationDao().ensureSchemaCreated
-    }
+    ).mapToUnit
   }
 }

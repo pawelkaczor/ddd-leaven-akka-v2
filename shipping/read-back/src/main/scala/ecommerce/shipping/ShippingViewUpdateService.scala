@@ -5,6 +5,8 @@ import ecommerce.shipping.view.{ShipmentDao, ShipmentProjection}
 import pl.newicom.dddd.view.sql.{SqlViewUpdateConfig, SqlViewUpdateService, ViewMetadataDao}
 import slick.driver.JdbcProfile
 
+import scala.concurrent.Future
+
 class ShippingViewUpdateService(override val config: Config)(override implicit val profile: JdbcProfile)
   extends SqlViewUpdateService with ShippingReadBackendConfiguration {
 
@@ -16,10 +18,10 @@ class ShippingViewUpdateService(override val config: Config)(override implicit v
     )
   }
 
-  override def onUpdateStart(): Unit = {
+  override def onUpdateStart: Future[Unit] = {
     viewStore.run {
-      new ViewMetadataDao().ensureSchemaCreated
+      new ViewMetadataDao().ensureSchemaCreated >>
       shipmentDao.ensureSchemaCreated
-    }
+    }.mapToUnit
   }
 }
