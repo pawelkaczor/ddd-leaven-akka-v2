@@ -9,6 +9,7 @@ import slick.jdbc.meta.MTable._
 import scala.concurrent.ExecutionContext
 
 class ShipmentDao(implicit val profile: JdbcProfile, ex: ExecutionContext) {
+
   import profile.api._
 
   implicit val shipmentStatusColumnType = MappedColumnType.base[ShippingStatus, String](
@@ -43,29 +44,12 @@ class ShipmentDao(implicit val profile: JdbcProfile, ex: ExecutionContext) {
 
   def byOrderId(orderId: EntityId) = by_order_id(orderId).result
 
-/*
-  def createIfNotExists(view: ShipmentView)(implicit s: Session): ShipmentView = {
-    byId(view.id).run.headOption.orElse {
-      shipments.insert(view)
-      Some(view)
-    }.get
-  }
-*/
-
   def createOrUpdate(view: ShipmentView) = {
     shipments.insertOrUpdate(view)
   }
 
-/*
-  def update(view: ShipmentView) = {
-    val query = by_id(view.id)
-    if (query.run.headOption.isDefined)
-      query.update(view)
-    else
-      throw new RuntimeException("view does not exist")
-  }
-*/
-
+  def remove(id: EntityId) =
+    by_id(id).delete
 
   def ensureSchemaDropped =
     getTables(shipmentsTableName).headOption.flatMap {

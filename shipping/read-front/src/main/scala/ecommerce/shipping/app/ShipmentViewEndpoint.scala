@@ -1,5 +1,6 @@
 package ecommerce.shipping.app
 
+import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
 import ecommerce.shipping.view.ShipmentDao
 import ecommerce.shipping.ReadEndpoint
@@ -25,10 +26,9 @@ case class ShipmentViewEndpoint(implicit val ec: ExecutionContext, profile: Jdbc
     } ~
     path("shipment" / Segment) { id =>
       get {
-        complete {
-          viewStore.run {
-            dao.byId(id)
-          }
+        onSuccess(viewStore.run(dao.byId(id))) {
+          case Some(res) => complete(res)
+          case None => complete(StatusCodes.NotFound -> "unknown shipment")
         }
       }
     } ~
