@@ -1,7 +1,7 @@
 package ecommerce.sales.view
 
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.time.{Seconds, Span}
+import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfterAll, Suite}
 import org.slf4j.LoggerFactory.getLogger
 import pl.newicom.dddd.view.sql.SqlViewStoreConfiguration
@@ -27,11 +27,15 @@ trait ViewTestSupport extends SqlViewStoreConfiguration with BeforeAndAfterAll w
   def ensureSchemaDropped: DBIO[Unit]
   def ensureSchemaCreated: DBIO[Unit]
 
+  implicit override val patienceConfig = PatienceConfig(
+    timeout = scaled(Span(5, Seconds)),
+    interval = scaled(Span(200, Millis))
+  )
+
   override def beforeAll() {
-    val setup = viewStore.run {
+    viewStore.run {
       ensureSchemaDropped >> ensureSchemaCreated
-    }
-    assert(setup.isReadyWithin(Span(5, Seconds)))
+    }.futureValue
 
   }
 

@@ -1,5 +1,6 @@
 package ecommerce.sales.app
 
+import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Route
 import ecommerce.sales.ReadEndpoint
 import ecommerce.sales.view.ReservationDao
@@ -25,13 +26,13 @@ case class ReservationViewEndpoint(implicit ec: ExecutionContext, profile: JdbcP
     } ~
     path("reservation" / Segment) { id =>
       get {
-        complete {
-          viewStore.run {
-            dao.byId(id)
-          }
+        onSuccess(viewStore.run(dao.byId(id))) {
+          case Some(res) => complete(res)
+          case None => complete(StatusCodes.NotFound -> "unknown reservation")
         }
       }
     }
 
   }
+
 }
