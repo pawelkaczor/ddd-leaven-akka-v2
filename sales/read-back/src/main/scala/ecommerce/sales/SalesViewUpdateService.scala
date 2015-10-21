@@ -2,24 +2,23 @@ package ecommerce.sales
 
 import com.typesafe.config.Config
 import ecommerce.sales.view.{ReservationDao, ReservationProjection}
-import pl.newicom.dddd.view.sql.{SqlViewUpdateConfig, SqlViewUpdateService, ViewMetadataDao}
+import pl.newicom.dddd.view.sql.{SqlViewUpdateConfig, SqlViewUpdateService}
+import slick.dbio.DBIO
 import slick.driver.JdbcProfile
-
-import scala.concurrent.Future
 
 class SalesViewUpdateService(override val config: Config)(override implicit val profile: JdbcProfile)
   extends SqlViewUpdateService with SalesReadBackendConfiguration {
 
-  override def configuration: Seq[SqlViewUpdateConfig] = {
+  lazy val resevationDao = new ReservationDao
+
+  override def vuConfigs: Seq[SqlViewUpdateConfig] = {
     List(
-      SqlViewUpdateConfig("sales-reservations", salesOffice, new ReservationProjection(new ReservationDao))
+      SqlViewUpdateConfig("sales-reservations", salesOffice, new ReservationProjection(resevationDao))
     )
   }
 
-  override def onUpdateStart: Future[Unit] = {
-    viewStore.run(
-      new ViewMetadataDao().ensureSchemaCreated >>
-      new ReservationDao().ensureSchemaCreated
-    ).mapToUnit
+  override def onViewUpdateInit: DBIO[Unit] = {
+      super.onViewUpdateInit >>
+        resevationDao.ensureSchemaCreated
   }
 }
