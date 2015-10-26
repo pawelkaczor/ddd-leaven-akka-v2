@@ -1,4 +1,0 @@
-#!/bin/bash
-
-../shipping/write-back/target/universal/stage/bin/shipping-write-back
-

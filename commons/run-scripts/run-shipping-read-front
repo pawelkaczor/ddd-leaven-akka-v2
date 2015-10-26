@@ -1,0 +1,4 @@
+#!/bin/bash
+
+../../shipping/read-front/target/universal/stage/bin/shipping-read-front
+
