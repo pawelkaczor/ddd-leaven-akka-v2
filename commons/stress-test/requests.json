@@ -1,0 +1,73 @@
+[
+  {
+    "headers": {"Command-Type": "ecommerce.sales.CreateReservation"},
+    "path": "/ecommerce/sales",
+    "port": "9100",
+    "body": {
+      "reservationId": "?",
+      "customerId": "?"
+    },
+    "method": "POST"
+  },
+
+  {
+    "headers": { "Command-Type": "ecommerce.sales.ReserveProduct"},
+    "path": "/ecommerce/sales",
+    "port": "9100",
+    "body": {
+      "reservationId": "?",
+      "product": {
+        "snapshotId": {
+          "aggregateId": "123456789",
+          "sequenceNr": 0
+        },
+        "name": "DDDD For Dummies - 7th Edition",
+        "productType": 1,
+        "price": {
+          "doubleValue": 10.0,
+          "currencyCode": "USD"
+        }
+      },
+      "quantity": 1
+    },
+    "method": "POST"
+  },
+
+  {
+    "headers": {"Command-Type": "ecommerce.sales.ConfirmReservation"},
+    "path": "/ecommerce/sales",
+    "port": "9100",
+    "body": {
+      "reservationId": "?"
+    },
+    "method": "POST"
+  },
+
+  {
+    "headers": {"Command-Type": "ecommerce.invoicing.ReceivePayment"},
+    "path": "/ecommerce/invoicing",
+    "port": "9200",
+    "body": {
+      "invoiceId": "?",
+      "orderId": "?",
+      "amount": {
+        "doubleValue": 10.0,
+        "currencyCode": "USD"
+      },
+      "paymentId": "230982342"
+    },
+    "method": "POST"
+  },
+
+  {
+    "path": "/ecommerce/sales/reservation/",
+    "port": "9110",
+    "method": "GET"
+  },
+
+  {
+    "path": "/ecommerce/shipping/shipment/order/",
+    "port": "9310",
+    "method": "GET"
+  }
+]
