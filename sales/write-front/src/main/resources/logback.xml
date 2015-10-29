@@ -12,7 +12,7 @@
     <logger name="akka.cluster.ClusterHeartbeatSender" level="off"/>
     <logger name="akka.cluster.ClusterRemoteWatcher" level="info"/>
 
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="console"/>
     </root>
 
