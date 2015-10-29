@@ -1,0 +1,39 @@
+
+  upstream sales_write {
+    server <host>:9100;
+  }
+
+  upstream sales_read {
+    server <host>:9110;
+  }
+
+  upstream invoicing_write {
+    server <host>:9200;
+  }
+
+  upstream shipping_read {
+    server <host>:9310;
+  }
+
+ server {
+	listen 80;
+
+    location /ecommerce/sales {
+      if ($request_method = POST ) {
+          proxy_pass http://sales_write;
+      }
+
+      if ($request_method = GET ) {
+          proxy_pass http://sales_read;
+      }
+    }
+
+    location /ecommerce/invoicing {
+      proxy_pass http://invoicing_write;
+    }
+
+    location /ecommerce/shipping {
+      proxy_pass http://shipping_read;
+    }
+
+}

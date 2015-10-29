@@ -2,7 +2,7 @@ local json = require "lib/json"
 
 local data = {}
 
-local function bodyUpdateMap(reservationId, customerId)
+local function bodyUpdates(reservationId, customerId)
     local updates = {}
 
     local reservation = { name = "reservationId", value = reservationId }
@@ -15,34 +15,17 @@ local function bodyUpdateMap(reservationId, customerId)
     updates["ecommerce.sales.ConfirmReservation"] = { reservation }
     updates["ecommerce.invoicing.ReceivePayment"] = { order, invoice }
 
-    local mt = {}
-    mt.__index = function (table, key)
-        return {}
-    end
-    setmetatable(updates, mt)
+    setmetatable(updates, {
+        __index = function (table, key) return {} end
+    })
     return updates
 end
 
-function data.loadRequests(file)
-    local data = {}
-    local content
-    local f=io.open(file,"r")
-    if f~=nil then
-        content = f:read("*all")
-        io.close(f)
-    else
-        print("No data!")
-        return lines
-    end
-    data = json.fromJson(content)
-    return data
-end
-
-function data.nextRequest(arg)
+function data.request(arg)
     local req, reservationId, customerId = arg.template, arg.reservationId, arg.customerId
 
     local ct = req.headers and req.headers["Command-Type"]
-    for _, update in ipairs(bodyUpdateMap(reservationId, customerId)[ct]) do
+    for _, update in ipairs(bodyUpdates(reservationId, customerId)[ct]) do
         if update and update.name then
             req.body[update.name] = update.value
             req.bodyStr = json.toJson(req.body)
@@ -51,6 +34,10 @@ function data.nextRequest(arg)
 
     if req.method == "GET" then
         req.path = req.path .. reservationId
+    end
+
+    if req.method == "POST" then
+        req.headers["Content-Type"] = "application/json"
     end
 
     return req

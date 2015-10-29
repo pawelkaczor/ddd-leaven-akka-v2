@@ -1,7 +1,23 @@
+local json = require("lib/json")
 local data = require("lib/data")
 local uuid = require("uuid")
 
 local threadsCounter = 0
+
+local function log(msg)
+    print(msg)
+end
+
+local function newSession()
+    sessionCounter = (sessionCounter and sessionCounter + 1) or 1
+    if maxSessions and (sessionCounter > maxSessions) then
+        --log(string.format("Stopping customer: %d", customerId))
+        wrk.thread:stop()
+    else
+        step = 1
+        reservationId = uuid()
+    end
+end
 
 function setup(thread)
     threadsCounter = threadsCounter + 1
@@ -10,36 +26,40 @@ end
 
 function init(args)
     local dir = args[1] or error("stress-test directory not provided")
-    requests = data.loadRequests(dir .. "/requests.json")
-    step = 1
-    local msg = "thread for customer %d created"
-    print(msg:format(customerId))
+    maxSessions = args[2] and tonumber(args[2])
+
+    requestTemplates = json.loadFile(dir .. "/requests.json")
+    newSession()
 end
 
 function request()
-    local req = data.nextRequest {
-        template = requests[step],
-        reservationId = uuid(),
-        customerId = "customer-" .. customerId
+    req = data.request {
+        template      = requestTemplates[step],
+        reservationId = reservationId,
+        customerId    = "customer-" .. customerId
     }
     wrk.port = req.port
     wrk.port = req.port
-
-    local result = wrk.format(req.method, req.path, req.headers, req.bodyStr)
-    print(result)
-
-    return result
+    return wrk.format(req.method, req.path, req.headers, req.bodyStr)
 end
 
 function response()
     if step == 6 then
-        print("Stopping thread")
-        wrk.thread:stop()
+        newSession()
     else
         step = step + 1
     end
 end
 
-function delay()
-    return 1000
+--[[
+done = function(summary, latency, requests)
+    log("------------------------------")
+    local errNr = summary.errors.status
+    log(string.format("Nr of erroneous responses: %d", errNr))
 end
+]]
+
+function delay()
+    return 500
+end
+

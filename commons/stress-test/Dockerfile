@@ -6,7 +6,7 @@ ENV REFRESHED_AT 2015-06-15
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update -y &&\
-    apt-get install -y git make build-essential libssl-dev unzip net-tools curl lua5.1 liblua5.1-dev
+    apt-get install -y git make build-essential libssl-dev unzip net-tools curl lua5.1 liblua5.1-dev nginx
 
 WORKDIR /tmp
 

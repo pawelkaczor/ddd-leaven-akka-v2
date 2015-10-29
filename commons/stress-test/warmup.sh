@@ -1,10 +1,12 @@
 #!/bin/bash
 
+
 configDir=/mnt/stress-test
 
 cd $configDir
 
-#host=`netstat -nr | grep '^0\.0\.0\.0' | awk '{print $2}'`
-host=example.com
+chmod +x ./nginx/configure-reverse-proxy.sh
+./nginx/configure-reverse-proxy.sh $configDir/nginx/template
 
-wrk $@ -s $configDir/wrk-config.lua http://$host:80 -- $configDir
+# start one customer, one session
+wrk -t1 -c1 -s $configDir/wrk-config.lua http://127.0.0.1:80 -- $configDir 1

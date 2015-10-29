@@ -2,7 +2,6 @@
   {
     "headers": {"Command-Type": "ecommerce.sales.CreateReservation"},
     "path": "/ecommerce/sales",
-    "port": "9100",
     "body": {
       "reservationId": "?",
       "customerId": "?"
@@ -13,7 +12,6 @@
   {
     "headers": { "Command-Type": "ecommerce.sales.ReserveProduct"},
     "path": "/ecommerce/sales",
-    "port": "9100",
     "body": {
       "reservationId": "?",
       "product": {
@@ -36,7 +34,6 @@
   {
     "headers": {"Command-Type": "ecommerce.sales.ConfirmReservation"},
     "path": "/ecommerce/sales",
-    "port": "9100",
     "body": {
       "reservationId": "?"
     },
@@ -46,7 +43,6 @@
   {
     "headers": {"Command-Type": "ecommerce.invoicing.ReceivePayment"},
     "path": "/ecommerce/invoicing",
-    "port": "9200",
     "body": {
       "invoiceId": "?",
       "orderId": "?",
@@ -61,13 +57,11 @@
 
   {
     "path": "/ecommerce/sales/reservation/",
-    "port": "9110",
     "method": "GET"
   },
 
   {
     "path": "/ecommerce/shipping/shipment/order/",
-    "port": "9310",
     "method": "GET"
   }
 ]
