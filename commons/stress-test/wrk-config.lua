@@ -1,5 +1,6 @@
 local json = require("lib/json")
 local data = require("lib/data")
+local utils = require("lib/utils")
 local uuid = require("uuid")
 
 local threadsCounter = 0
@@ -21,6 +22,10 @@ local function newSession()
     end
 end
 
+--
+-- wrk functions
+--
+
 function setup(thread)
     threadsCounter = threadsCounter + 1
     thread:set("customerId", threadsCounter)
@@ -34,18 +39,24 @@ function init(args)
     newSession()
 end
 
+function delay()
+    return tonumber(requestTemplates[step].delay)
+end
+
 function request()
     req = data.request {
         template      = requestTemplates[step],
         reservationId = reservationId,
         customerId    = "customer-" .. customerId
     }
+
     wrk.port = req.port
     wrk.port = req.port
     return wrk.format(req.method, req.path, req.headers, req.bodyStr)
 end
 
-function response()
+function response(status, headers, body)
+    utils.logResponse(status, headers, body, step, customerId)
     if step == 6 then
         newSession()
     else
@@ -53,15 +64,7 @@ function response()
     end
 end
 
---[[
-done = function(summary, latency, requests)
-    log("------------------------------")
-    local errNr = summary.errors.status
-    log(string.format("Nr of erroneous responses: %d", errNr))
-end
-]]
-
-function delay()
-    return 500
+function done(summary, latency, requests)
+    utils.logThread(summary, latency, requests)
 end
 
