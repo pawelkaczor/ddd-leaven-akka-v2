@@ -1,27 +1,20 @@
 local json = require("lib/json")
 local data = require("lib/data")
 local utils = require("lib/utils")
+local socket = require("socket")
 local uuid = require("uuid")
 
 local threadsCounter = 0
-
-local _ = uuid.randomseed(os.time()*10000)
 
 local function log(msg)
     print(msg)
 end
 
-local function newSession()
-    sessionCounter = (sessionCounter and sessionCounter + 1) or 1
-    if maxSessions and (sessionCounter > maxSessions) then
-        --log(string.format("Stopping customer: %d", customerId))
-        wrk.thread:stop()
-    else
-        step = 1
-        reservationId = uuid.new()
-    end
+local function newUuid()
+    math.randomseed(socket.gettime())
+    uuid.randomseed(math.random()*100000000000)
+    return uuid()
 end
-
 --
 -- wrk functions
 --
@@ -33,10 +26,11 @@ end
 
 function init(args)
     local dir = args[1] or error("stress-test directory not provided")
-    maxSessions = args[2] and tonumber(args[2])
-
+    maxSessions = (args[2] and tonumber(args[2])) or 1000000000000
     requestTemplates = json.loadFile(dir .. "/requests.json")
-    newSession()
+    sessionCounter = 1
+    step = 1
+    reservationId = newUuid()
 end
 
 function delay()
@@ -58,7 +52,14 @@ end
 function response(status, headers, body)
     utils.logResponse(status, headers, body, step, customerId)
     if step == 6 then
-        newSession()
+        sessionCounter = sessionCounter + 1
+        if sessionCounter > maxSessions then
+            --log(string.format("Stopping customer: %d", customerId))
+            wrk.thread:stop()
+        else
+            step = 1
+            reservationId = newUuid()
+        end
     else
         step = step + 1
     end

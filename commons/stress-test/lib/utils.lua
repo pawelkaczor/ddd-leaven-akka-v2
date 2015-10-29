@@ -50,12 +50,14 @@ function utils.logResponse(status, headers, body, step, threadId)
     print("------------------------------")
     print("Response ".. step .." with status: ".. status .." on thread ".. threadId)
     print("------------------------------")
+--[[
     print("[response] Headers:")
     for key, value in pairs(headers) do
         print("[response]  - " .. key  .. ": " .. value)
     end
     print("[response] Body:")
     print(body)
+]]
 end
 
 function utils.logThread(summary, latency, requests)

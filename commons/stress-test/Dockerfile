@@ -30,6 +30,7 @@ RUN curl http://keplerproject.github.io/luarocks/releases/luarocks-2.2.2.tar.gz 
     make install &&\
     luarocks install lua-cjson &&\
     luarocks install uuid &&\
+    luarocks install luasocket &&\
     ulimit -c -m -s -t unlimited
 
 WORKDIR /
