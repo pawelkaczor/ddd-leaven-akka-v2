@@ -4,6 +4,8 @@ local uuid = require("uuid")
 
 local threadsCounter = 0
 
+local _ = uuid.randomseed(os.time()*10000)
+
 local function log(msg)
     print(msg)
 end
@@ -15,7 +17,7 @@ local function newSession()
         wrk.thread:stop()
     else
         step = 1
-        reservationId = uuid()
+        reservationId = uuid.new()
     end
 end
 
