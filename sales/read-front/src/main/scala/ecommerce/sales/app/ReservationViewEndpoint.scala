@@ -6,7 +6,6 @@ import ecommerce.sales.ReadEndpoint
 import ecommerce.sales.view.ReservationDao
 import org.json4s.Formats
 import slick.driver.JdbcProfile
-import slick.jdbc.JdbcBackend._
 
 import scala.concurrent.ExecutionContext
 

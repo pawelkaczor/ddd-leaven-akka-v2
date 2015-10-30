@@ -8,7 +8,6 @@ import org.json4s.Formats
 
 import scala.concurrent.ExecutionContext
 import slick.driver.JdbcProfile
-import slick.jdbc.JdbcBackend._
 
 case class ShipmentViewEndpoint(implicit val ec: ExecutionContext, profile: JdbcProfile, formats: Formats) extends ReadEndpoint {
 

@@ -6,10 +6,10 @@
         </encoder>
     </appender>
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="CONSOLE"/>
     </root>
     <logger name="slick" level="INFO"/>
-    <logger name="slick.jdbc.JdbcBackend.statement" level="DEBUG"/>
+    <logger name="slick.jdbc.JdbcBackend.statement" level="INFO"/>
     <logger name="eventstore.tcp" level="INFO"/>
 </configuration>
