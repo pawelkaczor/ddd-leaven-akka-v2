@@ -44,7 +44,7 @@ function request()
 end
 
 function response(status, headers, body)
-    utils.logResponse(status, headers, body, step, threadCounter)
+    --utils.logResponse(status, headers, body, step, threadCounter)
     if step == 6 then
         sessionCounter = sessionCounter + 1
         if sessionCounter > maxSessions then

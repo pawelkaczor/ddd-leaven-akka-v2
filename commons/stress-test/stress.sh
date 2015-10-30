@@ -4,5 +4,5 @@ configDir=/mnt/stress-test
 
 cd $configDir
 
-# 10 customers, 10 seconds
-wrk -t2 -c2 -d10s -s $configDir/wrk-config.lua http://127.0.0.1:80 -- $configDir
+# 24 threads, 30 seconds
+wrk -t24 -c24 -d30s -s $configDir/wrk-config.lua http://127.0.0.1:80 -- $configDir

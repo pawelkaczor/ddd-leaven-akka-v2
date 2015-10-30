@@ -17,6 +17,8 @@
 
  server {
 	listen 80;
+    access_log  /dev/null;
+    error_log /dev/null;
 
     location /ecommerce/sales {
       if ($request_method = POST ) {
