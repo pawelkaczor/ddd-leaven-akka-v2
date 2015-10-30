@@ -53,7 +53,7 @@
       "paymentId": "230982342"
     },
     "method": "POST",
-    "delay": 1000
+    "delay": 650
   },
 
   {
