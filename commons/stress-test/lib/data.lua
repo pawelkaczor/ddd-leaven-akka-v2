@@ -33,7 +33,7 @@ function data.request(arg)
     end
 
     if req.method == "GET" then
-        req.path = req.path .. reservationId
+        req.path = req.pathPrefix .. reservationId
     end
 
     if req.method == "POST" then

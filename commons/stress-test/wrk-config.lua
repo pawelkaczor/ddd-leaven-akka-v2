@@ -40,7 +40,6 @@ function request()
 
     wrk.port = req.port
     wrk.port = req.port
-    print(reservationId)
     return wrk.format(req.method, req.path, req.headers, req.bodyStr)
 end
 

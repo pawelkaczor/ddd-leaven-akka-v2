@@ -57,12 +57,12 @@
   },
 
   {
-    "path": "/ecommerce/sales/reservation/",
+    "pathPrefix": "/ecommerce/sales/reservation/",
     "method": "GET"
   },
 
   {
-    "path": "/ecommerce/shipping/shipment/order/",
+    "pathPrefix": "/ecommerce/shipping/shipment/order/",
     "method": "GET"
   }
 ]
