@@ -65,4 +65,5 @@ Running and testing the system
 - [Running virtualized system](https://github.com/pawelkaczor/ddd-leaven-akka-v2/wiki/Running-virtualized-system)
 - [Manual testing of order process](https://github.com/pawelkaczor/ddd-leaven-akka-v2/wiki/Manual-testing-of-order-process)
 - [End-to-end test of order process](https://github.com/pawelkaczor/ddd-leaven-akka-v2/wiki/End-to-end-test-of-order-process)
+- [Stress testing](https://github.com/pawelkaczor/ddd-leaven-akka-v2/wiki/Stress-testing)
 

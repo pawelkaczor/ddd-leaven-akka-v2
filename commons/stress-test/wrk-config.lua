@@ -77,6 +77,6 @@ end
 
 
 function done(summary, latency, requests)
-    utils.log_summary(summary, latency, requests)
+    --utils.log_summary(summary, latency, requests)
 end
 
