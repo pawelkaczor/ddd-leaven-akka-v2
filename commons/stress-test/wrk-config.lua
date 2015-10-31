@@ -5,20 +5,34 @@ local socket = require("socket")
 
 local threadGlobalCounter = 0
 
-local function log(msg)
-    print(msg)
-end
+-- See: https://github.com/wg/wrk/blob/master/SCRIPTING
 
+--[[
+  The setup phase begins after the target IP address has been resolved and all
+  threads have been initialized but not yet started.
+]]
+
+-- Called once for each thread
 function setup(thread)
     threadGlobalCounter = threadGlobalCounter + 1
     thread:set("threadCounter", threadGlobalCounter)
 end
 
+--[[
+   The running phase begins with a single call to init(), followed by
+   a call to request() and response() for each request cycle.
+]]
+
+--[[
+   Receives any extra command line arguments for the script which
+   must be separated from wrk arguments with "--".
+-- ]]
 function init(args)
     local dir = args[1] or error("stress-test directory not provided")
     maxSessions = (args[2] and tonumber(args[2])) or 1000000000000
     requestTemplates = json.loadFile(dir .. "/requests.json")
     sessionCounter = 1
+    stepsTotal = #requestTemplates
     step = 1
     uuid = require("uuid")
     math.randomseed(socket.gettime())
@@ -27,9 +41,11 @@ function init(args)
     reservationId = uuid()
 end
 
+-- Returns the number of milliseconds to delay sending the next request.
 function delay()
     return tonumber(requestTemplates[step].delay)
 end
+
 
 function request()
     req = data.request {
@@ -43,9 +59,10 @@ function request()
     return wrk.format(req.method, req.path, req.headers, req.bodyStr)
 end
 
+
 function response(status, headers, body)
-    --utils.logResponse(status, headers, body, step, threadCounter)
-    if step == 6 then
+    --utils.log_response(status, headers, body, step, threadCounter)
+    if step == stepsTotal then
         sessionCounter = sessionCounter + 1
         if sessionCounter > maxSessions then
             wrk.thread:stop()
@@ -58,7 +75,8 @@ function response(status, headers, body)
     end
 end
 
+
 function done(summary, latency, requests)
-    utils.logThread(summary, latency, requests)
+    utils.log_summary(summary, latency, requests)
 end
 

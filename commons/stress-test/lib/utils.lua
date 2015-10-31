@@ -1,5 +1,9 @@
 local utils = {}
 
+local function log(msg)
+    print(msg)
+end
+
 -- Resource: https://gist.github.com/lunixbochs/5b0bb27861a396ab7a86
 local function string(o)
     return '"' .. tostring(o) .. '"'
@@ -28,7 +32,7 @@ function utils.var_dump(...)
     if #args > 1 then
         var_dump(args)
     else
-        print(recurse(args[1]))
+        log(recurse(args[1]))
     end
 end
 
@@ -46,26 +50,26 @@ function utils.typeof(var)
     end
 end
 
-function utils.logResponse(status, headers, body, step, threadId)
-    print("------------------------------")
-    print("Response ".. step .." with status: ".. status .." on thread ".. threadId)
-    print("------------------------------")
---[[
-    print("[response] Headers:")
+function utils.log_response(status, headers, body, step, threadId)
+    log("------------------------------")
+    log("Response ".. step .." with status: ".. status .." on thread ".. threadId)
+    log("------------------------------")
+---[[
+    log("[response] Headers:")
     for key, value in pairs(headers) do
-        print("[response]  - " .. key  .. ": " .. value)
+        log("[response]  - " .. key  .. ": " .. value)
     end
-    print("[response] Body:")
-    print(body)
-]]
+    log("[response] Body:")
+    log(body)
+--]]
 end
 
-function utils.logThread(summary, latency, requests)
-    print("------------------------------")
-    print("Requests")
-    print("------------------------------")
+function utils.log_summary(summary, latency, requests)
+    log("------------------------------")
+    log("Requests")
+    log("------------------------------")
 
-    print(utils.typeof(requests))
+    log(utils.typeof(requests))
 
     utils.var_dump(summary)
     utils.var_dump(requests)
