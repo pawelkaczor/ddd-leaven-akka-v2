@@ -9,10 +9,10 @@
 <div>
 <h2>Overview</h2>
 
-<p>This sample e-commerce system has a set of properties that makes it unique among similar systems. It is:</p>
+<p>This sample e-commerce system has unique set of properties. It is:</p>
 
 <ul class="task-list">
-<li>responsive, resilient, elastic - at least potentially ;-),</li>
+<li>responsive, resilient, elastic,</li>
 <li>incorporates a SOA, EDA, and Microservice architecture,</li>
 <li>incorporates <a href="http://abdullin.com/post/dddd-cqrs-and-other-enterprise-development-buzz-words">CQRS/DDDD</a> architectural patterns,</li>
 <li>supporting long-running business processes (eg. payment deadlines), and</li>
@@ -29,10 +29,11 @@
 <p><a href="http://geteventstore.com">Event Store</a> - scalable, highly available event store with akka-persistence journal implementation. Provides engine for running user-defined projections (javascript functions) over single or multiple  event streams. Projections allow the system to group or combine events into new event streams that can represent domain-level journals such as office journals (events grouped by emitter (<code>Aggregate Root</code>) class) or business process journals (events related to concrete business process). Domain journals are topic of interest for services such as:</p>
 
 <ul class="task-list">
-<li>view updaters - responsible for updating the read side of the system </li>
-<li>receptors - allow event-driven interaction between subsystems (event choreography), including long-running processes (sagas), and</li>
+<li><b>view updaters</b> - responsible for updating the read side of the system </li>
+<li><b>receptors</b> - allow event-driven interaction between subsystems (event choreography), including long-running processes (sagas), and</li>
 </ul>
 </li>
+    <p>Both view uppdaters and receptors are operating within non-blocking <b>back-pressured</b> event processing pipeline </p>
 <li><p><a href="http://github.com/pawelkaczor/akka-ddd">Akka-DDD</a> - framework containing glue-code and all building blocks</p></li>
 </ul>
 </div>
