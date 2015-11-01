@@ -8,13 +8,13 @@ Sample e-commerce application built on top of [Akka](http://akka.io) and [EventS
 Overview
 --------------------
 
-This sample e-commerce system has a set of properties that makes it unique among similar systems. It is:
+This sample e-commerce system has unique set of properties. It is:
 
-* responsive, resilient, elastic - at least potentially ;-),
-* incorporates a SOA, EDA, and Microservice architecture,
-* incorporates [CQRS/DDDD](http://abdullin.com/post/dddd-cqrs-and-other-enterprise-development-buzz-words) architectural patterns,
-* supporting long-running business processes (eg. payment deadlines), and
-* developer-friendly (implemented in Scala, ~1500 lines of code).
+* responsive, resilient, elastic :clap:,
+* incorporates a SOA, EDA, and Microservice architecture :ok_hand:,
+* incorporates [CQRS/DDDD](http://abdullin.com/post/dddd-cqrs-and-other-enterprise-development-buzz-words) architectural patterns :+1:,
+* supporting long-running business processes (eg. payment deadlines) :muscle:, and
+* developer-friendly (implemented in Scala, ~1500 lines of code) :smile:.
 
 All these capabilities are obviously supported by the underlying technology stack, which includes:
 
@@ -25,8 +25,10 @@ All these capabilities are obviously supported by the underlying technology stac
 * [Akka Persistence](http://doc.akka.io/docs/akka/current/scala/persistence.html) - infrastructure for building durable (event sourced) actors, which has a pluggable journal,
 
 * [Event Store](http://geteventstore.com) - scalable, highly available event store with akka-persistence journal implementation. Provides engine for running user-defined projections (javascript functions) over single or multiple  event streams. Projections allow the system to group or combine events into new event streams that can represent domain-level journals such as office journals (events grouped by emitter (`Aggregate Root`) class) or business process journals (events related to concrete business process). Domain journals are topic of interest for services such as:
-  * view updaters - responsible for updating the read side of the system 
-  * receptors - allow event-driven interaction between subsystems (event choreography), including long-running processes (sagas), and
+  * **view updaters** - responsible for updating the read side of the system 
+  * **receptors** - allow event-driven interaction between subsystems (event choreography), including long-running processes (sagas), 
+  
+:exclamation: Both view uppdaters and receptors are operating within non-blocking **back-pressured** event processing pipeline :exclamation: 
 
 * [Akka-DDD](http://github.com/pawelkaczor/akka-ddd) - framework containing glue-code and all building blocks
 
