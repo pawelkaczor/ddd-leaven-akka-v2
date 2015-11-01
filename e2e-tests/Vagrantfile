@@ -15,7 +15,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       # docker.vagrant_vagrantfile = "./host/Vagrantfile"
 
       docker.name     = "ecommerce-eventstore"
-      docker.image    = "newion/eventstore:3.0.3"
+      docker.image    = "ruudud/eventstore:3.3.0"
       docker.ports    = ['2113:2113', '1113:1113']
     end
   end
@@ -61,7 +61,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     info "Enabling system projections"
     sleep(5)
     run "curl -v -u admin:changeit --data '' 'http://localhost:2113/projection/$by_category/command/enable'"
-    run "curl -v -u admin:changeit --data '' 'http://localhost:2113/projection/$by_event_type/command/enable'"
 
     info "Installing user projections"
     run "curl -v -H 'Content-Type: application/json' -u admin:changeit --data @../invoicing/write-back/src/main/resources/projections/clock.js http://127.0.0.1:2113/projections/continuous?name=clock_proj&type=JS&emit=1"
