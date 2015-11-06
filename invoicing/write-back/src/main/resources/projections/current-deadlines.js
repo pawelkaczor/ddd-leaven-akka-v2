@@ -11,8 +11,8 @@ fromStreams(['clock', '$ce-deadlines']).
                 var eventScheduledEnvelope = s.deadlines[i];
                 var eventScheduled = JSON.parse(eventScheduledEnvelope.bodyRaw);
                 var deadlineMillis = eventScheduled.payload.deadlineMillis;
-                var currentTimeMillis = JSON.parse(e.bodyRaw).timeMillis
-                var businessUnit = eventScheduled.payload.businessUnit
+                var currentTimeMillis = JSON.parse(e.bodyRaw).timeMillis;
+                var businessUnit = eventScheduled.payload.businessUnit;
                 if (currentTimeMillis >= deadlineMillis) {
                     s.deadlines.splice(i, 1);
                     linkTo('currentDeadlines-' + businessUnit, eventScheduledEnvelope);
