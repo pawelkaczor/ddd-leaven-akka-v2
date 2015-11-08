@@ -33,10 +33,11 @@ case class ShipmentViewEndpoint(implicit val ec: ExecutionContext, profile: Jdbc
     } ~
     path("shipment" / "order" / Segment) { id =>
       get {
-        complete {
-          viewStore.run {
-            dao.byOrderId(id)
-          }
+        onSuccess(viewStore.run(dao.byOrderId(id))) {
+          case seq if seq.isEmpty =>
+            complete(StatusCodes.NotFound -> "unknown order")
+          case orders =>
+            complete(orders)
         }
       }
     }
