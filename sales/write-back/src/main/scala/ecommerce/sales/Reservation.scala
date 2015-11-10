@@ -15,7 +15,7 @@ object Reservation {
       status: ReservationStatus,
       items: List[ReservationItem],
       createDate: Date)
-    extends AggregateState {
+    extends AggregateState[State] {
 
     override def apply = {
       case ProductReserved(_, product, quantity) =>

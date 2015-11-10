@@ -6,7 +6,7 @@ import pl.newicom.dddd.eventhandling.EventPublisher
 
 object Shipment {
 
-  case class State() extends AggregateState {
+  case class State() extends AggregateState[State] {
     override def apply = {
       case _ => this
     }

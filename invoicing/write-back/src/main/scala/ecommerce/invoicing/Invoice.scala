@@ -8,7 +8,7 @@ import pl.newicom.dddd.eventhandling.EventPublisher
 
 object Invoice {
 
- case class State(amountPaid: Option[Money]) extends AggregateState {
+ case class State(amountPaid: Option[Money]) extends AggregateState[State] {
     override def apply = {
       case OrderBilled(_, _, amount, _) =>
         copy(amountPaid = Some(amountPaid.getOrElse(Money()) + amount))
