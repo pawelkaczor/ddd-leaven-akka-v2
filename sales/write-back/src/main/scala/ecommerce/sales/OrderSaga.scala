@@ -4,8 +4,7 @@ import akka.actor.ActorPath
 import ecommerce.invoicing.{OrderBilled, OrderBillingFailed}
 import ecommerce.sales.OrderSaga.OrderSagaConfig
 import pl.newicom.dddd.actor.PassivationConfig
-import pl.newicom.dddd.messaging.event.EventMessage
-import pl.newicom.dddd.process.{Saga, SagaConfig}
+import pl.newicom.dddd.process.{ProcessEvent, Saga, SagaConfig}
 import pl.newicom.dddd.utils.UUIDSupport.uuid
 
 object OrderStatus extends Enumeration {
@@ -34,12 +33,12 @@ class OrderSaga(val pc: PassivationConfig, reservationOffice: ActorPath) extends
   var status = New
 
   def receiveEvent = {
-    case em @ EventMessage(_, e: ReservationConfirmed) if status == New =>
-      raise(em)
-    case em @ EventMessage(_, e: OrderBilled) if status == New =>
-      raise(em)
-    case em @ EventMessage(_, e: OrderBillingFailed) if status == New =>
-      raise(em)
+    case e: ReservationConfirmed if status == New =>
+      ProcessEvent
+    case e: OrderBilled if status == New =>
+      ProcessEvent
+    case e: OrderBillingFailed if status == New =>
+      ProcessEvent
   }
 
   def applyEvent = {

@@ -5,8 +5,7 @@ import ecommerce.invoicing.InvoicingSaga.InvoicingSagaConfig
 import ecommerce.sales.{Money, ReservationConfirmed}
 import org.joda.time.DateTime.now
 import pl.newicom.dddd.actor.PassivationConfig
-import pl.newicom.dddd.messaging.event.EventMessage
-import pl.newicom.dddd.process.{Saga, SagaConfig}
+import pl.newicom.dddd.process.{DropEvent, ProcessEvent, Saga, SagaConfig}
 
 object InvoicingSaga {
   object InvoiceStatus extends Enumeration {
@@ -33,18 +32,18 @@ class InvoicingSaga(val pc: PassivationConfig, invoicingOffice: ActorPath, overr
   var status = New
 
   def receiveEvent = {
-    case em @ EventMessage(_, e: ReservationConfirmed) if status == New =>
-      raise(em)
-    case em @ EventMessage(_, e: OrderBilled) if status == WaitingForPayment =>
-      raise(em)
-    case em @ EventMessage(_, e: PaymentExpired) =>
+    case e: ReservationConfirmed if status == New =>
+      ProcessEvent
+    case e: OrderBilled if status == WaitingForPayment =>
+      ProcessEvent
+    case e: PaymentExpired =>
       if (status == WaitingForPayment) {
-        raise(em)
+        ProcessEvent
       } else {
-        // receive and drop (invoice already paid)
+        DropEvent
       }
-    case em @ EventMessage(_, e: OrderBillingFailed) if status == WaitingForPayment =>
-      raise(em)
+    case e: OrderBillingFailed if status == WaitingForPayment =>
+      ProcessEvent
   }
 
   def applyEvent = {
