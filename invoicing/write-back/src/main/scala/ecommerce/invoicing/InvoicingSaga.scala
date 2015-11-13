@@ -1,17 +1,20 @@
 package ecommerce.invoicing
 
 import akka.actor.ActorPath
-import ecommerce.invoicing.InvoicingSaga.InvoicingSagaConfig
+import ecommerce.invoicing.InvoicingSaga._
 import ecommerce.sales.{Money, ReservationConfirmed}
 import org.joda.time.DateTime.now
 import pl.newicom.dddd.actor.PassivationConfig
-import pl.newicom.dddd.process.{DropEvent, ProcessEvent, Saga, SagaConfig}
+import pl.newicom.dddd.process._
 
 object InvoicingSaga {
-  object InvoiceStatus extends Enumeration {
-    type InvoiceStatus = Value
-    val New, WaitingForPayment, Completed, Failed = Value
-  }
+
+  sealed trait InvoiceStatus extends SagaState[InvoiceStatus]
+  case object New extends InvoiceStatus
+  case object WaitingForPayment extends InvoiceStatus
+  case object Completed extends InvoiceStatus
+  case object Failed extends InvoiceStatus
+
 
   implicit object InvoicingSagaConfig extends SagaConfig[InvoicingSaga]("invoicing") {
     def correlationIdResolver = {
@@ -23,13 +26,14 @@ object InvoicingSaga {
 
 }
 
-import ecommerce.invoicing.InvoicingSaga.InvoiceStatus._
-
-class InvoicingSaga(val pc: PassivationConfig, invoicingOffice: ActorPath, override val schedulingOffice: Option[ActorPath]) extends Saga {
+class InvoicingSaga(val pc: PassivationConfig, invoicingOffice: ActorPath, override val schedulingOffice: Option[ActorPath])
+  extends Saga with StateHandling[InvoiceStatus] {
 
   override def persistenceId = s"${InvoicingSagaConfig.name}Saga-$id"
 
-  var status = New
+  val initialState = New
+
+  def status = state
 
   def receiveEvent = {
     case e: ReservationConfirmed if status == New =>
@@ -46,25 +50,36 @@ class InvoicingSaga(val pc: PassivationConfig, invoicingOffice: ActorPath, overr
       ProcessEvent
   }
 
-  def applyEvent = {
-    case ReservationConfirmed(reservationId, customerId, totalAmountOpt) =>
-      val totalAmount = totalAmountOpt.getOrElse(Money())
-      deliverCommand(invoicingOffice, CreateInvoice(sagaId, reservationId, customerId, totalAmount, now()))
-      status = WaitingForPayment
-      // schedule payment deadline
-      schedule(PaymentExpired(sagaId, reservationId), now.plusMinutes(3))
+  def stateMachine: StateMachine = {
 
-    case PaymentExpired(invoiceId, orderId) =>
-      // cancel invoice
-      log.debug("Payment expired for order '{}'.", orderId)
-      deliverCommand(invoicingOffice, CancelInvoice(invoiceId, orderId))
+    case New => {
 
-    case OrderBilled(_, orderId, _, _) =>
-      log.debug("InvoicingSaga for order '{}' completed.", orderId)
-      status = Completed
+      case ReservationConfirmed(reservationId, customerId, totalAmountOpt) =>
+        val totalAmount = totalAmountOpt.getOrElse(Money())
+        deliverCommand(invoicingOffice, CreateInvoice(sagaId, reservationId, customerId, totalAmount, now()))
+        // schedule payment deadline
+        schedule(PaymentExpired(sagaId, reservationId), now.plusMinutes(3))
 
-    case OrderBillingFailed(_, orderId) =>
-      log.debug("InvoicingSaga for order '{}' failed.", orderId)
-      status = Failed
+        WaitingForPayment
+
+    }
+
+    case WaitingForPayment => {
+
+      case PaymentExpired(invoiceId, orderId) =>
+        // cancel invoice
+        log.debug("Payment expired for order '{}'.", orderId)
+        deliverCommand(invoicingOffice, CancelInvoice(invoiceId, orderId))
+        state
+
+      case OrderBilled(_, orderId, _, _) =>
+        log.debug("InvoicingSaga for order '{}' completed.", orderId)
+        Completed
+
+      case OrderBillingFailed(_, orderId) =>
+        log.debug("InvoicingSaga for order '{}' failed.", orderId)
+        Failed
+    }
+
   }
 }
