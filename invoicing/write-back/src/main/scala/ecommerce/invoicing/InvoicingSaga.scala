@@ -35,20 +35,10 @@ class InvoicingSaga(val pc: PassivationConfig, invoicingOffice: ActorPath, overr
 
   def status = state
 
-  def receiveEvent = {
-    case e: ReservationConfirmed if status == New =>
-      ProcessEvent
-    case e: OrderBilled if status == WaitingForPayment =>
-      ProcessEvent
-    case e: PaymentExpired =>
-      if (status == WaitingForPayment) {
-        ProcessEvent
-      } else {
-        DropEvent
-      }
-    case e: OrderBillingFailed if status == WaitingForPayment =>
-      ProcessEvent
-  }
+  override def receiveEvent =
+    super.receiveEvent.orElse {
+      case e: PaymentExpired if status != WaitingForPayment => DropEvent
+    }
 
   def stateMachine: StateMachine = {
 

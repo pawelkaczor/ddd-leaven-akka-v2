@@ -37,15 +37,6 @@ class OrderSaga(val pc: PassivationConfig, reservationOffice: ActorPath) extends
 
   def status = state
 
-  def receiveEvent: ReceiveEvent = {
-    case e: ReservationConfirmed if status.isNew =>
-      ProcessEvent
-    case e: OrderBilled if status.isNew =>
-      ProcessEvent
-    case e: OrderBillingFailed if status.isNew =>
-      ProcessEvent
-  }
-
   def stateMachine: StateMachine = {
 
     case New => {
