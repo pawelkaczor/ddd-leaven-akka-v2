@@ -8,11 +8,13 @@ import ecommerce.sales.view.ViewTestSupport
 import ecommerce.shipping.{ShippingSerializationHintsProvider, ShippingStatus}
 import ecommerce.shipping.view.{ShipmentDao, ShipmentView}
 import org.json4s.Formats
+import org.scalatest.concurrent.Eventually
 import org.scalatest.{BeforeAndAfter, Matchers, WordSpecLike}
 import pl.newicom.dddd.serialization.JsonSerHints._
 import pl.newicom.dddd.utils.UUIDSupport.uuid7
 
-class ShipmentViewEndpointSpec extends WordSpecLike with Matchers with ScalatestRouteTest with ViewTestSupport with BeforeAndAfter {
+class ShipmentViewEndpointSpec extends WordSpecLike with Matchers with ScalatestRouteTest
+  with ViewTestSupport with BeforeAndAfter with Eventually {
 
   override lazy val config = ConfigFactory.load
   implicit val formats: Formats = new ShippingSerializationHintsProvider().hints()
@@ -38,19 +40,19 @@ class ShipmentViewEndpointSpec extends WordSpecLike with Matchers with Scalatest
 
     val route: Route = ShipmentViewEndpoint().route(viewStore)
 
-    "respond to /shipment/all with all shipments" in {
+    "respond to /shipment/all with all shipments" in eventually {
       Get("/shipment/all") ~> route ~> check {
         response should include (shipmentId)
       }
     }
 
-    "respond to /shipment/{shipmentId} with requested shipment" in {
+    "respond to /shipment/{shipmentId} with requested shipment" in eventually {
       Get(s"/shipment/$shipmentId") ~> route ~> check {
         response should include (shipmentId)
       }
     }
 
-    "respond to /shipment/{shipmentId} with NotFound if shipment unknown" in {
+    "respond to /shipment/{shipmentId} with NotFound if shipment unknown" in eventually {
       Get(s"/shipment/invalid") ~> route ~> check {
         status shouldBe NotFound
       }
