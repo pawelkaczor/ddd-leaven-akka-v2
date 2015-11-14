@@ -29,27 +29,21 @@ object OrderSaga {
 
 }
 
-class OrderSaga(val pc: PassivationConfig, reservationOffice: ActorPath) extends Saga with StateHandling[OrderStatus] {
+class OrderSaga(val pc: PassivationConfig, reservationOffice: ActorPath) extends ProcessManager[OrderStatus] {
 
   override def persistenceId = s"${OrderSagaConfig.name}Saga-$id"
 
-  val initialState = New
-
-  def status = state
-
-  def stateMachine: StateMachine = {
+  startWith(New) {
 
     case New => {
 
       case OrderBilled(_, orderId, _, _) =>
-        // close reservation
-        deliverCommand(reservationOffice, CloseReservation(orderId))
-        Completed
+        deliverCommand(reservationOffice, CloseReservation(orderId)) // close reservation
+        goto(Completed)
 
       case OrderBillingFailed(_, orderId) =>
-        // cancel reservation
-        deliverCommand(reservationOffice, CancelReservation(orderId))
-        Failed
+        deliverCommand(reservationOffice, CancelReservation(orderId)) // cancel reservation
+        goto(Failed)
     }
 
   }

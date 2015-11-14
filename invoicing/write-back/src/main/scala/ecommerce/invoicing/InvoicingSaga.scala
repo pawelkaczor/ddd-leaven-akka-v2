@@ -27,20 +27,16 @@ object InvoicingSaga {
 }
 
 class InvoicingSaga(val pc: PassivationConfig, invoicingOffice: ActorPath, override val schedulingOffice: Option[ActorPath])
-  extends Saga with StateHandling[InvoiceStatus] {
+  extends ProcessManager[InvoiceStatus] {
 
   override def persistenceId = s"${InvoicingSagaConfig.name}Saga-$id"
 
-  val initialState = New
-
-  def status = state
-
   override def receiveEvent =
     super.receiveEvent.orElse {
-      case e: PaymentExpired if status != WaitingForPayment => DropEvent
+      case e: PaymentExpired if state != WaitingForPayment => DropEvent
     }
 
-  def stateMachine: StateMachine = {
+  startWith(New) {
 
     case New => {
 
@@ -50,7 +46,7 @@ class InvoicingSaga(val pc: PassivationConfig, invoicingOffice: ActorPath, overr
         // schedule payment deadline
         schedule(PaymentExpired(sagaId, reservationId), now.plusMinutes(3))
 
-        WaitingForPayment
+        goto(WaitingForPayment)
 
     }
 
@@ -60,15 +56,15 @@ class InvoicingSaga(val pc: PassivationConfig, invoicingOffice: ActorPath, overr
         // cancel invoice
         log.debug("Payment expired for order '{}'.", orderId)
         deliverCommand(invoicingOffice, CancelInvoice(invoiceId, orderId))
-        state
+        stay()
 
       case OrderBilled(_, orderId, _, _) =>
-        log.debug("InvoicingSaga for order '{}' completed.", orderId)
-        Completed
+
+        goto(Completed)
 
       case OrderBillingFailed(_, orderId) =>
-        log.debug("InvoicingSaga for order '{}' failed.", orderId)
-        Failed
+
+        goto(Failed)
     }
 
   }
