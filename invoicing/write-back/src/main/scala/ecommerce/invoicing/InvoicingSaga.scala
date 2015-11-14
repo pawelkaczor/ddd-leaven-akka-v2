@@ -36,7 +36,11 @@ class InvoicingSaga(val pc: PassivationConfig, invoicingOffice: ActorPath, overr
       case e: PaymentExpired if state != WaitingForPayment => DropEvent
     }
 
-  startWith(New) {
+  startWhen {
+
+    case _:ReservationConfirmed => New
+
+  } andThen {
 
     case New => {
 

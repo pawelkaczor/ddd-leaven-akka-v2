@@ -33,7 +33,11 @@ class OrderSaga(val pc: PassivationConfig, reservationOffice: ActorPath) extends
 
   override def persistenceId = s"${OrderSagaConfig.name}Saga-$id"
 
-  startWith(New) {
+  startWhen {
+
+    case _:OrderBilled | _:OrderBillingFailed => New
+
+  } andThen {
 
     case New => {
 
