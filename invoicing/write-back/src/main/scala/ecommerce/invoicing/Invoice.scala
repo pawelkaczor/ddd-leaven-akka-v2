@@ -5,6 +5,7 @@ import ecommerce.sales._
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.aggregate.{AggregateRoot, AggregateState}
 import pl.newicom.dddd.eventhandling.EventPublisher
+import pl.newicom.dddd.office.LocalOfficeId.fromRemoteId
 
 object Invoice {
 
@@ -16,12 +17,12 @@ object Invoice {
         this
     }
   }
+
+  implicit val officeId = fromRemoteId[Invoice](InvoicingOfficeId)
 }
 
-abstract class Invoice(override val pc: PassivationConfig) extends AggregateRoot[State] {
+abstract class Invoice(override val pc: PassivationConfig) extends AggregateRoot[State, Invoice] {
   this: EventPublisher =>
-
-  override def persistenceId = s"${invoicingOffice.name}-$id"
 
   override val factory: AggregateRootFactory = {
     case InvoiceCreated(_, _, _, _, _) =>

@@ -11,9 +11,10 @@ import pl.newicom.dddd.aggregate.AggregateRootActorFactory
 import pl.newicom.dddd.cluster._
 import pl.newicom.dddd.eventhandling.EventPublisher
 import pl.newicom.dddd.messaging.event.DomainEventMessage
+import pl.newicom.dddd.office.Office
 import pl.newicom.dddd.process.ReceptorSupport.ReceptorFactory
 import pl.newicom.dddd.process.SagaSupport._
-import pl.newicom.dddd.process.{Receptor, SagaActorFactory, SagaManager}
+import pl.newicom.dddd.process.{Saga, Receptor, SagaActorFactory, SagaManager}
 import pl.newicom.dddd.scheduling.Scheduler
 import pl.newicom.eventstore.EventstoreSubscriber
 
@@ -36,15 +37,17 @@ trait InvoicingBackendConfiguration {
   implicit def system: ActorSystem
   def creationSupport = implicitly[CreationSupport]
 
-  def invoiceOffice: ActorPath
-  def schedulingOffice: ActorPath
+  def invoiceOffice: Office[Invoice]
+  def schedulingOffice: Office[Scheduler]
 
 
   //
   // Scheduling
   //
   implicit object SchedulerFactory extends AggregateRootActorFactory[Scheduler] {
-    override def props(pc: PassivationConfig) = Props(new Scheduler(pc, "global") with LocalPublisher)
+    override def props(pc: PassivationConfig) = Props(new Scheduler(pc) with LocalPublisher {
+      override def id = "global"
+    })
   }
   implicit object SchedulerShardResolution extends DefaultShardResolution[Scheduler]
 
@@ -59,7 +62,7 @@ trait InvoicingBackendConfiguration {
 
   implicit object InvoicingSagaActorFactory extends SagaActorFactory[InvoicingSaga] {
     def props(pc: PassivationConfig): Props = {
-      Props(new InvoicingSaga(pc, invoiceOffice, Some(schedulingOffice)))
+      Props(new InvoicingSaga(pc, invoiceOffice.actorPath, Some(schedulingOffice.actorPath)))
     }
   }
 
@@ -67,8 +70,8 @@ trait InvoicingBackendConfiguration {
   // SagaManager factory
   //
 
-  implicit lazy val sagaManagerFactory: SagaManagerFactory = (sagaConfig, sagaOffice) => {
-    new SagaManager(sagaConfig, sagaOffice) with EventstoreSubscriber
+  implicit def sagaManagerFactory[E <: Saga]: SagaManagerFactory[E] = sagaOffice => {
+    new SagaManager()(sagaOffice) with EventstoreSubscriber
   }
 
   //

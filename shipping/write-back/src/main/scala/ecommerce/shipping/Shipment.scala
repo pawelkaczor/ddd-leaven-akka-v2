@@ -3,8 +3,11 @@ package ecommerce.shipping
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.aggregate._
 import pl.newicom.dddd.eventhandling.EventPublisher
+import pl.newicom.dddd.office.LocalOfficeId.fromRemoteId
 
 object Shipment {
+
+  implicit val officeId = fromRemoteId[Shipment](ShippingOfficeId)
 
   case class State() extends AggregateState[State] {
     override def apply = {
@@ -14,12 +17,10 @@ object Shipment {
 
 }
 
-import Shipment._
+import ecommerce.shipping.Shipment._
 
-abstract class Shipment(override val pc: PassivationConfig) extends AggregateRoot[State] {
+abstract class Shipment(val pc: PassivationConfig) extends AggregateRoot[State, Shipment] {
   this: EventPublisher =>
-
-  override def persistenceId = s"${shippingOffice.name}-$id"
 
   override val factory: AggregateRootFactory = {
     case ShipmentCreated(_, _) =>

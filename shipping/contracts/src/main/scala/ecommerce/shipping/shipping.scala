@@ -3,8 +3,6 @@ package ecommerce.shipping
 import pl.newicom.dddd.aggregate
 import pl.newicom.dddd.aggregate._
 
-trait ShippingOffice
-
 //
 // Commands
 //

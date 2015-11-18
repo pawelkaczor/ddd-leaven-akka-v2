@@ -5,8 +5,6 @@ import org.joda.time.DateTime
 import pl.newicom.dddd.aggregate
 import pl.newicom.dddd.aggregate._
 
-trait InvoicingOffice
-
 //
 // Commands
 //

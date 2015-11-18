@@ -1,7 +1,7 @@
 package ecommerce
 
-import pl.newicom.dddd.office.OfficeInfo
+import pl.newicom.dddd.office.RemoteOfficeId
 
 package object shipping {
-  implicit val shippingOffice: OfficeInfo[ShippingOffice] = OfficeInfo("Shipment")
+  implicit object ShippingOfficeId extends RemoteOfficeId("Shipment")
 }

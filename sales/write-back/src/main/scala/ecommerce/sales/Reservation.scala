@@ -7,8 +7,11 @@ import ecommerce.sales.ReservationStatus._
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.aggregate.{AggregateRoot, AggregateState, EntityId}
 import pl.newicom.dddd.eventhandling.EventPublisher
+import pl.newicom.dddd.office.LocalOfficeId.fromRemoteId
 
 object Reservation {
+
+  implicit val officeId = fromRemoteId[Reservation](SalesOfficeId)
 
   case class State(
       customerId: EntityId,
@@ -45,10 +48,8 @@ object Reservation {
 
 }
 
-abstract class Reservation(override val pc: PassivationConfig) extends AggregateRoot[State] {
+abstract class Reservation(val pc: PassivationConfig) extends AggregateRoot[State, Reservation] {
   this: EventPublisher =>
-
-  override def persistenceId = s"${salesOffice.name}-$id"
 
   override val factory: AggregateRootFactory = {
     case ReservationCreated(_, customerId) =>

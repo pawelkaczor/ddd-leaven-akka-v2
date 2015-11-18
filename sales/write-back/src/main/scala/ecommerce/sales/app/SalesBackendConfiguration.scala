@@ -11,8 +11,9 @@ import pl.newicom.dddd.aggregate.AggregateRootActorFactory
 import pl.newicom.dddd.cluster._
 import pl.newicom.dddd.eventhandling.EventPublisher
 import pl.newicom.dddd.messaging.event.DomainEventMessage
+import pl.newicom.dddd.office.Office
 import pl.newicom.dddd.process.SagaSupport._
-import pl.newicom.dddd.process.{SagaActorFactory, SagaManager}
+import pl.newicom.dddd.process.{Saga, SagaActorFactory, SagaManager}
 import pl.newicom.eventstore.EventstoreSubscriber
 
 import scala.io.Source
@@ -33,7 +34,7 @@ trait SalesBackendConfiguration {
   def config: Config
   implicit def system: ActorSystem
   def creationSupport = implicitly[CreationSupport]
-  def reservationOffice: ActorPath
+  def reservationOffice: Office[Reservation]
 
   //
   // Reservation Office
@@ -48,7 +49,7 @@ trait SalesBackendConfiguration {
 
   implicit object OrderSagaActorFactory extends SagaActorFactory[OrderSaga] {
     def props(pc: PassivationConfig): Props = {
-      Props(new OrderSaga(pc, reservationOffice))
+      Props(new OrderSaga(pc, reservationOffice.actorPath))
     }
   }
 
@@ -56,8 +57,8 @@ trait SalesBackendConfiguration {
   // SagaManager factory
   //
 
-  implicit lazy val sagaManagerFactory: SagaManagerFactory = (sagaConfig, sagaOffice) => {
-    new SagaManager(sagaConfig, sagaOffice) with EventstoreSubscriber
+  implicit def sagaManagerFactory[E <: Saga]: SagaManagerFactory[E] = (sagaOffice) => {
+    new SagaManager[E]()(sagaOffice) with EventstoreSubscriber
   }
 
   def seeds(config: Config) = {

@@ -1,8 +1,8 @@
 package ecommerce.tests.e2e
 
-import ecommerce.invoicing.{ReceivePayment, invoicingOffice}
+import ecommerce.invoicing.ReceivePayment
 import ecommerce.sales._
-import ecommerce.shipping.{ShippingSerializationHintsProvider, shippingOffice}
+import ecommerce.shipping.ShippingSerializationHintsProvider
 import ecommerce.tests.e2e.SystemSpec._
 import org.json4s.Formats
 import org.scalatest.concurrent.Eventually
@@ -11,14 +11,14 @@ import pl.newicom.dddd.serialization.JsonSerHints._
 
 object SystemSpec {
 
-  val sales = EndpointConfig(path = "ecommerce/sales", officeInfo = salesOffice)
+  val sales = EndpointConfig(path = "ecommerce/sales")
   val sales_write = sales.copy(port = 9100)
   val sales_read = sales.copy(port = 9110)
 
-  val invoicing = EndpointConfig(path = "ecommerce/invoicing", officeInfo = invoicingOffice)
+  val invoicing = EndpointConfig(path = "ecommerce/invoicing")
   val invoicing_write = invoicing.copy(port = 9200)
 
-  val shipping = EndpointConfig(path = "ecommerce/shipping", officeInfo = shippingOffice)
+  val shipping = EndpointConfig(path = "ecommerce/shipping")
   val shipping_read = shipping.copy(port = 9310)
 
   implicit val formats: Formats =

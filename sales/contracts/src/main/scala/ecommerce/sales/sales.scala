@@ -5,8 +5,6 @@ import java.util.Currency
 import ProductType.ProductType
 import pl.newicom.dddd.messaging.event.AggregateSnapshotId
 
-trait SalesOffice
-
 object Money {
 
   val DEFAULT_CURRENCY_CODE: String = "EUR"

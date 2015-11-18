@@ -12,9 +12,8 @@ import pl.newicom.dddd.cluster._
 import pl.newicom.dddd.eventhandling.EventPublisher
 import pl.newicom.dddd.messaging.event.DomainEventMessage
 import pl.newicom.dddd.process.Receptor
-import pl.newicom.dddd.process.ReceptorSupport._
+import pl.newicom.dddd.process.ReceptorSupport.ReceptorFactory
 import pl.newicom.eventstore.EventstoreSubscriber
-
 import scala.io.Source
 import scala.util.Try
 
@@ -35,12 +34,13 @@ trait ShippingBackendConfiguration {
   def creationSupport = implicitly[CreationSupport]
 
   //
-  // Invoicing
+  // Shipping
   //
+
   implicit object ShipmentARFactory extends AggregateRootActorFactory[Shipment] {
     override def props(pc: PassivationConfig) = Props(new Shipment(pc) with LocalPublisher)
   }
-  implicit object InvoiceShardResolution extends DefaultShardResolution[Shipment]
+  implicit object ShippingShardResolution extends DefaultShardResolution[Shipment]
 
   //
   // Receptor factory

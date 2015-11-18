@@ -5,6 +5,7 @@ import ecommerce.invoicing.InvoicingSaga._
 import ecommerce.sales.{Money, ReservationConfirmed}
 import org.joda.time.DateTime.now
 import pl.newicom.dddd.actor.PassivationConfig
+import pl.newicom.dddd.office.SagaConfig
 import pl.newicom.dddd.process._
 
 object InvoicingSaga {
@@ -26,10 +27,11 @@ object InvoicingSaga {
 
 }
 
-class InvoicingSaga(val pc: PassivationConfig, invoicingOffice: ActorPath, override val schedulingOffice: Option[ActorPath])
-  extends ProcessManager[InvoiceStatus] {
+class InvoicingSaga(val pc: PassivationConfig,
+                    invoicingOffice: ActorPath,
+                    override val schedulingOffice: Option[ActorPath]) extends ProcessManager[InvoiceStatus] {
 
-  override def persistenceId = s"${InvoicingSagaConfig.name}Saga-$id"
+  def officeId = InvoicingSagaConfig
 
   override def receiveEvent =
     super.receiveEvent.orElse {
@@ -72,4 +74,5 @@ class InvoicingSaga(val pc: PassivationConfig, invoicingOffice: ActorPath, overr
     }
 
   }
+
 }

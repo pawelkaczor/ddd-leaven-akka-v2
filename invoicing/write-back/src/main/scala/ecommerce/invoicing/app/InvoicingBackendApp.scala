@@ -1,13 +1,14 @@
 package ecommerce.invoicing.app
 
 import _root_.akka.cluster.Cluster
-import akka.actor.{ActorRef, ActorSystem}
+import akka.actor.ActorSystem
 import akka.kernel.Bootable
 import com.typesafe.config.{Config, ConfigFactory}
 import ecommerce.invoicing.{Invoice, InvoicingSaga}
 import org.slf4j.LoggerFactory._
 import pl.newicom.dddd.cluster._
-import pl.newicom.dddd.office.Office._
+import pl.newicom.dddd.office.Office
+import pl.newicom.dddd.office.OfficeFactory.office
 import pl.newicom.dddd.process.ReceptorSupport.registerReceptor
 import pl.newicom.dddd.process.SagaSupport._
 import pl.newicom.dddd.scheduling.{Scheduler, DeadlinesReceptor}
@@ -19,10 +20,8 @@ class InvoicingBackendApp extends Bootable with InvoicingBackendConfiguration {
   val config: Config = ConfigFactory.load()
   implicit val system = ActorSystem("invoicing", config)
 
-  var _invoiceOffice: ActorRef = null
-  var _schedulingOffice: ActorRef = null
-  def invoiceOffice = _invoiceOffice.path
-  def schedulingOffice = _schedulingOffice.path
+  var invoiceOffice: Office[Invoice] = null
+  var schedulingOffice: Office[Scheduler] = null
 
   override def startup() = {
     joinCluster()
@@ -30,8 +29,8 @@ class InvoicingBackendApp extends Bootable with InvoicingBackendConfiguration {
   }
 
   def openOffices(): Unit = {
-    _invoiceOffice = office[Invoice]
-    _schedulingOffice = office[Scheduler]
+    invoiceOffice = office[Invoice]
+    schedulingOffice = office[Scheduler]
     registerSaga[InvoicingSaga]
     registerReceptor(DeadlinesReceptor("global"))
   }

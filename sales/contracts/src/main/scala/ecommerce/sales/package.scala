@@ -1,8 +1,9 @@
 package ecommerce
 
-import pl.newicom.dddd.office.OfficeInfo
+import pl.newicom.dddd.office.RemoteOfficeId
 
 package object sales {
 
-  implicit val salesOffice: OfficeInfo[SalesOffice] = OfficeInfo("Reservation")
+  implicit object SalesOfficeId extends RemoteOfficeId("Reservation")
+
 }
