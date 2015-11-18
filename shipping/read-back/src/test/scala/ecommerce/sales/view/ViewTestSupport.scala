@@ -1,12 +1,11 @@
 package ecommerce.sales.view
 
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.time.{Seconds, Span}
+import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfterAll, Suite}
 import org.slf4j.LoggerFactory.getLogger
 import pl.newicom.dddd.view.sql.SqlViewStoreConfiguration
 import slick.dbio._
-
 import slick.driver.H2Driver
 
 import scala.concurrent.ExecutionContext
@@ -17,6 +16,11 @@ trait ViewTestSupport extends SqlViewStoreConfiguration with BeforeAndAfterAll w
   val log = getLogger(getClass)
 
   implicit val profile = H2Driver
+
+  implicit override val patienceConfig = PatienceConfig(
+    timeout = scaled(Span(5, Seconds)),
+    interval = scaled(Span(200, Millis))
+  )
 
   implicit class ViewStoreAction[A](a: DBIO[A])(implicit ex: ExecutionContext) {
     private val future = viewStore.run(a)
