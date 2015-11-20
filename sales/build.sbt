@@ -16,7 +16,7 @@ lazy val `sales-write-back` = (project in file("write-back"))
     dockerExposedPorts := Seq(9101),
     multiNodeTestingSettings,
     libraryDependencies ++=
-      Seq(AkkaDDD.messaging, AkkaDDD.core, AkkaDDD.test, AkkaDDD.eventStore)
+      Seq(AkkaDDD.core, AkkaDDD.test, AkkaDDD.eventStore)
   )
   .dependsOn(`sales-contracts`, "invoicing-contracts", "commons")
   .configs(MultiJvm)

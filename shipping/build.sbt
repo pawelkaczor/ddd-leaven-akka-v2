@@ -15,7 +15,7 @@ lazy val `shipping-write-back` = (project in file("write-back"))
   .settings(
     dockerExposedPorts := Seq(9301),
     libraryDependencies ++=
-      Seq(AkkaDDD.messaging, AkkaDDD.core, AkkaDDD.test, AkkaDDD.eventStore)
+      Seq(AkkaDDD.core, AkkaDDD.test, AkkaDDD.eventStore)
   )
   .dependsOn(`shipping-contracts`, "commons")
   .enablePlugins(ApplicationPlugin)

@@ -14,7 +14,7 @@ lazy val `invoicing-write-back` = (project in file("write-back"))
   .settings(
     dockerExposedPorts := Seq(9201),
     libraryDependencies ++=
-      Seq(AkkaDDD.messaging, AkkaDDD.core, AkkaDDD.scheduling, AkkaDDD.test, AkkaDDD.eventStore)
+      Seq(AkkaDDD.core, AkkaDDD.scheduling, AkkaDDD.test, AkkaDDD.eventStore)
   )
   .dependsOn(`invoicing-contracts`, "commons")
   .enablePlugins(ApplicationPlugin)
