@@ -9,8 +9,7 @@
 
     <logger name="Remoting" level="off"/>
     <logger name="akka.remote.EndpointWriter" level="off"/>
-    <logger name="akka.cluster.ClusterHeartbeatSender" level="off"/>
-    <logger name="akka.cluster.ClusterRemoteWatcher" level="info"/>
+    <logger name="akka.cluster" level="info"/>
 
     <root level="${ECOMMERCE_LOG_LEVEL:-DEBUG}">
         <appender-ref ref="console"/>

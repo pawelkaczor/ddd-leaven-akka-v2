@@ -10,7 +10,7 @@
         <appender-ref ref="CONSOLE"/>
     </root>
 
-    <logger name="akka.cluster.ClusterRemoteWatcher" level="INFO"/>
+    <logger name="akka.cluster" level="INFO"/>
     <logger name="akka.serialization" level="INFO"/>
     <logger name="eventstore.tcp" level="INFO"/>
 </configuration>
