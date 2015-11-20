@@ -7,8 +7,7 @@ lazy val sales = (project in file(".")).aggregate(`sales-contracts`, `sales-writ
 
 lazy val `sales-contracts` = (project in file("contracts"))
   .settings(
-    libraryDependencies ++=
-      Seq(AkkaDDD.messaging) ++ Json.`4s`
+    libraryDependencies += AkkaDDD.messaging
   )
 
 
@@ -24,23 +23,24 @@ lazy val `sales-write-back` = (project in file("write-back"))
   .enablePlugins(ApplicationPlugin)
 
 
+
 lazy val `sales-write-front` = (project in file("write-front"))
   .settings(
       dockerExposedPorts := Seq(9100),
-      libraryDependencies ++=
-        SqlDb() ++ Seq(AkkaDDD.writeFront)
+      libraryDependencies += AkkaDDD.writeFront
   )
   .dependsOn(`sales-contracts`, "commons")
   .enablePlugins(HttpServerPlugin)
 
 
+
 lazy val `sales-read-back` = (project in file("read-back"))
   .settings(
-    libraryDependencies ++=
-      SqlDb() ++ Seq(AkkaDDD.viewUpdateSql)
+    libraryDependencies += AkkaDDD.viewUpdateSql
   )
   .dependsOn(`sales-contracts`, "commons")
   .enablePlugins(ApplicationPlugin)
+
 
 
 lazy val `sales-read-front` = (project in file("read-front"))

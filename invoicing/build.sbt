@@ -5,9 +5,9 @@ lazy val invoicing = (project in file(".")).aggregate(`invoicing-contracts`, `in
 
 lazy val `invoicing-contracts` = (project in file("contracts"))
   .settings(
-    libraryDependencies ++=
-      Seq(AkkaDDD.messaging) ++ Json.`4s`
+    libraryDependencies += AkkaDDD.messaging
   ).dependsOn("sales-contracts")
+
 
 
 lazy val `invoicing-write-back` = (project in file("write-back"))
@@ -20,11 +20,11 @@ lazy val `invoicing-write-back` = (project in file("write-back"))
   .enablePlugins(ApplicationPlugin)
 
 
+
 lazy val `invoicing-write-front` = (project in file("write-front"))
   .settings(
     dockerExposedPorts := Seq(9200),
-    libraryDependencies ++=
-      SqlDb() ++ Seq(AkkaDDD.writeFront)
+    libraryDependencies += AkkaDDD.writeFront
   )
   .dependsOn(`invoicing-contracts`, "commons")
   .enablePlugins(HttpServerPlugin)
