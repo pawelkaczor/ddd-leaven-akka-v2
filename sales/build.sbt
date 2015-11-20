@@ -36,7 +36,7 @@ lazy val `sales-write-front` = (project in file("write-front"))
 
 lazy val `sales-read-back` = (project in file("read-back"))
   .settings(
-    libraryDependencies += AkkaDDD.viewUpdateSql
+    libraryDependencies ++= AkkaDDD.viewUpdateSql
   )
   .dependsOn(`sales-contracts`, "commons")
   .enablePlugins(ApplicationPlugin)

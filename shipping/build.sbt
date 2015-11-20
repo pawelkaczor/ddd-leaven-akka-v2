@@ -24,7 +24,7 @@ lazy val `shipping-write-back` = (project in file("write-back"))
 
 lazy val `shipping-read-back` = (project in file("read-back"))
   .settings(
-    libraryDependencies += AkkaDDD.viewUpdateSql
+    libraryDependencies ++= AkkaDDD.viewUpdateSql
   )
   .dependsOn(`shipping-contracts`, "commons")
   .enablePlugins(ApplicationPlugin)
