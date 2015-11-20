@@ -7,47 +7,50 @@ lazy val sales = (project in file(".")).aggregate(`sales-contracts`, `sales-writ
 
 lazy val `sales-contracts` = (project in file("contracts"))
   .settings(
-    libraryDependencies ++= Seq(
-      AkkaDDD.messaging
-    ) ++ Json.`4s`
+    libraryDependencies ++=
+      Seq(AkkaDDD.messaging) ++ Json.`4s`
   )
+
 
 lazy val `sales-write-back` = (project in file("write-back"))
   .settings(
-      multiNodeTestingSettings,
-      libraryDependencies ++= Seq(
-        Akka.testkit,
-        AkkaDDD.messaging, AkkaDDD.core, AkkaDDD.test, AkkaDDD.eventStore
-      )
-    )
-    .dependsOn(`sales-contracts`, "invoicing-contracts", "commons")
-    .configs(MultiJvm)
+    dockerExposedPorts := Seq(9101),
+    multiNodeTestingSettings,
+    libraryDependencies ++=
+      Seq(AkkaDDD.messaging, AkkaDDD.core, AkkaDDD.test, AkkaDDD.eventStore)
+  )
+  .dependsOn(`sales-contracts`, "invoicing-contracts", "commons")
+  .configs(MultiJvm)
+  .enablePlugins(ApplicationPlugin)
+
 
 lazy val `sales-write-front` = (project in file("write-front"))
   .settings(
-    libraryDependencies ++= SqlDb() ++ Seq(
-      AkkaDDD.writeFront, Akka.slf4j
-    )
+      dockerExposedPorts := Seq(9100),
+      libraryDependencies ++=
+        SqlDb() ++ Seq(AkkaDDD.writeFront)
   )
   .dependsOn(`sales-contracts`, "commons")
+  .enablePlugins(HttpServerPlugin)
+
 
 lazy val `sales-read-back` = (project in file("read-back"))
   .settings(
-    parallelExecution in Test := false,
-    libraryDependencies ++= SqlDb() ++ Seq(
-      AkkaDDD.viewUpdateSql
-    )
+    libraryDependencies ++=
+      SqlDb() ++ Seq(AkkaDDD.viewUpdateSql)
   )
   .dependsOn(`sales-contracts`, "commons")
+  .enablePlugins(ApplicationPlugin)
+
 
 lazy val `sales-read-front` = (project in file("read-front"))
   .settings(
-    parallelExecution in Test := false,
-    libraryDependencies ++= AkkaDDD.httpSupport ++ Seq(
-      Akka.testkit
-    )
+    dockerExposedPorts := Seq(9110)
   )
   .dependsOn(`sales-read-back` % "test->test;compile->compile", "commons")
+  .enablePlugins(HttpServerPlugin)
+
+
 
 lazy val multiNodeTestingSettings: Seq[Setting[_]] = SbtMultiJvm.multiJvmSettings ++ Seq(
   // make sure that MultiJvm test are compiled by the default test compilation

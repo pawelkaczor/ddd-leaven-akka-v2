@@ -13,12 +13,13 @@ lazy val `shipping-contracts` = (project in file("contracts"))
 
 lazy val `shipping-write-back` = (project in file("write-back"))
   .settings(
+    dockerExposedPorts := Seq(9301),
     libraryDependencies ++= Seq(
-      Akka.testkit,
       AkkaDDD.messaging, AkkaDDD.core, AkkaDDD.test, AkkaDDD.eventStore
     )
   )
   .dependsOn(`shipping-contracts`, "commons")
+  .enablePlugins(ApplicationPlugin)
 
 lazy val `shipping-read-back` = (project in file("read-back"))
   .settings(
@@ -28,12 +29,11 @@ lazy val `shipping-read-back` = (project in file("read-back"))
     )
   )
   .dependsOn(`shipping-contracts`, "commons")
+  .enablePlugins(ApplicationPlugin)
 
 lazy val `shipping-read-front` = (project in file("read-front"))
   .settings(
-    parallelExecution in Test := false,
-    libraryDependencies ++= AkkaDDD.httpSupport ++ Seq(
-      Akka.testkit
-    )
+    dockerExposedPorts := Seq(9310)
   )
   .dependsOn(`shipping-read-back` % "test->test;compile->compile", "commons")
+  .enablePlugins(HttpServerPlugin)

@@ -4,13 +4,11 @@ object Deps {
 
   object Version {
     val akka =                  "2.4.0"
-    val akkaHttp =              "1.0"
     val akkaDDD =               "1.1.0-SNAPSHOT"
   }
 
   object Akka {
     val actor =            apply("actor")
-    val httpTestKit =      apply("http-testkit-experimental", Version.akkaHttp) % "test"
     val persistence =      apply("persistence")
     val slf4j =            apply("slf4j")
     val testkit =          apply("testkit") % "test"
@@ -23,10 +21,7 @@ object Deps {
     val messaging = apply("messaging")
     val core = apply("core")
     val writeFront = apply("write-front")
-    val httpSupport = Seq(
-      "pl.newicom.dddd" %% s"http-support" % Version.akkaDDD,
-      Akka.httpTestKit
-    )
+    val httpSupport = "pl.newicom.dddd" %% s"http-support" % Version.akkaDDD % "test->test;compile->compile"
     val viewUpdateSql = "pl.newicom.dddd" %% "view-update-sql" % Version.akkaDDD
     val eventStore = "pl.newicom.dddd" %% "eventstore-akka-persistence" % Version.akkaDDD
     val scheduling = apply("scheduling")
