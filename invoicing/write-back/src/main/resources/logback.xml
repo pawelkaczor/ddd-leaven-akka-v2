@@ -6,7 +6,7 @@
         </encoder>
     </appender>
 
-    <root level="INFO">
+    <root level="${ECOMMERCE_LOG_LEVEL:-DEBUG}">
         <appender-ref ref="CONSOLE"/>
     </root>
 
