@@ -6,7 +6,6 @@ import ecommerce.sales.OrderSaga._
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.office.SagaConfig
 import pl.newicom.dddd.process._
-import pl.newicom.dddd.utils.UUIDSupport.uuid
 
 object OrderSaga {
 
@@ -22,7 +21,7 @@ object OrderSaga {
 
   implicit object OrderSagaConfig extends SagaConfig[OrderSaga]("sales") {
     def correlationIdResolver = {
-      case rc: ReservationConfirmed => s"$uuid" // orderId
+      case ReservationConfirmed(reservationId, _, _) => reservationId // orderId
       case OrderBilled(_, orderId, _, _) => orderId
       case OrderBillingFailed(_, orderId) => orderId
     }
@@ -37,11 +36,14 @@ class OrderSaga(val pc: PassivationConfig,
 
   startWhen {
 
-    case _:OrderBilled | _:OrderBillingFailed => New
+    case rc: ReservationConfirmed => New
 
   } andThen {
 
     case New => {
+
+      case ReservationConfirmed =>
+        stay()
 
       case OrderBilled(_, orderId, _, _) =>
         deliverCommand(reservationOffice, CloseReservation(orderId)) // close reservation
