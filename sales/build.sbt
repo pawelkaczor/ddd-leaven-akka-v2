@@ -14,6 +14,7 @@ lazy val `sales-contracts` = (project in file("contracts"))
 lazy val `sales-write-back` = (project in file("write-back"))
   .settings(
     dockerExposedPorts := Seq(9101),
+    javaOptions in Universal ++= Seq("-DmainClass=ecommerce.sales.app.SalesBackendApp"),
     multiNodeTestingSettings,
     libraryDependencies ++=
       Seq(AkkaDDD.core, AkkaDDD.test, AkkaDDD.eventStore)
@@ -27,6 +28,7 @@ lazy val `sales-write-back` = (project in file("write-back"))
 lazy val `sales-write-front` = (project in file("write-front"))
   .settings(
       dockerExposedPorts := Seq(9100),
+      javaOptions in Universal ++= Seq("-DmainClass=ecommerce.sales.app.SalesFrontApp"),
       libraryDependencies += AkkaDDD.writeFront
   )
   .dependsOn(`sales-contracts`, "commons")
@@ -36,6 +38,7 @@ lazy val `sales-write-front` = (project in file("write-front"))
 
 lazy val `sales-read-back` = (project in file("read-back"))
   .settings(
+    javaOptions in Universal ++= Seq("-DmainClass=ecommerce.sales.app.SalesViewUpdateApp"),
     libraryDependencies ++= AkkaDDD.viewUpdateSql
   )
   .dependsOn(`sales-contracts`, "commons")
@@ -45,6 +48,7 @@ lazy val `sales-read-back` = (project in file("read-back"))
 
 lazy val `sales-read-front` = (project in file("read-front"))
   .settings(
+    javaOptions in Universal ++= Seq("-DmainClass=ecommerce.sales.app.SalesReadFrontApp"),
     dockerExposedPorts := Seq(9110)
   )
   .dependsOn(`sales-read-back` % "test->test;compile->compile", "commons")

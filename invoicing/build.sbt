@@ -13,6 +13,7 @@ lazy val `invoicing-contracts` = (project in file("contracts"))
 lazy val `invoicing-write-back` = (project in file("write-back"))
   .settings(
     dockerExposedPorts := Seq(9201),
+    javaOptions in Universal ++= Seq("-DmainClass=ecommerce.invoicing.app.InvoicingBackendApp"),
     libraryDependencies ++=
       Seq(AkkaDDD.core, AkkaDDD.scheduling, AkkaDDD.test, AkkaDDD.eventStore)
   )
@@ -24,6 +25,7 @@ lazy val `invoicing-write-back` = (project in file("write-back"))
 lazy val `invoicing-write-front` = (project in file("write-front"))
   .settings(
     dockerExposedPorts := Seq(9200),
+    javaOptions in Universal ++= Seq("-DmainClass=ecommerce.invoicing.app.InvoicingFrontApp"),
     libraryDependencies += AkkaDDD.writeFront
   )
   .dependsOn(`invoicing-contracts`, "commons")

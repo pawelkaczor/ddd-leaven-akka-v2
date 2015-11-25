@@ -1,10 +1,9 @@
+import com.typesafe.sbt.packager.docker.{Cmd, DockerKeys, DockerPlugin}
 import sbt._
-import Keys._
-import com.typesafe.sbt.packager.docker.{Cmd, DockerKeys}
 
 object CommonDockerSettingsPlugin extends AutoPlugin with DockerKeys {
   override def trigger = allRequirements
-  override def requires = com.typesafe.sbt.packager.docker.DockerPlugin
+  override def requires = DockerPlugin
   def appLogLevel = sys.props.getOrElse("ECOMMERCE_LOG_LEVEL", default = "DEBUG")
 
   override lazy val projectSettings = Seq(
