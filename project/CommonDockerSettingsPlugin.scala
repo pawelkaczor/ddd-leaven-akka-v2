@@ -1,4 +1,4 @@
-import com.typesafe.sbt.packager.docker.{Cmd, DockerKeys, DockerPlugin}
+import com.typesafe.sbt.packager.docker.{DockerPlugin, Cmd, DockerKeys}
 import sbt._
 
 object CommonDockerSettingsPlugin extends AutoPlugin with DockerKeys {
@@ -7,7 +7,7 @@ object CommonDockerSettingsPlugin extends AutoPlugin with DockerKeys {
   def appLogLevel = sys.props.getOrElse("ECOMMERCE_LOG_LEVEL", default = "DEBUG")
 
   override lazy val projectSettings = Seq(
-      dockerBaseImage := "newion/alpine",
+      dockerBaseImage := "develar/java:latest",
       dockerCommands ++= Seq(
         Cmd("ENV", s"ES_HOST=127.0.0.1 ES_PASSWORD=changeit ECOMMERCE_LOG_LEVEL=$appLogLevel")
       )
