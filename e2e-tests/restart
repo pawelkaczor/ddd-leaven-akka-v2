@@ -1,4 +1,9 @@
 #!/bin/bash
 
-vagrant destroy -f $@
+if [[ $# -eq 0 ]] ; then
+    ./destroy-all
+else
+    vagrant destroy -f $@
+fi
+
 vagrant up

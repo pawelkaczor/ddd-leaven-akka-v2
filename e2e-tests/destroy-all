@@ -1,0 +1,27 @@
+#!/bin/bash
+
+function destroy {
+  vagrant destroy -f $1 &
+}
+
+destroy shipping-read-front
+destroy shipping-read-back
+destroy shipping-write-back
+destroy invoicing-write-front
+destroy invoicing-write-back
+destroy sales-read-front
+destroy sales-read-back
+destroy sales-write-front
+destroy sales-write-back
+destroy ecommerce-view-store
+destroy ecommerce-eventstore
+
+while true; do
+	if docker ps | grep -e "shipping\|invoicing\|sales\|ecommerce"; then
+		sleep 0.3
+	else
+		break
+	fi
+done
+
+echo "System destroyed."
