@@ -4,7 +4,6 @@ import akka.actor.{ActorRef, Props}
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.aggregate.AggregateRootActorFactory
 import pl.newicom.dddd.eventhandling.LocalPublisher
-import pl.newicom.dddd.messaging.event.AggregateSnapshotId
 import pl.newicom.dddd.test.support.OfficeSpec
 import scala.concurrent.duration._
 
@@ -25,7 +24,7 @@ class ReservationSpec extends OfficeSpec[Reservation] {
 
   def reservationId = aggregateId
 
-  val product = Product(AggregateSnapshotId("product1", 0), "productName", ProductType.Standard, Some(Money(10)))
+  val product = Product("product1", "productName", ProductType.Standard, Some(Money(10)))
 
   "Reservation office" should {
     "create reservation" in {

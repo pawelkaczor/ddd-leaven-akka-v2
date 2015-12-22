@@ -45,5 +45,5 @@ case class ReservationItem(product: Product, quantity: Int) extends BusinessEnti
 
   def increaseQuantity(addedQuantity: Int) = copy(quantity = this.quantity + addedQuantity)
 
-  def productId = product.productId
+  def productId = product.id
 }

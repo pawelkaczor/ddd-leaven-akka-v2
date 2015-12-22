@@ -3,7 +3,7 @@ package ecommerce.sales
 import java.util.Currency
 
 import ProductType.ProductType
-import pl.newicom.dddd.messaging.event.AggregateSnapshotId
+import pl.newicom.dddd.aggregate.EntityId
 
 object Money {
 
@@ -91,15 +91,12 @@ object ProductType extends Enumeration {
 
 object Product {
   def apply(productId: String, name: String, productType: ProductType, price: Option[Money]) =
-    new Product(AggregateSnapshotId(productId), name, productType, price)
+    new Product(productId, 0L, name, productType, price)
 }
 
 case class Product(
-  snapshotId: AggregateSnapshotId,
-  name: String,
-  productType: ProductType,
-  price: Option[Money]) {
-
-  def productId = snapshotId.aggregateId
-  def version = snapshotId.sequenceNr
-}
+                    id: EntityId,
+                    version: Long,
+                    name: String,
+                    productType: ProductType,
+                    price: Option[Money])

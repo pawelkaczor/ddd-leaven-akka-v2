@@ -8,7 +8,7 @@ import ecommerce.sales.ReservationConfirmed
 import ecommerce.sales.ReservationStatus.{Confirmed, Opened}
 import org.joda.time.DateTime.now
 import org.scalatest._
-import pl.newicom.dddd.messaging.event.{AggregateSnapshotId, DomainEventMessage}
+import pl.newicom.dddd.messaging.event.{OfficeEventMessage, CaseId}
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class ReservationProjectionSpec extends WordSpecLike with Matchers with ViewTestSupport {
@@ -48,7 +48,7 @@ class ReservationProjectionSpec extends WordSpecLike with Matchers with ViewTest
 
   override def ensureSchemaCreated = dao.ensureSchemaCreated
 
-  implicit def toEventMessage(event: ReservationCreated): DomainEventMessage = DomainEventMessage(AggregateSnapshotId(event.reservationId), event)
-  implicit def toEventMessage(event: ReservationConfirmed): DomainEventMessage = DomainEventMessage(AggregateSnapshotId(event.reservationId), event)
+  implicit def toEventMessage(event: ReservationCreated): OfficeEventMessage = OfficeEventMessage(CaseId(event.reservationId), event)
+  implicit def toEventMessage(event: ReservationConfirmed): OfficeEventMessage = OfficeEventMessage(CaseId(event.reservationId), event)
 
 }

@@ -22,7 +22,7 @@ object Reservation {
 
     override def apply = {
       case ProductReserved(_, product, quantity) =>
-        val newItems = items.find(item => item.productId == product.productId) match {
+        val newItems = items.find(item => item.productId == product.id) match {
           case Some(orderLine) =>
             val index = items.indexOf(orderLine)
             items.updated(index, orderLine.increaseQuantity(quantity))

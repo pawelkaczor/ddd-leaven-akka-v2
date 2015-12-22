@@ -5,7 +5,7 @@ import java.sql.Date
 import ecommerce.sales.ReservationStatus._
 import ecommerce.sales._
 import org.joda.time.DateTime.now
-import pl.newicom.dddd.messaging.event.DomainEventMessage
+import pl.newicom.dddd.messaging.event.OfficeEventMessage
 import pl.newicom.dddd.view.sql.Projection
 import pl.newicom.dddd.view.sql.Projection.ProjectionAction
 import slick.dbio.DBIOAction
@@ -15,7 +15,7 @@ import scala.concurrent.ExecutionContext
 
 class ReservationProjection(dao: ReservationDao)(implicit ec: ExecutionContext) extends Projection {
 
-  override def consume(eventMessage: DomainEventMessage): ProjectionAction[Write] = {
+  override def consume(eventMessage: OfficeEventMessage): ProjectionAction[Write] = {
     eventMessage.event match {
       case ReservationCreated(id, clientId) =>
         val newView = ReservationView(id, clientId, Opened, new Date(now().getMillis))

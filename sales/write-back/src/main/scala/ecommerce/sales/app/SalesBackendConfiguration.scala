@@ -10,7 +10,7 @@ import pl.newicom.dddd.actor.{CreationSupport, PassivationConfig}
 import pl.newicom.dddd.aggregate.AggregateRootActorFactory
 import pl.newicom.dddd.cluster._
 import pl.newicom.dddd.eventhandling.EventPublisher
-import pl.newicom.dddd.messaging.event.DomainEventMessage
+import pl.newicom.dddd.messaging.event.OfficeEventMessage
 import pl.newicom.dddd.office.Office
 import pl.newicom.dddd.persistence.PersistentActorLogging
 import pl.newicom.dddd.process.SagaSupport._
@@ -23,7 +23,7 @@ import scala.util.Try
 trait LocalPublisher extends EventPublisher {
   this: Actor with PersistentActorLogging =>
 
-  override def publish(em: DomainEventMessage): Unit = {
+  override def publish(em: OfficeEventMessage): Unit = {
     context.system.eventStream.publish(em.event)
     log.debug(s"Published: $em")
   }

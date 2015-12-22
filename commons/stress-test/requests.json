@@ -15,10 +15,8 @@
     "body": {
       "reservationId": "?",
       "product": {
-        "snapshotId": {
-          "aggregateId": "123456789",
-          "sequenceNr": 0
-        },
+        "id": "123456789",
+        "version": 0,
         "name": "DDDD For Dummies - 7th Edition",
         "productType": 1,
         "price": {
