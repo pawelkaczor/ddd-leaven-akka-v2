@@ -3,8 +3,8 @@ import sbt._
 object Deps {
 
   object Version {
-    val akka =                  "2.4.0"
-    val akkaHttp =              "1.0"
+    val akka =                  "2.4.1"
+    val akkaHttp =              "2.0.2"
     val akkaDDD =               "1.1.0-SNAPSHOT"
   }
 
