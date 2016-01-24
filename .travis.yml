@@ -3,3 +3,5 @@
    - "2.11.7"
  jdk:
    - oraclejdk8
+
+ install: sbt ++$TRAVIS_SCALA_VERSION monitoring/publishLocal
