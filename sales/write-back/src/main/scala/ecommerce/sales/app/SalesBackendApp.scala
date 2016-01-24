@@ -1,7 +1,7 @@
 package ecommerce.sales.app
 
-import _root_.akka.cluster.Cluster
-import akka.actor.{ActorRef, ActorSystem}
+import akka.cluster.Cluster
+import akka.actor.ActorSystem
 import akka.kernel.Bootable
 import com.typesafe.config.{Config, ConfigFactory}
 import ecommerce.sales.{OrderSaga, Reservation}
@@ -14,8 +14,8 @@ class SalesBackendApp extends Bootable with SalesBackendConfiguration {
 
   lazy val log = getLogger(this.getClass.getName)
 
-  val config: Config = ConfigFactory.load()
-  implicit val system = ActorSystem("sales", config)
+  lazy val config: Config = ConfigFactory.load()
+  implicit lazy val system = ActorSystem("sales", config)
 
   var reservationOffice: Office[Reservation] = null
 
@@ -39,7 +39,7 @@ class SalesBackendApp extends Bootable with SalesBackendConfiguration {
   }
 
  override def shutdown() = {
-    system.terminate()
+   system.terminate()
   }
 
 }

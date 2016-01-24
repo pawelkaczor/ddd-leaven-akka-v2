@@ -14,14 +14,14 @@ lazy val `sales-contracts` = (project in file("contracts"))
 lazy val `sales-write-back` = (project in file("write-back"))
   .settings(
     dockerExposedPorts := Seq(9101),
-    javaOptions in Universal ++= Seq("-DmainClass=ecommerce.sales.app.SalesBackendApp"),
+    javaOptions in Universal += "-DmainClass=ecommerce.sales.app.SalesBackendApp",
     multiNodeTestingSettings,
     libraryDependencies ++=
       Seq(AkkaDDD.core, AkkaDDD.test, AkkaDDD.eventStore)
   )
   .dependsOn(`sales-contracts`, "invoicing-contracts", "commons")
   .configs(MultiJvm)
-  .enablePlugins(ApplicationPlugin)
+  .enablePlugins(ApplicationPlugin, MonitoringPlugin)
 
 
 

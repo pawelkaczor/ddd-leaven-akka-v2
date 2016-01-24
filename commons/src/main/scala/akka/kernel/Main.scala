@@ -28,8 +28,10 @@ object Main {
   private def log(s: String) = if (!quiet) println(s)
 
   def main(args: Array[String]) = {
-    val mainClass: String = System.getProperty("mainClass")
-    if (mainClass == null) {
+    val mainClass             = Option(System.getProperty("mainClass"))
+    val monitoringRunnerClass = Option(System.getProperty("monitoringRunnerClass"))
+
+    if (mainClass.isEmpty) {
       log("[error] No boot classes specified")
       System.exit(1)
     }
@@ -39,11 +41,10 @@ object Main {
     log("Running Akka " + ActorSystem.Version)
 
     val classLoader = createClassLoader()
-
     Thread.currentThread.setContextClassLoader(classLoader)
 
-    val bootClasses: immutable.Seq[String] = immutable.Seq(mainClass)
-    val bootables: immutable.Seq[Bootable] = bootClasses map { c ⇒ classLoader.loadClass(c).newInstance.asInstanceOf[Bootable] }
+    val bootClasses = immutable.Seq(monitoringRunnerClass, mainClass).flatten
+    val bootables = bootClasses map { c ⇒ classLoader.loadClass(c).newInstance.asInstanceOf[Bootable] }
 
     for (bootable ← bootables) {
       log("Starting up " + bootable.getClass.getName)
