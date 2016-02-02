@@ -21,7 +21,7 @@ lazy val `sales-write-back` = (project in file("write-back"))
   )
   .dependsOn(`sales-contracts`, "invoicing-contracts", "commons")
   .configs(MultiJvm)
-  .enablePlugins(ApplicationPlugin, MonitoringPlugin)
+  .enablePlugins(ApplicationPlugin)
 
 
 
