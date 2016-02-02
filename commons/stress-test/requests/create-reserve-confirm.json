@@ -1,0 +1,41 @@
+[
+  {
+    "headers": {"Command-Type": "ecommerce.sales.CreateReservation"},
+    "path": "/ecommerce/sales",
+    "body": {
+      "reservationId": "?",
+      "customerId": "?"
+    },
+    "method": "POST"
+  },
+
+  {
+    "headers": { "Command-Type": "ecommerce.sales.ReserveProduct"},
+    "path": "/ecommerce/sales",
+    "body": {
+      "reservationId": "?",
+      "product": {
+        "id": "123456789",
+        "version": 0,
+        "name": "DDDD For Dummies - 7th Edition",
+        "productType": 1,
+        "price": {
+          "doubleValue": 10.0,
+          "currencyCode": "USD"
+        }
+      },
+      "quantity": 1
+    },
+    "method": "POST"
+  },
+
+  {
+    "headers": {"Command-Type": "ecommerce.sales.ConfirmReservation"},
+    "path": "/ecommerce/sales",
+    "body": {
+      "reservationId": "?"
+    },
+    "method": "POST"
+  }
+
+]
