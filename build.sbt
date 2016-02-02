@@ -27,3 +27,16 @@ lazy val `e2e-tests` = project
 addCommandAlias("redeploy", ";clean;docker:stage;restart")
 addCommandAlias("redeployQuick", ";docker:stage;restart")
 
+// redeployQuick aliases per application
+addCommandAlias("rsrb", ";project sales-read-back;docker:stage;restart")
+addCommandAlias("rsrf", ";project sales-read-front;docker:stage;restart")
+addCommandAlias("rswb", ";project sales-write-back;docker:stage;restart")
+addCommandAlias("rswf", ";project sales-write-front;docker:stage;restart")
+
+addCommandAlias("riwb", ";project invoicing-write-back;docker:stage;restart")
+addCommandAlias("riwf", ";project invoicing-write-front;docker:stage;restart")
+
+addCommandAlias("rshrb", ";project shipping-read-back;docker:stage;restart")
+addCommandAlias("rshrf", ";project shipping-read-front;docker:stage;restart")
+addCommandAlias("rshwb", ";project shipping-write-back;docker:stage;restart")
+
