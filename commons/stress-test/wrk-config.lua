@@ -28,9 +28,10 @@ end
    must be separated from wrk arguments with "--".
 -- ]]
 function init(args)
-    local dir = args[1] or error("stress-test directory not provided")
+    requestTemplatesFile = args[1] or error("requests not provided")
     maxSessions = (args[2] and tonumber(args[2])) or 1000000000000
-    requestTemplates = json.loadFile(dir .. "/requests.json")
+    utils.log("Loading requests templates from: " .. requestTemplatesFile)
+    requestTemplates = json.loadFile(requestTemplatesFile)
     sessionCounter = 1
     stepsTotal = #requestTemplates
     step = 1

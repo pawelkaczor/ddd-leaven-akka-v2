@@ -75,4 +75,8 @@ function utils.log_summary(summary, latency, requests)
     utils.var_dump(requests)
 end
 
+function utils.log(text)
+    log(text)
+end
+
 return utils
