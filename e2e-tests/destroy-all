@@ -17,7 +17,7 @@ destroy ecommerce-view-store
 destroy ecommerce-eventstore
 
 while true; do
-	if docker ps | grep -e "shipping\|invoicing\|sales\|ecommerce"; then
+	if docker ps | grep -e "shipping\|invoicing\|sales\|ecommerce-view-store|ecommerce-eventstore"; then
 		sleep 0.3
 	else
 		break

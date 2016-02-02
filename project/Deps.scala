@@ -32,8 +32,8 @@ object Deps {
 
   object Kamon {
     val akka          = apply("akka")
-    val akkaRemote    = apply("akka-remote_akka-2.4")
     val aspectjweaver = "org.aspectj" % "aspectjweaver" % "1.8.7"
+    val akkaRemote    = apply("akka-remote_akka-2.4")
     val autoweave     = apply("autoweave")
     val core          = apply("core")
     val logReporter   = apply("log-reporter")
@@ -41,7 +41,7 @@ object Deps {
     val statsD        = apply("statsd")
     val systemMetrics = apply("system-metrics")
 
-    def apply(): Seq[ModuleID] = Seq(akka, akkaRemote, aspectjweaver, autoweave, logReporter, scala, statsD)
+    def apply(): Seq[ModuleID] = Seq(akka, akkaRemote, aspectjweaver, autoweave, scala, statsD)
     private def apply(m: String) = "io.kamon" %% s"kamon-$m" % Version.Kamon
   }
 

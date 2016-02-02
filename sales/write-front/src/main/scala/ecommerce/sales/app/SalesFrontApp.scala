@@ -6,8 +6,8 @@ import com.typesafe.config.{Config, ConfigFactory}
 
 class SalesFrontApp extends Bootable {
 
-  private val config: Config = ConfigFactory.load()
-  implicit private val system = ActorSystem("sales-front", config)
+  private lazy val config: Config = ConfigFactory.load()
+  implicit private lazy val system = ActorSystem("sales-front", config)
 
   override def startup(): Unit = {
     system.actorOf(SalesFrontAppSupervisor.props, "sales-front-supervisor")
