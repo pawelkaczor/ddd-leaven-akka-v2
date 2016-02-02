@@ -68,4 +68,5 @@ Running and testing the system
 - [Manual testing of order process](https://github.com/pawelkaczor/ddd-leaven-akka-v2/wiki/Manual-testing-of-order-process)
 - [End-to-end test of order process](https://github.com/pawelkaczor/ddd-leaven-akka-v2/wiki/End-to-end-test-of-order-process)
 - [Stress testing](https://github.com/pawelkaczor/ddd-leaven-akka-v2/wiki/Stress-testing)
+- [Monitoring](https://github.com/pawelkaczor/ddd-leaven-akka-v2/wiki/Monitoring)
 
