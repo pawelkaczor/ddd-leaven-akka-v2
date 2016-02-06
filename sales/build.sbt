@@ -17,7 +17,7 @@ lazy val `sales-write-back` = (project in file("write-back"))
     javaOptions in Universal += "-DmainClass=ecommerce.sales.app.SalesBackendApp",
     multiNodeTestingSettings,
     libraryDependencies ++=
-      Seq(AkkaDDD.core, AkkaDDD.test, AkkaDDD.eventStore)
+      Seq(AkkaDDD.core, AkkaDDD.test, AkkaDDD.eventStore, AkkaDDD.monitoring)
   )
   .dependsOn(`sales-contracts`, "invoicing-contracts", "commons")
   .configs(MultiJvm)

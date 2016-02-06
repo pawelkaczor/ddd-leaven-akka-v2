@@ -22,6 +22,7 @@ object Deps {
     val eventStore    = "pl.newicom.dddd" %% "eventstore-akka-persistence" % Version.akkaDDD
     val httpSupport   = Seq("pl.newicom.dddd" %% s"http-support" % Version.akkaDDD, Akka.httpTestKit)
     val messaging     = apply("messaging")
+    val monitoring    = apply("monitoring")
     val scheduling    = apply("scheduling")
     val test          = apply("test") % "test"
     val viewUpdateSql = SqlDb() ++ Seq("pl.newicom.dddd" %% "view-update-sql" % Version.akkaDDD)
