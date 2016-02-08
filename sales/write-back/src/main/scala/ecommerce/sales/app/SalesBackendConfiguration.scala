@@ -11,6 +11,7 @@ import pl.newicom.dddd.aggregate.AggregateRootActorFactory
 import pl.newicom.dddd.cluster._
 import pl.newicom.dddd.eventhandling.EventPublisher
 import pl.newicom.dddd.messaging.event.OfficeEventMessage
+import pl.newicom.dddd.monitoring.{SagaMonitoring, ReceptorMonitoring}
 import pl.newicom.dddd.office.Office
 import pl.newicom.dddd.persistence.PersistentActorLogging
 import pl.newicom.dddd.process.SagaSupport._
@@ -50,7 +51,7 @@ trait SalesBackendConfiguration {
 
   implicit object OrderSagaActorFactory extends SagaActorFactory[OrderSaga] {
     def props(pc: PassivationConfig): Props = {
-      Props(new OrderSaga(pc, reservationOffice.actorPath))
+      Props(new OrderSaga(pc, reservationOffice.actorPath) with SagaMonitoring)
     }
   }
 
@@ -59,7 +60,7 @@ trait SalesBackendConfiguration {
   //
 
   implicit def sagaManagerFactory[E <: Saga]: SagaManagerFactory[E] = (sagaOffice) => {
-    new SagaManager[E]()(sagaOffice) with EventstoreSubscriber
+    new SagaManager[E]()(sagaOffice) with EventstoreSubscriber with ReceptorMonitoring
   }
 
   def seeds(config: Config) = {
