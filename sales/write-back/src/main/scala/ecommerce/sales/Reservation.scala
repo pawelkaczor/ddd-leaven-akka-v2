@@ -7,7 +7,6 @@ import ecommerce.sales.ReservationStatus._
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.aggregate.{AggregateRoot, AggregateState, EntityId}
 import pl.newicom.dddd.eventhandling.EventPublisher
-import pl.newicom.dddd.monitoring.AggregateRootMonitoring
 import pl.newicom.dddd.office.LocalOfficeId.fromRemoteId
 
 object Reservation {
@@ -49,7 +48,7 @@ object Reservation {
 
 }
 
-abstract class Reservation(val pc: PassivationConfig) extends AggregateRoot[State, Reservation] with AggregateRootMonitoring {
+abstract class Reservation(val pc: PassivationConfig) extends AggregateRoot[State, Reservation] {
   this: EventPublisher =>
 
   override val factory: AggregateRootFactory = {
