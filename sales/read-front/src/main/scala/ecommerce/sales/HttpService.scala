@@ -3,7 +3,7 @@ package ecommerce.sales
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives
-import akka.stream.scaladsl.ImplicitMaterializer
+import pl.newicom.dddd.streams.ImplicitMaterializer
 import akka.util.Timeout
 import com.typesafe.config.Config
 import ecommerce.sales.app.ReservationViewEndpoint

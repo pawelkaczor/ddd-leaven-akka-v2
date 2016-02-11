@@ -5,7 +5,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.{Directives, Route}
-import akka.stream.scaladsl.ImplicitMaterializer
+import pl.newicom.dddd.streams.ImplicitMaterializer
 import akka.util.Timeout
 import ecommerce.invoicing.{Command => InvoicingCommand, InvoicingOfficeId}
 import org.json4s.Formats
