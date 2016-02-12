@@ -4,15 +4,15 @@ import java.net.InetAddress
 
 import akka.actor._
 import com.typesafe.config.Config
-import ecommerce.sales.{ReservationConfirmed, OrderSaga, Reservation}
+import ecommerce.sales.{OrderSaga, Reservation}
+import eventstore.EsConnection
 import org.slf4j.Logger
 import pl.newicom.dddd.actor.{CreationSupport, PassivationConfig}
 import pl.newicom.dddd.aggregate._
 import pl.newicom.dddd.cluster._
 import pl.newicom.dddd.eventhandling.EventPublisher
-import pl.newicom.dddd.messaging.{AddressableMessage, Message}
-import pl.newicom.dddd.messaging.event.{EventMessage, OfficeEventMessage}
-import pl.newicom.dddd.monitoring.{AggregateRootMonitoring, SagaMonitoring, ReceptorMonitoring}
+import pl.newicom.dddd.messaging.event.OfficeEventMessage
+import pl.newicom.dddd.monitoring.{AggregateRootMonitoring, ReceptorMonitoring, SagaMonitoring}
 import pl.newicom.dddd.office.Office
 import pl.newicom.dddd.persistence.PersistentActorLogging
 import pl.newicom.dddd.process.SagaSupport._
@@ -43,20 +43,7 @@ trait SalesBackendConfiguration {
   // Reservation Office
   //
   implicit object ReservationARFactory extends AggregateRootActorFactory[Reservation] {
-
-    override def props(pc: PassivationConfig) = Props(new Reservation(pc) with LocalPublisher with AggregateRootMonitoring {
-
-      override def toEventMessage(event: DomainEvent): EventMessage = {
-        event match {
-          case rc: ReservationConfirmed =>
-            EventMessage(event)
-              .withMetaAttribute("commandTimestamp", commandTraceContext.startTimestamp.nanos)
-              .withMetaAttribute("commandName", "ConfirmReservation")
-          case _ =>
-            super.toEventMessage(event)
-        }
-      }
-    })
+    override def props(pc: PassivationConfig) = Props(new Reservation(pc) with LocalPublisher with AggregateRootMonitoring)
   }
 
   implicit object ReservationShardResolution extends DefaultShardResolution[Reservation]
@@ -66,24 +53,7 @@ trait SalesBackendConfiguration {
   implicit object OrderSagaActorFactory extends SagaActorFactory[OrderSaga] {
 
     def props(pc: PassivationConfig): Props = {
-      Props(new OrderSaga(pc, reservationOffice.actorPath) with SagaMonitoring {
-
-        override protected def acknowledgeEvent(em: Message): Unit = {
-          for {
-            commandTimestamp <- em.tryGetMetaAttribute[BigInt]("commandTimestamp")
-            commandName <- em.tryGetMetaAttribute[String]("commandName")
-          } yield {
-            val eventName = em.asInstanceOf[AddressableMessage].payloadName
-            val contextName = s"AR-$commandName-Saga-$eventName"
-            newTraceContext(contextName, commandTimestamp.toLong).foreach(_.finish())
-          }
-          super.acknowledgeEvent(em)
-        }
-
-        override def onEventReceived(em: EventMessage, appliedAction: SagaAction): Unit = {
-          super.onEventReceived(em, appliedAction)
-        }
-      })
+      Props(new OrderSaga(pc, reservationOffice.actorPath) with SagaMonitoring)
     }
   }
 
@@ -92,7 +62,8 @@ trait SalesBackendConfiguration {
   //
 
   implicit def sagaManagerFactory[E <: Saga]: SagaManagerFactory[E] = (sagaOffice) => {
-    new SagaManager[E]()(sagaOffice) with EventstoreSubscriber with ReceptorMonitoring
+    new SagaManager[E]()(sagaOffice) with EventstoreSubscriber with ReceptorMonitoring[EsConnection] {
+    }
   }
 
   def seeds(config: Config) = {
