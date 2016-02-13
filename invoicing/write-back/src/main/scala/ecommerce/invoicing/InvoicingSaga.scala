@@ -5,8 +5,8 @@ import ecommerce.invoicing.InvoicingSaga._
 import ecommerce.sales.{Money, ReservationConfirmed}
 import org.joda.time.DateTime.now
 import pl.newicom.dddd.actor.PassivationConfig
-import pl.newicom.dddd.office.SagaConfig
 import pl.newicom.dddd.process._
+import pl.newicom.dddd.saga.SagaConfig
 
 object InvoicingSaga {
 

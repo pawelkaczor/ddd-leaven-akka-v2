@@ -4,8 +4,8 @@ import akka.actor.ActorPath
 import ecommerce.invoicing.{OrderBilled, OrderBillingFailed}
 import ecommerce.sales.OrderSaga._
 import pl.newicom.dddd.actor.PassivationConfig
-import pl.newicom.dddd.office.SagaConfig
 import pl.newicom.dddd.process._
+import pl.newicom.dddd.saga.SagaConfig
 
 object OrderSaga {
 
