@@ -19,6 +19,7 @@ import pl.newicom.dddd.process.{Saga, Receptor, SagaActorFactory, SagaManager}
 import pl.newicom.dddd.scheduling.Scheduler
 import pl.newicom.eventstore.EventstoreSubscriber
 
+import scala.concurrent.duration.{DurationInt, Duration}
 import scala.io.Source
 import scala.util.Try
 
@@ -62,6 +63,9 @@ trait InvoicingBackendConfiguration {
   implicit object InvoicingSagaShardResolution extends DefaultShardResolution[InvoicingSaga]
 
   implicit object InvoicingSagaActorFactory extends SagaActorFactory[InvoicingSaga] {
+    // avoid Saga passivation during a stress-test as it results in a delivery failure of DeliveryTick (ALOD) messages
+    override def inactivityTimeout: Duration = 30 minutes
+
     def props(pc: PassivationConfig): Props = {
       Props(new InvoicingSaga(pc, invoiceOffice.actorPath, Some(schedulingOffice.actorPath)))
     }

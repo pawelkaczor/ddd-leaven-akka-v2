@@ -19,6 +19,7 @@ import pl.newicom.dddd.process.SagaSupport._
 import pl.newicom.dddd.process._
 import pl.newicom.eventstore.EventstoreSubscriber
 
+import scala.concurrent.duration.{DurationInt, Duration}
 import scala.io.Source
 import scala.util.Try
 
@@ -52,6 +53,9 @@ trait SalesBackendConfiguration {
 
   implicit object OrderSagaActorFactory extends SagaActorFactory[OrderSaga] {
 
+    // avoid Saga passivation during a stress-test as it results in a delivery failure of DeliveryTick (ALOD) messages
+    override def inactivityTimeout: Duration = 30 minutes
+
     def props(pc: PassivationConfig): Props = {
       Props(new OrderSaga(pc, reservationOffice.actorPath) with SagaMonitoring)
     }
@@ -62,8 +66,7 @@ trait SalesBackendConfiguration {
   //
 
   implicit def sagaManagerFactory[E <: Saga]: SagaManagerFactory[E] = (sagaOffice) => {
-    new SagaManager[E]()(sagaOffice) with EventstoreSubscriber with ReceptorMonitoring[EsConnection] {
-    }
+    new SagaManager[E]()(sagaOffice) with EventstoreSubscriber with ReceptorMonitoring[EsConnection]
   }
 
   def seeds(config: Config) = {
