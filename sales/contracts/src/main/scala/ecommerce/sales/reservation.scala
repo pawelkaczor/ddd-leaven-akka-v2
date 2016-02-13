@@ -39,9 +39,9 @@ object ReservationStatus extends Enumeration {
   val Opened, Confirmed, Canceled, Closed = Value
 }
 
-case class ReservationItem(product: Product, quantity: Int) extends BusinessEntity {
+case class ReservationItem(product: Product, quantity: Int) {
 
-  override val id: String = UUID.randomUUID().toString
+  val id: String = UUID.randomUUID().toString
 
   def increaseQuantity(addedQuantity: Int) = copy(quantity = this.quantity + addedQuantity)
 
