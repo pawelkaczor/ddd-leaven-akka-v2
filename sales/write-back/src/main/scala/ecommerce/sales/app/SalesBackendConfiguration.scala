@@ -10,11 +10,9 @@ import org.slf4j.Logger
 import pl.newicom.dddd.actor.{CreationSupport, PassivationConfig}
 import pl.newicom.dddd.aggregate._
 import pl.newicom.dddd.cluster._
-import pl.newicom.dddd.eventhandling.EventPublisher
-import pl.newicom.dddd.messaging.event.OfficeEventMessage
+import pl.newicom.dddd.eventhandling.NoPublishing
 import pl.newicom.dddd.monitoring.{AggregateRootMonitoring, ReceptorMonitoring, SagaMonitoring}
 import pl.newicom.dddd.office.Office
-import pl.newicom.dddd.persistence.PersistentActorLogging
 import pl.newicom.dddd.process.SagaSupport._
 import pl.newicom.dddd.process._
 import pl.newicom.eventstore.EventstoreSubscriber
@@ -22,15 +20,6 @@ import pl.newicom.eventstore.EventstoreSubscriber
 import scala.concurrent.duration.{DurationInt, Duration}
 import scala.io.Source
 import scala.util.Try
-
-trait LocalPublisher extends EventPublisher {
-  this: Actor with PersistentActorLogging =>
-
-  override def publish(em: OfficeEventMessage): Unit = {
-    context.system.eventStream.publish(em.event)
-    log.debug(s"Published: $em")
-  }
-}
 
 trait SalesBackendConfiguration {
 
@@ -44,7 +33,7 @@ trait SalesBackendConfiguration {
   // Reservation Office
   //
   implicit object ReservationARFactory extends AggregateRootActorFactory[Reservation] {
-    override def props(pc: PassivationConfig) = Props(new Reservation(pc) with LocalPublisher with AggregateRootMonitoring)
+    override def props(pc: PassivationConfig) = Props(new Reservation(pc) with NoPublishing with AggregateRootMonitoring)
   }
 
   implicit object ReservationShardResolution extends DefaultShardResolution[Reservation]
@@ -61,12 +50,10 @@ trait SalesBackendConfiguration {
     }
   }
 
-  //
-  // SagaManager factory
-  //
-
   implicit def sagaManagerFactory[E <: Saga]: SagaManagerFactory[E] = (sagaOffice) => {
-    new SagaManager[E]()(sagaOffice) with EventstoreSubscriber with ReceptorMonitoring[EsConnection]
+    new SagaManager[E]()(sagaOffice) with EventstoreSubscriber with ReceptorMonitoring[EsConnection] {
+      override lazy val config = defaultConfig.copy(capacity = 100)
+    }
   }
 
   def seeds(config: Config) = {

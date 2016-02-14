@@ -14,7 +14,8 @@ import pl.newicom.dddd.http.JsonMarshalling
 import pl.newicom.dddd.messaging.command.CommandMessage
 import pl.newicom.dddd.office.OfficeId
 import pl.newicom.dddd.serialization.JsonSerHints.fromConfig
-import pl.newicom.dddd.writefront.{CommandDirective, CommandHandler}
+import pl.newicom.dddd.utils.UUIDSupport._
+import pl.newicom.dddd.writefront.{CommandDirectives, CommandHandler}
 
 import scala.concurrent.duration.FiniteDuration
 import scala.util.{Failure, Success}
@@ -26,7 +27,7 @@ object HttpService {
 
 class HttpService(interface: String, port: Int)(implicit askTimeout: Timeout)
   extends Actor with InvoicingFrontConfiguration with CommandHandler
-  with CommandDirective with Directives
+  with CommandDirectives with Directives
   with ActorLogging with ImplicitMaterializer with JsonMarshalling {
 
   import context.dispatcher
@@ -43,13 +44,16 @@ class HttpService(interface: String, port: Int)(implicit askTimeout: Timeout)
     }
   }
 
-  private def handleCommand[A <: Command](officeId: OfficeId): Route = commandManifest[A] { implicit cm =>
-    post {
-      entity(as[A]) { command =>
-        complete {
-          handle(officeId, CommandMessage(command)).map[ToResponseMarshallable] {
-            case Success(msg) => StatusCodes.OK -> msg
-            case Failure(ex)  => StatusCodes.InternalServerError -> ex.getMessage
+  private def handleCommand[A <: Command](officeId: OfficeId): Route = commandTimestamp { timestamp =>
+    commandManifest[A] { implicit cm =>
+      post {
+        entity(as[A]) { command =>
+          complete {
+            val cm = CommandMessage(command, uuid, timestamp.toDate)
+            handle(officeId, cm).map[ToResponseMarshallable] {
+              case Success(msg) => StatusCodes.OK -> msg
+              case Failure(ex) => StatusCodes.InternalServerError -> ex.getMessage
+            }
           }
         }
       }

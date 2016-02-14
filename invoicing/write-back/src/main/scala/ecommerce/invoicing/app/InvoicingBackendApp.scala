@@ -18,10 +18,10 @@ class InvoicingBackendApp extends Bootable with InvoicingBackendConfiguration {
   lazy val log = getLogger(this.getClass.getName)
 
   val config: Config = ConfigFactory.load()
-  implicit val system = ActorSystem("invoicing", config)
+  implicit lazy val system = ActorSystem("invoicing", config)
 
-  var invoiceOffice: Office[Invoice] = null
-  var schedulingOffice: Office[Scheduler] = null
+  var invoiceOffice: Office[Invoice] = _
+  var schedulingOffice: Office[Scheduler] = _
 
   override def startup() = {
     joinCluster()

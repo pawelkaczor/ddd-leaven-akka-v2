@@ -5,14 +5,14 @@ import java.net.InetAddress
 import akka.actor._
 import com.typesafe.config.Config
 import ecommerce.invoicing.{Invoice, InvoicingSaga}
+import eventstore.EsConnection
 import org.slf4j.Logger
 import pl.newicom.dddd.actor.{CreationSupport, PassivationConfig}
 import pl.newicom.dddd.aggregate.AggregateRootActorFactory
 import pl.newicom.dddd.cluster._
-import pl.newicom.dddd.eventhandling.EventPublisher
-import pl.newicom.dddd.messaging.event.OfficeEventMessage
+import pl.newicom.dddd.eventhandling.NoPublishing
+import pl.newicom.dddd.monitoring.{ReceptorMonitoring, SagaMonitoring, AggregateRootMonitoring}
 import pl.newicom.dddd.office.Office
-import pl.newicom.dddd.persistence.PersistentActorLogging
 import pl.newicom.dddd.process.ReceptorSupport.ReceptorFactory
 import pl.newicom.dddd.process.SagaSupport._
 import pl.newicom.dddd.process.{Saga, Receptor, SagaActorFactory, SagaManager}
@@ -22,15 +22,6 @@ import pl.newicom.eventstore.EventstoreSubscriber
 import scala.concurrent.duration.{DurationInt, Duration}
 import scala.io.Source
 import scala.util.Try
-
-trait LocalPublisher extends EventPublisher {
-  this: Actor with PersistentActorLogging =>
-
-  override def publish(em: OfficeEventMessage): Unit = {
-    context.system.eventStream.publish(em.event)
-    log.debug(s"Published: $em")
-  }
-}
 
 trait InvoicingBackendConfiguration {
 
@@ -47,7 +38,7 @@ trait InvoicingBackendConfiguration {
   // Scheduling
   //
   implicit object SchedulerFactory extends AggregateRootActorFactory[Scheduler] {
-    override def props(pc: PassivationConfig) = Props(new Scheduler(pc) with LocalPublisher {
+    override def props(pc: PassivationConfig) = Props(new Scheduler(pc) with NoPublishing with AggregateRootMonitoring {
       override def id = "global"
     })
   }
@@ -57,7 +48,7 @@ trait InvoicingBackendConfiguration {
   // Invoicing
   //
   implicit object InvoiceARFactory extends AggregateRootActorFactory[Invoice] {
-    override def props(pc: PassivationConfig) = Props(new Invoice(pc) with LocalPublisher)
+    override def props(pc: PassivationConfig) = Props(new Invoice(pc) with NoPublishing)
   }
   implicit object InvoiceShardResolution extends DefaultShardResolution[Invoice]
   implicit object InvoicingSagaShardResolution extends DefaultShardResolution[InvoicingSaga]
@@ -67,24 +58,16 @@ trait InvoicingBackendConfiguration {
     override def inactivityTimeout: Duration = 30 minutes
 
     def props(pc: PassivationConfig): Props = {
-      Props(new InvoicingSaga(pc, invoiceOffice.actorPath, Some(schedulingOffice.actorPath)))
+      Props(new InvoicingSaga(pc, invoiceOffice.actorPath, Some(schedulingOffice.actorPath)) with SagaMonitoring)
     }
   }
 
-  //
-  // SagaManager factory
-  //
-
   implicit def sagaManagerFactory[E <: Saga]: SagaManagerFactory[E] = sagaOffice => {
-    new SagaManager()(sagaOffice) with EventstoreSubscriber
+    new SagaManager()(sagaOffice) with EventstoreSubscriber with ReceptorMonitoring[EsConnection]
   }
 
-  //
-  // Receptor factory
-  //
-
   implicit val receptorFactory: ReceptorFactory = receptorConfig => {
-    new Receptor with EventstoreSubscriber {
+    new Receptor with EventstoreSubscriber with ReceptorMonitoring[EsConnection] {
       def config = receptorConfig
     }
   }
