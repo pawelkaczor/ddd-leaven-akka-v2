@@ -46,13 +46,21 @@ trait SalesBackendConfiguration {
     override def inactivityTimeout: Duration = 30 minutes
 
     def props(pc: PassivationConfig): Props = {
-      Props(new OrderSaga(pc, reservationOffice.actorPath) with SagaMonitoring)
+      Props(new OrderSaga(pc, reservationOffice.actorPath) with SagaMonitoring {
+        val rejectionPercent: Int = 0 // increase for testing purposes only
+
+        override def receiveEvent: ReceiveEvent = {
+          case e: DomainEvent if (Math.random() * 100) < rejectionPercent => RejectEvent
+          case e: DomainEvent => RaiseEvent(e)
+        }
+      })
     }
   }
 
   implicit def sagaManagerFactory[E <: Saga]: SagaManagerFactory[E] = (sagaOffice) => {
     new SagaManager[E]()(sagaOffice) with EventstoreSubscriber with ReceptorMonitoring[EsConnection] {
       override lazy val config = defaultConfig.copy(capacity = 100)
+      override def redeliverInterval = 10.seconds
     }
   }
 
