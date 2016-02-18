@@ -5,7 +5,6 @@ import java.net.InetAddress
 import akka.actor._
 import com.typesafe.config.Config
 import ecommerce.sales.{OrderSaga, Reservation}
-import eventstore.EsConnection
 import org.slf4j.Logger
 import pl.newicom.dddd.actor.{CreationSupport, PassivationConfig}
 import pl.newicom.dddd.aggregate._
@@ -58,7 +57,7 @@ trait SalesBackendConfiguration {
   }
 
   implicit def sagaManagerFactory[E <: Saga]: SagaManagerFactory[E] = (sagaOffice) => {
-    new SagaManager[E]()(sagaOffice) with EventstoreSubscriber with ReceptorMonitoring[EsConnection] {
+    new SagaManager[E]()(sagaOffice) with EventstoreSubscriber with ReceptorMonitoring {
       override lazy val config = defaultConfig.copy(capacity = 100)
       override def redeliverInterval = 10.seconds
     }

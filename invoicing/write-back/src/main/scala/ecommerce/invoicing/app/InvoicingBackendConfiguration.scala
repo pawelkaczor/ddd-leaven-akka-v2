@@ -5,7 +5,6 @@ import java.net.InetAddress
 import akka.actor._
 import com.typesafe.config.Config
 import ecommerce.invoicing.{Invoice, InvoicingSaga}
-import eventstore.EsConnection
 import org.slf4j.Logger
 import pl.newicom.dddd.actor.{CreationSupport, PassivationConfig}
 import pl.newicom.dddd.aggregate.AggregateRootActorFactory
@@ -63,11 +62,11 @@ trait InvoicingBackendConfiguration {
   }
 
   implicit def sagaManagerFactory[E <: Saga]: SagaManagerFactory[E] = sagaOffice => {
-    new SagaManager()(sagaOffice) with EventstoreSubscriber with ReceptorMonitoring[EsConnection]
+    new SagaManager()(sagaOffice) with EventstoreSubscriber with ReceptorMonitoring
   }
 
   implicit val receptorFactory: ReceptorFactory = receptorConfig => {
-    new Receptor with EventstoreSubscriber with ReceptorMonitoring[EsConnection] {
+    new Receptor with EventstoreSubscriber with ReceptorMonitoring {
       def config = receptorConfig
     }
   }
