@@ -3,14 +3,14 @@ import sbt._
 object Deps {
 
   object Version {
-    val akka        =    "2.4.2-RC2"
-    val akkaDDD     =    "1.2.0-SNAPSHOT"
+    val akka        =    "2.4.2"
+    val akkaDDD     =    "1.2.1-SNAPSHOT"
     val Kamon       =    "0.6.0-a9d5c5c61f7e5e189bf67baee2b13e21ebbaaf73"
   }
 
   object Akka {
     val actor =            apply("actor")
-    val httpTestKit =      apply("http-testkit-experimental", Version.akka) % "test"
+    val httpTestKit =      apply("http-testkit", Version.akka) % "test"
     val multiNodeTestkit = apply("multi-node-testkit") % "test"
 
     private def apply(m: String, v: String = Version.akka) = "com.typesafe.akka" %% s"akka-$m" % v
