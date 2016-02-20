@@ -1,8 +1,13 @@
 package ecommerce.shipping
 
+import com.typesafe.config.Config
+import pl.newicom.dddd.view.sql.SqlViewStoreConfiguration
+
 import scala.concurrent.duration._
 
-trait ShippingReadFrontConfiguration extends ShippingReadBackendConfiguration {
+trait ShippingReadFrontConfiguration extends SqlViewStoreConfiguration {
+
+  def config: Config
 
   object httpService {
     val interface =   appConfig.getString("http-service.interface")

@@ -1,5 +1,6 @@
 package ecommerce.shipping
 
 import pl.newicom.dddd.view.sql.SqlViewStoreConfiguration
+import pl.newicom.eventstore.EventStoreConfiguration
 
-trait ShippingReadBackendConfiguration extends SqlViewStoreConfiguration
+trait ShippingReadBackendConfiguration extends SqlViewStoreConfiguration with EventStoreConfiguration

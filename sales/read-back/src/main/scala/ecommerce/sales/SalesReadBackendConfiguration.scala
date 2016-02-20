@@ -1,5 +1,6 @@
 package ecommerce.sales
 
 import pl.newicom.dddd.view.sql.SqlViewStoreConfiguration
+import pl.newicom.eventstore.EventStoreConfiguration
 
-trait SalesReadBackendConfiguration extends SqlViewStoreConfiguration
+trait SalesReadBackendConfiguration extends SqlViewStoreConfiguration with EventStoreConfiguration

@@ -26,7 +26,7 @@ lazy val `shipping-write-back` = (project in file("write-back"))
 lazy val `shipping-read-back` = (project in file("read-back"))
   .settings(
     javaOptions in Universal ++= Seq("-DmainClass=ecommerce.shipping.app.ShippingViewUpdateApp"),
-    libraryDependencies ++= AkkaDDD.viewUpdateSql
+    libraryDependencies ++= AkkaDDD.viewUpdateSql ++ Seq(AkkaDDD.eventStore)
   )
   .dependsOn(`shipping-contracts`, "commons")
   .enablePlugins(ApplicationPlugin)

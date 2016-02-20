@@ -39,7 +39,7 @@ lazy val `sales-write-front` = (project in file("write-front"))
 lazy val `sales-read-back` = (project in file("read-back"))
   .settings(
     javaOptions in Universal ++= Seq("-DmainClass=ecommerce.sales.app.SalesViewUpdateApp"),
-    libraryDependencies ++= AkkaDDD.viewUpdateSql
+    libraryDependencies ++= AkkaDDD.viewUpdateSql ++ Seq(AkkaDDD.eventStore)
   )
   .dependsOn(`sales-contracts`, "commons")
   .enablePlugins(ApplicationPlugin)
