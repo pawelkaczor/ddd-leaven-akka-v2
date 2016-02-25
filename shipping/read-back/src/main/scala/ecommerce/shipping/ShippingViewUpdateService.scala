@@ -18,8 +18,8 @@ class ShippingViewUpdateService(override val config: Config)(override implicit v
     )
   }
 
-  override def onViewUpdateInit: DBIO[Unit] = {
-      super.onViewUpdateInit >>
+  override def viewUpdateInitAction: DBIO[Unit] = {
+      super.viewUpdateInitAction >>
         shipmentDao.ensureSchemaCreated
   }
 }

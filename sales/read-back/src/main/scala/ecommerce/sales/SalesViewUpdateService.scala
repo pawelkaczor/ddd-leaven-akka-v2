@@ -18,8 +18,8 @@ class SalesViewUpdateService(override val config: Config)(override implicit val 
     )
   }
 
-  override def onViewUpdateInit: DBIO[Unit] = {
-      super.onViewUpdateInit >>
+  override def viewUpdateInitAction: DBIO[Unit] = {
+      super.viewUpdateInitAction >>
         resevationDao.ensureSchemaCreated
   }
 }
