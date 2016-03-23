@@ -4,7 +4,7 @@ object Deps {
 
   object Version {
     val akka        =    "2.4.2"
-    val akkaDDD     =    "1.2.1-SNAPSHOT"
+    val akkaDDD     =    "1.2.2-SNAPSHOT"
     val Kamon       =    "0.6.0-2961cc2fff3f408dbce964ed8ec82998bc864186"
   }
 

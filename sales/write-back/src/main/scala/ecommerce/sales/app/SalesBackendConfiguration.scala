@@ -46,12 +46,14 @@ trait SalesBackendConfiguration {
 
     def props(pc: PassivationConfig): Props = {
       Props(new OrderSaga(pc, reservationOffice.actorPath) with SagaMonitoring {
+/*
         val rejectionPercent: Int = 0 // increase for testing purposes only
 
         override def receiveEvent: ReceiveEvent = {
           case e: DomainEvent if (Math.random() * 100) < rejectionPercent => RejectEvent
           case e: DomainEvent => RaiseEvent(e)
         }
+*/
       })
     }
   }

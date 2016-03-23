@@ -14,8 +14,8 @@ import pl.newicom.dddd.monitoring.{ReceptorMonitoring, SagaMonitoring, Aggregate
 import pl.newicom.dddd.office.Office
 import pl.newicom.dddd.process.ReceptorSupport.ReceptorFactory
 import pl.newicom.dddd.process.SagaSupport._
-import pl.newicom.dddd.process.{Saga, Receptor, SagaActorFactory, SagaManager}
-import pl.newicom.dddd.scheduling.Scheduler
+import pl.newicom.dddd.process.{Saga, SagaActorFactory, SagaManager}
+import pl.newicom.dddd.scheduling.{DeadlinesReceptor, Scheduler}
 import pl.newicom.eventstore.EventstoreSubscriber
 
 import scala.concurrent.duration.{DurationInt, Duration}
@@ -66,7 +66,7 @@ trait InvoicingBackendConfiguration {
   }
 
   implicit val receptorFactory: ReceptorFactory = receptorConfig => {
-    new Receptor with EventstoreSubscriber with ReceptorMonitoring {
+    new DeadlinesReceptor with EventstoreSubscriber with ReceptorMonitoring {
       def config = receptorConfig
     }
   }
