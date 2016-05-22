@@ -33,7 +33,7 @@ object Deps {
   object Kamon {
     val akka          = apply("akka")
     val aspectjweaver = "org.aspectj" % "aspectjweaver" % "1.8.7"
-    val akkaRemote    = apply("akka-remote_akka-2.4")
+    val akkaRemote    = apply("akka-remote")
     val autoweave     = apply("autoweave")
     val core          = apply("core")
     val logReporter   = apply("log-reporter")
