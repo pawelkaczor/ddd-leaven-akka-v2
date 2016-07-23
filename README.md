@@ -41,10 +41,11 @@ The system currently consists of the following subsystems:
 * Invoicing - handling payment process
 * Shipping - handling shipping process
 
-Applications
+Subsystem components
 --------------------
 
 Each subsystem is divided into **write** and **read** side, each side containing **back-end** and **front-end** application: 
+![](https://docs.google.com/drawings/d/12Lwwq3WROlu2pkXsIwICQvuWiPNKW5XQwc7bRtLaauI/pub?w=722&amp;h=620)
 
 ***
 #### write-back
