@@ -17,15 +17,20 @@ class ReservationProjection(dao: ReservationDao)(implicit ec: ExecutionContext) 
 
   override def consume(eventMessage: OfficeEventMessage): ProjectionAction[Write] = {
     eventMessage.event match {
+
       case ReservationCreated(id, clientId) =>
         val newView = ReservationView(id, clientId, Opened, new Date(now().getMillis))
         dao.createOrUpdate(newView)
+
       case ReservationConfirmed(id, clientId, _) =>
           dao.updateStatus(id, Confirmed)
+
       case ReservationCanceled(id) =>
         dao.updateStatus(id, Canceled)
+
       case ReservationClosed(id) =>
         dao.updateStatus(id, Closed)
+
       case ProductReserved(id, product, quantity) =>
         // TODO handle
         DBIOAction.successful(())

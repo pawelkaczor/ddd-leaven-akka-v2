@@ -65,7 +65,7 @@ trait SalesBackendConfiguration {
     }
   }
 
-  def seeds(config: Config) = {
+  def seeds(config: Config): List[Address] = {
     // Read cluster seed nodes from the file specified in the configuration
     Try(config.getString("app.cluster.seedsFile")).toOption match {
       case Some(seedsFile) =>

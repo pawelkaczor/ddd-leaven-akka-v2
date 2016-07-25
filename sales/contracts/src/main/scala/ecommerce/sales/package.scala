@@ -4,6 +4,6 @@ import pl.newicom.dddd.office.RemoteOfficeId
 
 package object sales {
 
-  implicit object SalesOfficeId extends RemoteOfficeId("Reservation", "Sales")
+  implicit object ReservationOfficeId extends RemoteOfficeId("Reservation", "Sales")
 
 }

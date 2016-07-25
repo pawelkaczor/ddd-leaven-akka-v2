@@ -12,12 +12,12 @@ import pl.newicom.dddd.process.SagaSupport.registerSaga
 
 class SalesBackendApp extends Bootable with SalesBackendConfiguration {
 
-  lazy val log = getLogger(this.getClass.getName)
+  lazy val log = getLogger(getClass.getName)
 
   lazy val config: Config = ConfigFactory.load()
   implicit lazy val system = ActorSystem("sales", config)
 
-  var reservationOffice: Office[Reservation] = null
+  var reservationOffice: Office[Reservation] = _
 
   override def startup() = {
     joinCluster()
@@ -29,13 +29,10 @@ class SalesBackendApp extends Bootable with SalesBackendConfiguration {
     registerSaga[OrderSaga]
   }
 
-  /**
-   * Join the cluster with the specified seed nodes and block until termination
-   */
   def joinCluster(): Unit = {
     val seedList = seeds(config)
     log.info(s"Joining cluster with seed nodes: $seedList")
-    Cluster(system).joinSeedNodes(seedList.toSeq)
+    Cluster(system).joinSeedNodes(seedList)
   }
 
  override def shutdown() = {

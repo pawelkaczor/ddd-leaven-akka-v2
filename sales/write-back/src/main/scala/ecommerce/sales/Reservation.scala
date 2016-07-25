@@ -11,7 +11,7 @@ import pl.newicom.dddd.office.LocalOfficeId.fromRemoteId
 
 object Reservation {
 
-  implicit val officeId = fromRemoteId[Reservation](SalesOfficeId)
+  implicit val officeId = fromRemoteId[Reservation](ReservationOfficeId)
 
   case class State(
       customerId: EntityId,

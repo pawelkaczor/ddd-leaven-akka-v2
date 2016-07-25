@@ -7,7 +7,7 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.{Directives, Route}
 import pl.newicom.dddd.streams.ImplicitMaterializer
 import akka.util.Timeout
-import ecommerce.sales.{Command => SalesCommand, SalesOfficeId}
+import ecommerce.sales.{Command => ReservationCommand, ReservationOfficeId}
 import org.json4s.Formats
 import pl.newicom.dddd.aggregate.Command
 import pl.newicom.dddd.http.JsonMarshalling
@@ -41,7 +41,7 @@ class HttpService(interface: String, port: Int)(implicit askTimeout: Timeout)
   private def route = /*logRequestResult("sales")*/ {
     pathPrefix("ecommerce") {
       path("sales") {
-        handleCommand[SalesCommand](SalesOfficeId)
+        handleCommand[ReservationCommand](ReservationOfficeId)
       }
     }
   }
