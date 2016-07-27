@@ -18,10 +18,10 @@ object HttpService {
 class HttpService(interface: String, port: Int)(implicit askTimeout: Timeout)
   extends Actor with InvoicingFrontConfiguration with CommandDispatcher with ActorLogging {
 
-  import context.dispatcher
   implicit val formats: Formats = fromConfig(config)
 
   Http(context.system).bindAndHandle(route, interface, port)
+
   log.info(s"Listening on $interface:$port")
 
   override def receive = Actor.emptyBehavior

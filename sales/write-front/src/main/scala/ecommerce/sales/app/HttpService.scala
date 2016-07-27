@@ -18,7 +18,6 @@ object HttpService {
 class HttpService(interface: String, port: Int)(implicit askTimeout: Timeout)
   extends Actor with SalesFrontConfiguration with CommandDispatcher with ActorLogging {
 
-  import context.dispatcher
   implicit val formats: Formats = fromConfig(config)
 
   Http(context.system).bindAndHandle(route, interface, port)
