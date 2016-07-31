@@ -12,7 +12,7 @@ trait SalesFrontConfiguration {
   object httpService {
     val interface =   appConfig.getString("http-service.interface")
     val port       =  appConfig.getInt("http-service.port")
-    val askTimeout =  FiniteDuration(appConfig.getDuration("http-service.ask-timeout", MILLISECONDS), MILLISECONDS)
+    val timeout =  FiniteDuration(appConfig.getDuration("http-service.ask-timeout", MILLISECONDS), MILLISECONDS)
   }
 
   lazy val contactPoints: Seq[String] = immutableSeq(appConfig.getStringList("backend-contact-points"))

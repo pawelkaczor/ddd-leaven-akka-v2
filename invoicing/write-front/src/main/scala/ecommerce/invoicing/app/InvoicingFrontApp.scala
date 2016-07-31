@@ -36,6 +36,6 @@ class InvoicingFrontAppSupervisor extends Actor with ActorLogging with Invoicing
 
   protected def createHttpService(): ActorRef = {
     import httpService._
-    context.actorOf(HttpService.props(interface, port, askTimeout), "http-service")
+    context.actorOf(HttpService.props(interface, port, timeout), "http-service")
   }
 }

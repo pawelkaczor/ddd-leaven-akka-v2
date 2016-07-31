@@ -36,6 +36,6 @@ class SalesFrontAppSupervisor extends Actor with ActorLogging with SalesFrontCon
 
   protected def createHttpService(): ActorRef = {
     import httpService._
-    context.actorOf(HttpService.props(interface, port, askTimeout), "http-service")
+    context.actorOf(HttpService.props(interface, port, timeout), "http-service")
   }
 }

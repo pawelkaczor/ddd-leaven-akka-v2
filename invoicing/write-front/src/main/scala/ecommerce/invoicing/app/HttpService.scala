@@ -6,7 +6,7 @@ import akka.util.Timeout
 import ecommerce.invoicing.{Command => InvoicingCommand, InvoicingOfficeId}
 import org.json4s.Formats
 import pl.newicom.dddd.serialization.JsonSerHints.fromConfig
-import pl.newicom.dddd.writefront.CommandDispatcher
+import pl.newicom.dddd.writefront.HttpCommandHandler
 
 import scala.concurrent.duration.FiniteDuration
 
@@ -15,8 +15,8 @@ object HttpService {
     Props(new HttpService(interface, port)(askTimeout))
 }
 
-class HttpService(interface: String, port: Int)(implicit askTimeout: Timeout)
-  extends Actor with InvoicingFrontConfiguration with CommandDispatcher with ActorLogging {
+class HttpService(interface: String, port: Int)(implicit val timeout: Timeout)
+  extends Actor with InvoicingFrontConfiguration with HttpCommandHandler with ActorLogging {
 
   implicit val formats: Formats = fromConfig(config)
 
@@ -30,7 +30,7 @@ class HttpService(interface: String, port: Int)(implicit askTimeout: Timeout)
 
   private def route = pathPrefix("ecommerce") {
     path("invoicing") {
-      dispatch[InvoicingCommand]
+      handle[InvoicingCommand]
     }
   }
 
