@@ -55,7 +55,7 @@ trait InvoicingBackendConfiguration {
     override def inactivityTimeout: Duration = 30 minutes
 
     def props(pc: PassivationConfig): Props = {
-      Props(new InvoicingSaga(pc, invoiceOffice.actorPath, Some(schedulingOffice.actorPath)) with SagaMonitoring)
+      Props(new InvoicingSaga(pc, invoiceOffice, Some(schedulingOffice)) with SagaMonitoring)
     }
   }
 

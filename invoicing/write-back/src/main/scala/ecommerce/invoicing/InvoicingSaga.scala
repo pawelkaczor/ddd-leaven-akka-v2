@@ -1,11 +1,11 @@
 package ecommerce.invoicing
 
-import akka.actor.ActorPath
 import ecommerce.sales.{Money, ReservationConfirmed}
 import org.joda.time.DateTime.now
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.process._
 import pl.newicom.dddd.saga.SagaConfig
+import pl.newicom.dddd.office.Office
 
 object InvoicingSaga extends SagaSupport {
 
@@ -29,8 +29,8 @@ object InvoicingSaga extends SagaSupport {
 import ecommerce.invoicing.InvoicingSaga._
 
 class InvoicingSaga(val pc: PassivationConfig,
-                    invoicingOffice: ActorPath,
-                    override val schedulingOffice: Option[ActorPath]) extends ProcessManager[InvoiceStatus] {
+                    invoicingOffice: Office,
+                    override val schedulingOffice: Option[Office]) extends ProcessManager[InvoiceStatus] {
 
   def officeId = InvoicingSagaConfig
 
@@ -49,7 +49,9 @@ class InvoicingSaga(val pc: PassivationConfig,
 
       case ReservationConfirmed(reservationId, customerId, totalAmountOpt) =>
         val totalAmount = totalAmountOpt.getOrElse(Money())
-        deliverCommand(invoicingOffice, CreateInvoice(sagaId, reservationId, customerId, totalAmount, now()))
+
+        invoicingOffice !! CreateInvoice(sagaId, reservationId, customerId, totalAmount, now())
+
         // schedule payment deadline
         schedule(PaymentExpired(sagaId, reservationId), now.plusMinutes(3))
 
@@ -62,16 +64,15 @@ class InvoicingSaga(val pc: PassivationConfig,
       case PaymentExpired(invoiceId, orderId) =>
         // cancel invoice
         log.debug("Payment expired for order '{}'.", orderId)
-        deliverCommand(invoicingOffice, CancelInvoice(invoiceId, orderId))
-        stay()
+        invoicingOffice !! CancelInvoice(invoiceId, orderId)
 
       case OrderBilled(_, orderId, _, _) =>
 
-        goto(Completed)
+        Completed
 
       case OrderBillingFailed(_, orderId) =>
 
-        goto(Failed)
+        Failed
     }
 
   }

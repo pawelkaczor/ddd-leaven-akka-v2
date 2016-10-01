@@ -40,7 +40,7 @@ trait SalesBackendConfiguration {
     override def inactivityTimeout: Duration = 30 minutes
 
     def props(pc: PassivationConfig): Props = {
-      Props(new OrderSaga(pc, reservationOffice.actorPath) with SagaMonitoring {
+      Props(new OrderSaga(pc, reservationOffice) with SagaMonitoring {
 /*
         val rejectionPercent: Int = 0 // increase for testing purposes only
 

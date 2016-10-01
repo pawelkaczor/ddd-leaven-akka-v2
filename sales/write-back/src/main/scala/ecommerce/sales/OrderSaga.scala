@@ -1,8 +1,8 @@
 package ecommerce.sales
 
-import akka.actor.ActorPath
 import ecommerce.invoicing.{OrderBilled, OrderBillingFailed}
 import pl.newicom.dddd.actor.PassivationConfig
+import pl.newicom.dddd.office.Office
 import pl.newicom.dddd.process._
 import pl.newicom.dddd.saga.SagaConfig
 
@@ -30,8 +30,7 @@ object OrderSaga extends SagaSupport {
 
 import ecommerce.sales.OrderSaga._
 
-class OrderSaga(val pc: PassivationConfig,
-                reservationOffice: ActorPath) extends ProcessManager[OrderStatus] {
+class OrderSaga(val pc: PassivationConfig, reservationOffice: Office) extends ProcessManager[OrderStatus] {
 
   val officeId = OrderSagaConfig
 
@@ -44,15 +43,16 @@ class OrderSaga(val pc: PassivationConfig,
     case New => {
 
       case ReservationConfirmed =>
-        stay()
 
       case OrderBilled(_, orderId, _, _) =>
-        deliverCommand(reservationOffice, CloseReservation(orderId)) // close reservation
-        goto(Completed)
+        reservationOffice !! CloseReservation(orderId)
+
+        Completed
 
       case OrderBillingFailed(_, orderId) =>
-        deliverCommand(reservationOffice, CancelReservation(orderId)) // cancel reservation
-        goto(Failed)
+        reservationOffice !! CancelReservation(orderId)
+
+        Failed
     }
 
   }
