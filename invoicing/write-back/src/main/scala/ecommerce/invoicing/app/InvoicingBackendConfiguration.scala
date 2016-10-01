@@ -7,18 +7,18 @@ import com.typesafe.config.Config
 import ecommerce.invoicing.{Invoice, InvoicingSaga}
 import org.slf4j.Logger
 import pl.newicom.dddd.actor.{CreationSupport, PassivationConfig}
-import pl.newicom.dddd.aggregate.AggregateRootActorFactory
+import pl.newicom.dddd.aggregate.{AggregateRootActorFactory, BusinessEntity}
 import pl.newicom.dddd.cluster._
 import pl.newicom.dddd.eventhandling.NoPublishing
-import pl.newicom.dddd.monitoring.{ReceptorMonitoring, SagaMonitoring, AggregateRootMonitoring}
+import pl.newicom.dddd.monitoring.{AggregateRootMonitoring, ReceptorMonitoring, SagaMonitoring}
 import pl.newicom.dddd.office.Office
 import pl.newicom.dddd.process.ReceptorSupport.ReceptorFactory
-import pl.newicom.dddd.process.SagaSupport._
+import pl.newicom.dddd.process.SagaSupport.SagaManagerFactory
 import pl.newicom.dddd.process.{Saga, SagaActorFactory, SagaManager}
 import pl.newicom.dddd.scheduling.{DeadlinesReceptor, Scheduler}
 import pl.newicom.eventstore.EventstoreSubscriber
 
-import scala.concurrent.duration.{DurationInt, Duration}
+import scala.concurrent.duration.{Duration, DurationInt}
 import scala.io.Source
 import scala.util.Try
 
@@ -29,9 +29,10 @@ trait InvoicingBackendConfiguration {
   implicit def system: ActorSystem
   def creationSupport = implicitly[CreationSupport]
 
-  def invoiceOffice: Office[Invoice]
-  def schedulingOffice: Office[Scheduler]
+  def invoiceOffice: Office
+  def schedulingOffice: Office
 
+  implicit def shardResolution[A <: BusinessEntity] = new DefaultShardResolution[A]
 
   //
   // Scheduling
@@ -41,7 +42,6 @@ trait InvoicingBackendConfiguration {
       override def id = "global"
     })
   }
-  implicit object SchedulerShardResolution extends DefaultShardResolution[Scheduler]
 
   //
   // Invoicing
@@ -49,8 +49,6 @@ trait InvoicingBackendConfiguration {
   implicit object InvoiceARFactory extends AggregateRootActorFactory[Invoice] {
     override def props(pc: PassivationConfig) = Props(new Invoice(pc) with NoPublishing)
   }
-  implicit object InvoiceShardResolution extends DefaultShardResolution[Invoice]
-  implicit object InvoicingSagaShardResolution extends DefaultShardResolution[InvoicingSaga]
 
   implicit object InvoicingSagaActorFactory extends SagaActorFactory[InvoicingSaga] {
     // avoid Saga passivation during a stress-test as it results in a delivery failure of DeliveryTick (ALOD) messages

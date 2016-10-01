@@ -5,10 +5,10 @@ import akka.actor.ActorSystem
 import akka.kernel.Bootable
 import com.typesafe.config.{Config, ConfigFactory}
 import ecommerce.sales.{OrderSaga, Reservation}
-import org.slf4j.LoggerFactory._
 import pl.newicom.dddd.cluster._
-import pl.newicom.dddd.office.{Office, OfficeFactory}
-import pl.newicom.dddd.process.SagaSupport.registerSaga
+import pl.newicom.dddd.office.OfficeFactory.office
+import pl.newicom.dddd.office.Office
+import org.slf4j.LoggerFactory._
 
 class SalesBackendApp extends Bootable with SalesBackendConfiguration {
 
@@ -17,7 +17,7 @@ class SalesBackendApp extends Bootable with SalesBackendConfiguration {
   lazy val config: Config = ConfigFactory.load()
   implicit lazy val system = ActorSystem("sales", config)
 
-  var reservationOffice: Office[Reservation] = _
+  var reservationOffice: Office = _
 
   override def startup() = {
     joinCluster()
@@ -25,8 +25,8 @@ class SalesBackendApp extends Bootable with SalesBackendConfiguration {
   }
 
   def openOffices(): Unit = {
-    reservationOffice = OfficeFactory.office[Reservation]
-    registerSaga[OrderSaga]
+    reservationOffice = office[Reservation]
+    office[OrderSaga]
   }
 
   def joinCluster(): Unit = {

@@ -2,12 +2,11 @@ package ecommerce.sales
 
 import akka.actor.ActorPath
 import ecommerce.invoicing.{OrderBilled, OrderBillingFailed}
-import ecommerce.sales.OrderSaga._
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.process._
 import pl.newicom.dddd.saga.SagaConfig
 
-object OrderSaga {
+object OrderSaga extends SagaSupport {
 
   sealed trait OrderStatus extends SagaState[OrderStatus] {
     def isNew = false
@@ -28,6 +27,8 @@ object OrderSaga {
   }
 
 }
+
+import ecommerce.sales.OrderSaga._
 
 class OrderSaga(val pc: PassivationConfig,
                 reservationOffice: ActorPath) extends ProcessManager[OrderStatus] {

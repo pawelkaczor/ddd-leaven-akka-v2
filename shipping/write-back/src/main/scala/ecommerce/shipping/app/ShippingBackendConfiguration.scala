@@ -15,6 +15,7 @@ import pl.newicom.dddd.persistence.PersistentActorLogging
 import pl.newicom.dddd.process.Receptor
 import pl.newicom.dddd.process.ReceptorSupport.ReceptorFactory
 import pl.newicom.eventstore.EventstoreSubscriber
+
 import scala.io.Source
 import scala.util.Try
 
@@ -41,6 +42,7 @@ trait ShippingBackendConfiguration {
   implicit object ShipmentARFactory extends AggregateRootActorFactory[Shipment] {
     override def props(pc: PassivationConfig) = Props(new Shipment(pc) with LocalPublisher)
   }
+
   implicit object ShippingShardResolution extends DefaultShardResolution[Shipment]
 
   //

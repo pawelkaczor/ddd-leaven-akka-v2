@@ -12,11 +12,11 @@ import pl.newicom.dddd.cluster._
 import pl.newicom.dddd.eventhandling.NoPublishing
 import pl.newicom.dddd.monitoring.{AggregateRootMonitoring, ReceptorMonitoring, SagaMonitoring}
 import pl.newicom.dddd.office.Office
-import pl.newicom.dddd.process.SagaSupport._
+import pl.newicom.dddd.process.SagaSupport.SagaManagerFactory
 import pl.newicom.dddd.process._
 import pl.newicom.eventstore.EventstoreSubscriber
 
-import scala.concurrent.duration.{DurationInt, Duration}
+import scala.concurrent.duration.{Duration, DurationInt}
 import scala.io.Source
 import scala.util.Try
 
@@ -26,18 +26,13 @@ trait SalesBackendConfiguration {
   def config: Config
   implicit def system: ActorSystem
   def creationSupport = implicitly[CreationSupport]
-  def reservationOffice: Office[Reservation]
+  def reservationOffice: Office
 
-  //
-  // Reservation Office
-  //
+  implicit def shardResolution[A <: BusinessEntity] = new DefaultShardResolution[A]
+
   implicit object ReservationARFactory extends AggregateRootActorFactory[Reservation] {
     override def props(pc: PassivationConfig) = Props(new Reservation(pc) with NoPublishing with AggregateRootMonitoring)
   }
-
-  implicit object ReservationShardResolution extends DefaultShardResolution[Reservation]
-
-  implicit object OrderSagaShardResolution extends DefaultShardResolution[OrderSaga]
 
   implicit object OrderSagaActorFactory extends SagaActorFactory[OrderSaga] {
 

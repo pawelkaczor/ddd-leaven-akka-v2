@@ -10,7 +10,6 @@ import pl.newicom.dddd.cluster._
 import pl.newicom.dddd.office.Office
 import pl.newicom.dddd.office.OfficeFactory.office
 import pl.newicom.dddd.process.ReceptorSupport.registerReceptor
-import pl.newicom.dddd.process.SagaSupport._
 import pl.newicom.dddd.scheduling.{Scheduler, DeadlinesReceptor}
 
 class InvoicingBackendApp extends Bootable with InvoicingBackendConfiguration {
@@ -20,8 +19,8 @@ class InvoicingBackendApp extends Bootable with InvoicingBackendConfiguration {
   val config: Config = ConfigFactory.load()
   implicit lazy val system = ActorSystem("invoicing", config)
 
-  var invoiceOffice: Office[Invoice] = _
-  var schedulingOffice: Office[Scheduler] = _
+  var invoiceOffice: Office = _
+  var schedulingOffice: Office = _
 
   override def startup() = {
     joinCluster()
@@ -31,7 +30,7 @@ class InvoicingBackendApp extends Bootable with InvoicingBackendConfiguration {
   def openOffices(): Unit = {
     invoiceOffice = office[Invoice]
     schedulingOffice = office[Scheduler]
-    registerSaga[InvoicingSaga]
+    office[InvoicingSaga]
     registerReceptor(DeadlinesReceptor("global"))
   }
 
@@ -41,7 +40,7 @@ class InvoicingBackendApp extends Bootable with InvoicingBackendConfiguration {
   def joinCluster(): Unit = {
     val seedList = seeds(config)
     log.info(s"Joining cluster with seed nodes: $seedList")
-    Cluster(system).joinSeedNodes(seedList.toSeq)
+    Cluster(system).joinSeedNodes(seedList)
   }
 
   override def shutdown() = {

@@ -5,7 +5,7 @@ import pl.newicom.dddd.aggregate._
 import pl.newicom.dddd.eventhandling.EventPublisher
 import pl.newicom.dddd.office.LocalOfficeId.fromRemoteId
 
-object Shipment {
+object Shipment extends AggregateRootSupport {
 
   implicit val officeId = fromRemoteId[Shipment](ShippingOfficeId)
 

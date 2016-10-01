@@ -5,11 +5,11 @@ import java.util.Date
 import ecommerce.sales.Reservation.State
 import ecommerce.sales.ReservationStatus._
 import pl.newicom.dddd.actor.PassivationConfig
-import pl.newicom.dddd.aggregate.{AggregateRoot, AggregateState, EntityId}
+import pl.newicom.dddd.aggregate.{AggregateRoot, AggregateRootSupport, AggregateState, EntityId}
 import pl.newicom.dddd.eventhandling.EventPublisher
 import pl.newicom.dddd.office.LocalOfficeId.fromRemoteId
 
-object Reservation {
+object Reservation extends AggregateRootSupport {
 
   implicit val officeId = fromRemoteId[Reservation](ReservationOfficeId)
 

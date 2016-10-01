@@ -1,14 +1,13 @@
 package ecommerce.invoicing
 
 import akka.actor.ActorPath
-import ecommerce.invoicing.InvoicingSaga._
 import ecommerce.sales.{Money, ReservationConfirmed}
 import org.joda.time.DateTime.now
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.process._
 import pl.newicom.dddd.saga.SagaConfig
 
-object InvoicingSaga {
+object InvoicingSaga extends SagaSupport {
 
   sealed trait InvoiceStatus extends SagaState[InvoiceStatus]
   case object New extends InvoiceStatus
@@ -26,6 +25,8 @@ object InvoicingSaga {
   }
 
 }
+
+import ecommerce.invoicing.InvoicingSaga._
 
 class InvoicingSaga(val pc: PassivationConfig,
                     invoicingOffice: ActorPath,
@@ -52,7 +53,7 @@ class InvoicingSaga(val pc: PassivationConfig,
         // schedule payment deadline
         schedule(PaymentExpired(sagaId, reservationId), now.plusMinutes(3))
 
-        goto(WaitingForPayment)
+        WaitingForPayment
 
     }
 

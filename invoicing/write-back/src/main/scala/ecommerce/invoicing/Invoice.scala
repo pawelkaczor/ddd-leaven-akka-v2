@@ -1,13 +1,12 @@
 package ecommerce.invoicing
 
-import ecommerce.invoicing.Invoice._
 import ecommerce.sales._
 import pl.newicom.dddd.actor.PassivationConfig
-import pl.newicom.dddd.aggregate.{AggregateRoot, AggregateState}
+import pl.newicom.dddd.aggregate.{AggregateRoot, AggregateRootSupport, AggregateState}
 import pl.newicom.dddd.eventhandling.EventPublisher
 import pl.newicom.dddd.office.LocalOfficeId.fromRemoteId
 
-object Invoice {
+object Invoice extends AggregateRootSupport {
 
  case class State(amountPaid: Option[Money]) extends AggregateState[State] {
     override def apply = {
@@ -20,6 +19,8 @@ object Invoice {
 
   implicit val officeId = fromRemoteId[Invoice](InvoicingOfficeId)
 }
+
+import ecommerce.invoicing.Invoice._
 
 abstract class Invoice(override val pc: PassivationConfig) extends AggregateRoot[State, Invoice] {
   this: EventPublisher =>

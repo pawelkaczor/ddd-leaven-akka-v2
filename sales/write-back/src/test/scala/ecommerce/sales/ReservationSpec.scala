@@ -1,14 +1,15 @@
 package ecommerce.sales
 
-import akka.actor.{ActorRef, Props}
+import akka.actor.Props
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.aggregate.AggregateRootActorFactory
 import pl.newicom.dddd.eventhandling.LocalPublisher
 import pl.newicom.dddd.test.support.OfficeSpec
-import scala.concurrent.duration._
 
+import scala.concurrent.duration._
 import scala.concurrent.duration.Duration
 import ReservationSpec._
+import pl.newicom.dddd.office.Office
 
 object ReservationSpec {
   implicit def factory(implicit it: Duration = 1.minute): AggregateRootActorFactory[Reservation] =
@@ -20,7 +21,7 @@ object ReservationSpec {
 
 class ReservationSpec extends OfficeSpec[Reservation] {
 
-  def reservationOffice: ActorRef = officeUnderTest
+  def reservationOffice: Office = officeUnderTest
 
   def reservationId = aggregateId
 
