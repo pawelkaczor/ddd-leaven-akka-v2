@@ -1,18 +1,16 @@
 package akka.kernel
 
-import akka.actor.{ActorSystem, Address, AddressFromURIString}
 import java.io.File
 import java.lang.Boolean.getBoolean
-import java.net.{InetAddress, URLClassLoader}
+import java.net.URLClassLoader
 import java.util.jar.JarFile
 
+import akka.actor.ActorSystem
 import com.typesafe.config.{Config, ConfigFactory}
 import org.slf4j.LoggerFactory._
 
-import scala.collection.immutable
 import scala.collection.JavaConverters._
-import scala.io.Source
-import scala.util.Try
+import scala.collection.immutable
 
 trait Bootable {
 
@@ -36,31 +34,6 @@ trait Bootable {
    */
   def shutdown(): Unit = {
     system.terminate()
-  }
-
-  def seeds(config: Config)(implicit as: ActorSystem): List[Address] = {
-
-    def seed(hostAndPort: String): Address = {
-      AddressFromURIString.parse(s"akka.tcp://${as.name}@$hostAndPort")
-    }
-
-    log.info(s"Local actor system's name: ${as.name}")
-
-    Try(config.getString("app.cluster.seedsFile")).toOption match {
-
-      case Some(seedsFile) =>
-        // Seed file was specified, read it
-        log.info(s"reading seed nodes from file: $seedsFile")
-        Source.fromFile(seedsFile).getLines().map(seed).toList
-
-          case None =>
-            // No seed file, no seed host, use this node as the first seed
-            log.info("no seed file found, using default seeds")
-            val port = config.getInt("app.port")
-            val localAddress = Try(config.getString("app.host"))
-              .toOption.getOrElse(InetAddress.getLocalHost.getHostAddress)
-            List(seed(s"$localAddress:$port"))
-        }
   }
 
 }
