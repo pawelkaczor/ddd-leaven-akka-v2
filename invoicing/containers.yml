@@ -1,7 +1,7 @@
 ---
 - name: invoicing-write-back
   role: write-back
-  ports: ['9201:9201']
+  port: 9201
 - name: invoicing-write-front
   role: write-front
-  ports: ['9200:9200']
+  port: 9200

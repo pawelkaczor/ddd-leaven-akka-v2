@@ -1,15 +1,14 @@
 package ecommerce.sales.app
 
-import akka.actor._
 import akka.kernel.Bootable
-import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.config.Config
 import ecommerce.sales.{HttpService, SalesReadFrontConfiguration}
 
 class SalesReadFrontApp extends Bootable {
-   val config = ConfigFactory.load()
-   val system = ActorSystem("sales-read-front", config)
 
-   def startup() = {
+  override def systemName = "sales-read-front"
+
+  def startup() = {
      new SalesReadFrontConfiguration {
        override def config: Config = SalesReadFrontApp.this.config
        import httpService._
@@ -17,7 +16,4 @@ class SalesReadFrontApp extends Bootable {
      }
    }
 
-   def shutdown() = {
-     system.terminate()
-   }
- }
+}

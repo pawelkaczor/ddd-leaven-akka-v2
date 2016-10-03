@@ -32,6 +32,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   end
 
+
   subsystems.each do |subsystem|
     containers = YAML.load_file("../" + subsystem + '/containers.yml')
 
@@ -43,13 +44,19 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
         cntnr.vm.provider "docker" do |docker|
 
+          port = container["port"]
+
           # docker.force_host_vm = true
           # docker.vagrant_vagrantfile = "./host/Vagrantfile"
 
           docker.name = container["name"]
           docker.build_dir = "../" + subsystem + "/" + container["role"] + "/target/docker/stage"
           docker.create_args = ['--net=host']
-          docker.ports = container["ports"]
+
+          if port
+            docker.env = {"APP_CLUSTER_SEED" => "akka.tcp://ecommerce@127.0.0.1:" + port.to_s}.merge(container["env"] || {})
+            docker.ports = [port.to_s + ":" + port.to_s]
+          end
         end
       end
     end

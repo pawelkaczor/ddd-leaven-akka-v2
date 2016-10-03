@@ -2,20 +2,15 @@ package ecommerce.invoicing.app
 
 import akka.actor._
 import akka.kernel.Bootable
-import com.typesafe.config.{Config, ConfigFactory}
 
 class InvoicingFrontApp extends Bootable {
 
-  private val config: Config = ConfigFactory.load()
-  implicit private val system = ActorSystem("invoicing-front", config)
+  override def systemName = "invoicing-front"
 
   override def startup(): Unit = {
     system.actorOf(InvoicingFrontAppSupervisor.props, "invoicing-front-supervisor")
   }
 
-  override def shutdown(): Unit = {
-    system.terminate()
-  }
 }
 
 object InvoicingFrontAppSupervisor {

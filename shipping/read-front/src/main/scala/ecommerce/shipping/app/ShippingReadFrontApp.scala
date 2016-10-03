@@ -1,15 +1,14 @@
 package ecommerce.shipping.app
 
-import akka.actor._
 import akka.kernel.Bootable
-import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.config.Config
 import ecommerce.shipping.{HttpService, ShippingReadFrontConfiguration}
 
 class ShippingReadFrontApp extends Bootable {
-   val config = ConfigFactory.load()
-   val system = ActorSystem("shipping-read-front", config)
 
-   def startup() = {
+  override def systemName = "shipping-read-front"
+
+  def startup() = {
      new ShippingReadFrontConfiguration {
        override def config: Config = ShippingReadFrontApp.this.config
        import httpService._
@@ -17,7 +16,4 @@ class ShippingReadFrontApp extends Bootable {
      }
    }
 
-   def shutdown() = {
-     system.terminate()
-   }
- }
+}

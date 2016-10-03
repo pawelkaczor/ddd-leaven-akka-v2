@@ -2,20 +2,15 @@ package ecommerce.sales.app
 
 import akka.actor._
 import akka.kernel.Bootable
-import com.typesafe.config.{Config, ConfigFactory}
 
 class SalesFrontApp extends Bootable {
 
-  private lazy val config: Config = ConfigFactory.load()
-  implicit private lazy val system = ActorSystem("sales-front", config)
+  override def systemName = "sales-front"
 
   override def startup(): Unit = {
     system.actorOf(SalesFrontAppSupervisor.props, "sales-front-supervisor")
   }
 
-  override def shutdown(): Unit = {
-    system.terminate()
-  }
 }
 
 object SalesFrontAppSupervisor {
