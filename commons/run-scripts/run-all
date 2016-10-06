@@ -2,6 +2,7 @@
 
 LOGS="../../target"
 
+./run-headquarters-write-back > ${LOGS}/headquarters-write-back.log 2>&1 &
 ./run-sales-read-back > ${LOGS}/sales-read-back.log 2>&1 &
 ./run-sales-read-front > ${LOGS}/sales-read-front.log 2>&1 &
 ./run-sales-write-back > ${LOGS}/sales-write-back.log 2>&1 &

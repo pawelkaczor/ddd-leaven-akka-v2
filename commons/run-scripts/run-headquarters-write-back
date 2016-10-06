@@ -1,0 +1,4 @@
+#!/bin/bash
+
+../../headquarters/write-back/target/universal/stage/bin/headquarters-write-back
+
