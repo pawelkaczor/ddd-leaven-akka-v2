@@ -43,16 +43,21 @@
 <p>The system currently consists of the following subsystems:</p>
 
 <ul class="task-list">
-<li>Sales/Reservation - accepting/confirming reservations (orders)</li>
-<li>Invoicing - handling payment process</li>
-<li>Shipping - handling shipping process</li>
+<li>Sales/Reservation - responsible for creating and confirming Reservations</li>
+<li>Invoicing - responsible for the invoicing</li>
+<li>Shipping - responsible for the goods delivery</li>
+<li>Headquarters - executes the Ordering Process (see below)</li>
 </ul>
+</div>
+<div>
+    <h2>Ordering Process</h2>
+    <img src="https://raw.githubusercontent.com/pawelkaczor/ddd-leaven-akka-v2/master/project/diagrams/OrderingSystem.png">
 </div>
 <div>
 <h2>Applications</h2>
 
 <p>Each subsystem is divided into <strong>write</strong> and <strong>read</strong> side, each side containing <strong>back-end</strong> and <strong>front-end</strong> application: </p>
-
+    <img src="https://camo.githubusercontent.com/e409f553ba96b8ff73586f0468738fab13a5e202/68747470733a2f2f646f63732e676f6f676c652e636f6d2f64726177696e67732f642f31324c7777713357524f6c7532706b5873497749435176755769504e4b573558517763376252744c616175492f7075623f773d37323226616d703b683d363230">
 <hr>
 
 <h4>write-back</h4>
