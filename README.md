@@ -1,3 +1,4 @@
+
 ddd-leaven-akka-v2[![Build Status](https://travis-ci.org/pawelkaczor/ddd-leaven-akka-v2.svg?branch=master)](https://travis-ci.org/pawelkaczor/ddd-leaven-akka-v2)
 ==================
 
@@ -37,9 +38,15 @@ Subsystems
 
 The system currently consists of the following subsystems:
 
-* Sales/Reservation - accepting/confirming reservations (orders)
-* Invoicing - handling payment process
-* Shipping - handling shipping process
+* Sales/Reservation - responsible for creating and confirming Reservations
+* Invoicing - responsible for the invoicing
+* Shipping - responsible for the goods delivery
+* Headquarters - executes the Ordering Process (see below)
+ 
+Ordering Process
+--------------------
+ 
+![Ordering Process](https://raw.githubusercontent.com/pawelkaczor/ddd-leaven-akka-v2/master/project/diagrams/OrderingSystem.png)
 
 Subsystem components
 --------------------
