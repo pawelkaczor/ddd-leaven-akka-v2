@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%gray(%X{akkaTimestamp}) %highlight(%-5level) %cyan(%X{akkaSource}) - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="${ECOMMERCE_LOG_LEVEL:-DEBUG}">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <logger name="akka.cluster" level="INFO"/>
+    <logger name="akka.serialization" level="INFO"/>
+    <logger name="eventstore.tcp" level="INFO"/>
+</configuration>

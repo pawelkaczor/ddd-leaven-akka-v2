@@ -4,7 +4,8 @@ ENV['VAGRANT_DEFAULT_PROVIDER'] = 'docker'
 
 require 'yaml'
 
-subsystems = ['sales', 'invoicing', 'shipping']
+
+subsystems = ['headquarters', 'sales', 'invoicing', 'shipping']
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
@@ -45,18 +46,23 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         cntnr.vm.provider "docker" do |docker|
 
           port = container["port"]
+          role = container["role"]
 
           # docker.force_host_vm = true
           # docker.vagrant_vagrantfile = "./host/Vagrantfile"
 
           docker.name = container["name"]
-          docker.build_dir = "../" + subsystem + "/" + container["role"] + "/target/docker/stage"
+
+          docker.build_dir = "../" + subsystem + "/" + role + "/target/docker/stage"
           docker.create_args = ['--net=host']
 
           if port
-            docker.env = {"APP_CLUSTER_SEED" => "akka.tcp://ecommerce@127.0.0.1:" + port.to_s}.merge(container["env"] || {})
             docker.ports = [port.to_s + ":" + port.to_s]
           end
+
+          if role == "write-back"
+            docker.env = {"APP_CLUSTER_SEED" => "akka.tcp://ecommerce@127.0.0.1:9401", "APP_HOST" => "127.0.0.1"}
+           end
         end
       end
     end
@@ -70,10 +76,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     run "curl -v -u admin:changeit --data '' 'http://localhost:2113/projection/$by_category/command/enable'"
 
     info "Installing user projections"
-    run "curl -v -H 'Content-Type: application/json' -u admin:changeit --data @../invoicing/write-back/src/main/resources/projections/clock.js http://127.0.0.1:2113/projections/continuous?name=clock_proj&type=JS&emit=1"
-    run "curl -v -H 'Content-Type: application/json' -u admin:changeit --data @../invoicing/write-back/src/main/resources/projections/invoicing-process.js http://127.0.0.1:2113/projections/continuous?name=invoicing_process_proj&type=JS&emit=1"
-    run "curl -v -H 'Content-Type: application/json' -u admin:changeit --data @../invoicing/write-back/src/main/resources/projections/current-deadlines.js http://127.0.0.1:2113/projections/continuous?name=current_deadlines_proj&type=JS&emit=1"
-    run "curl -v -H 'Content-Type: application/json' -u admin:changeit --data @../sales/write-back/src/main/resources/projections/order-process.js http://127.0.0.1:2113/projections/continuous?name=order_process_proj&type=JS&emit=1"
+    run "curl -v -H 'Content-Type: application/json' -u admin:changeit --data @../headquarters/write-back/src/main/resources/projections/clock.js http://127.0.0.1:2113/projections/continuous?name=clock_proj&type=JS&emit=1"
+    run "curl -v -H 'Content-Type: application/json' -u admin:changeit --data @../headquarters/write-back/src/main/resources/projections/current-deadlines.js http://127.0.0.1:2113/projections/continuous?name=current_deadlines_proj&type=JS&emit=1"
+    run "curl -v -H 'Content-Type: application/json' -u admin:changeit --data @../headquarters/write-back/src/main/resources/projections/order-process.js http://127.0.0.1:2113/projections/continuous?name=order_process_proj&type=JS&emit=1"
   end
 
 end

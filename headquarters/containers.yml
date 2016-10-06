@@ -1,0 +1,4 @@
+---
+- name: headquarters-write-back
+  role: write-back
+  port: 9401

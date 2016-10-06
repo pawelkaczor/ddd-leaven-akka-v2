@@ -1,7 +1,4 @@
 ---
-- name: sales-write-back
-  role: write-back
-  port: 9101
 - name: sales-write-front
   role: write-front
   port: 9100
@@ -11,3 +8,6 @@
 - name: sales-read-front
   role: read-front
   port: 9110
+- name: sales-write-back
+  role: write-back
+  port: 9101

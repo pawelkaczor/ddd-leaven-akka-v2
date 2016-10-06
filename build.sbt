@@ -13,7 +13,7 @@ sourcesInBase in ThisBuild := false
 lazy val root = project.settings(
     aggregate in update := false
   )
-  .aggregate(commons, monitoring, sales, shipping, invoicing, `e2e-tests`)
+  .aggregate(commons, monitoring, sales, shipping, invoicing, headquarters, `e2e-tests`)
 
 lazy val commons = project
 lazy val monitoring = project.dependsOn(commons)
@@ -21,6 +21,8 @@ lazy val monitoring = project.dependsOn(commons)
 lazy val sales = project.dependsOn(commons)
 lazy val invoicing = project.dependsOn(commons)
 lazy val shipping = project.dependsOn(commons)
+
+lazy val headquarters = project.dependsOn(commons)
 
 lazy val `e2e-tests` = project
 
