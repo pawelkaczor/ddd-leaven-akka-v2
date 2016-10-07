@@ -27,6 +27,4 @@ trait ShippingBackendConfiguration {
     override def props(pc: PassivationConfig) = Props(new Shipment(pc) with LocalPublisher)
   }
 
-  implicit object ShippingShardResolution extends DefaultShardResolution[Shipment]
-
 }

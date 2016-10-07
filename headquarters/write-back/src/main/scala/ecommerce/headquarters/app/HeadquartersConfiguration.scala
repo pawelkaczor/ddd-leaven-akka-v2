@@ -9,7 +9,7 @@ import ecommerce.shipping.ShippingOfficeId
 import org.slf4j.Logger
 import pl.newicom.dddd
 import pl.newicom.dddd.actor.{CreationSupport, PassivationConfig}
-import pl.newicom.dddd.aggregate.{AggregateRootActorFactory, BusinessEntity}
+import pl.newicom.dddd.aggregate.AggregateRootActorFactory
 import pl.newicom.dddd.cluster._
 import pl.newicom.dddd.eventhandling.NoPublishing
 import pl.newicom.dddd.office.LocalOfficeId
@@ -28,8 +28,6 @@ trait HeadquartersConfiguration {
   def config: Config
   implicit def system: ActorSystem
   def creationSupport = implicitly[CreationSupport]
-
-  implicit def shardResolution[A <: BusinessEntity] = new DefaultShardResolution[A]
 
   implicit val schedulingOfficeID: LocalOfficeId[Scheduler] = dddd.scheduling.schedulingOfficeId("Headquarters")
 

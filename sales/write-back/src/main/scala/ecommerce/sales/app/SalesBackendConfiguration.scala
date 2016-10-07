@@ -12,8 +12,6 @@ import pl.newicom.dddd.monitoring.AggregateRootMonitoring
 trait SalesBackendConfiguration {
   this: Bootable =>
 
-  implicit def shardResolution[A <: BusinessEntity] = new DefaultShardResolution[A]
-
   implicit object ReservationARFactory extends AggregateRootActorFactory[Reservation] {
     override def props(pc: PassivationConfig) = Props(new Reservation(pc) with NoPublishing with AggregateRootMonitoring)
   }

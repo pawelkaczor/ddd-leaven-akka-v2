@@ -38,7 +38,7 @@ object OrderProcessManager extends SagaSupport {
 import ecommerce.headquarters.processes.OrderProcessManager._
 
 class OrderProcessManager(
-                           reservationOffice: Office, invoicingOffice: Office, shippingOffice: Office,
+                           reservation: Office, invoicing: Office, shipping: Office,
                            val pc: PassivationConfig,
                            override val schedulingOffice: Option[Office])
   extends ProcessManager[OrderStatus] {
@@ -61,7 +61,7 @@ class OrderProcessManager(
       case ReservationConfirmed(reservationId, customerId, totalAmountOpt) =>
         val totalAmount = totalAmountOpt.getOrElse(Money())
 
-        invoicingOffice !! CreateInvoice(sagaId, reservationId, customerId, totalAmount, now())
+        invoicing !! CreateInvoice(sagaId, reservationId, customerId, totalAmount, now())
 
         schedule (PaymentExpired(sagaId, reservationId)) in 3.minutes
 
@@ -73,20 +73,20 @@ class OrderProcessManager(
 
       case OrderBilled(_, orderId, _, _) =>
 
-        reservationOffice !! CloseReservation(orderId)
+        reservation !! CloseReservation(orderId)
 
-        shippingOffice !! CreateShipment(UUID.randomUUID().toString, orderId)
+        shipping !! CreateShipment(UUID.randomUUID().toString, orderId)
 
         Completed
 
       case PaymentExpired(invoiceId, orderId) =>
         log.debug("Payment expired for order '{}'.", orderId)
 
-        invoicingOffice !! CancelInvoice(invoiceId, orderId)
+        invoicing !! CancelInvoice(invoiceId, orderId)
 
       case OrderBillingFailed(_, orderId) =>
 
-        reservationOffice !! CancelReservation(orderId)
+        reservation !! CancelReservation(orderId)
 
         Failed
     }
