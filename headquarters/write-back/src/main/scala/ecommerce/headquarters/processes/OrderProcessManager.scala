@@ -1,7 +1,7 @@
 package ecommerce.headquarters.processes
 
 import java.util.UUID
-
+import com.github.nscala_time.time.Imports._
 import ecommerce.invoicing.{CancelInvoice, CreateInvoice, OrderBilled, OrderBillingFailed, PaymentExpired}
 import ecommerce.headquarters.processes.OrderProcessManager.OrderStatus
 import ecommerce.sales.{CancelReservation, CloseReservation, Money, ReservationConfirmed}
@@ -63,7 +63,7 @@ class OrderProcessManager(
 
         invoicingOffice !! CreateInvoice(sagaId, reservationId, customerId, totalAmount, now())
 
-        schedule(PaymentExpired(sagaId, reservationId), now.plusMinutes(3))
+        schedule (PaymentExpired(sagaId, reservationId)) in 3.minutes
 
         WaitingForPayment
 
