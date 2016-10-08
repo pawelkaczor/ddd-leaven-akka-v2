@@ -11,6 +11,6 @@ trait EcommerceSystemTestDriver extends TestDriver with Jersey with UUIDSupport 
     ("Content-Type", "application/json")
   )
 
-  def succeed = have(StatusCode(OK))
 
+  def beOK = have(StatusCode(OK))
 }

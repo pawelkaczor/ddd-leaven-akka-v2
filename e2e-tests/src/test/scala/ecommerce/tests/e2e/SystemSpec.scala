@@ -44,13 +44,13 @@ class SystemSpec extends EcommerceSystemTestDriver with Eventually {
       "create reservation" in eventually {
         POST command {
           CreateReservation(reservationId, customerId)
-        } should succeed
+        } should beOK
       }
     }
 
     using(sales_read) { implicit b =>
       "respond to reservation/{reservationId} query" in eventually {
-        GET / s"reservation/$reservationId" should succeed
+        GET / s"reservation/$reservationId" should beOK
       }
     }
 
@@ -64,13 +64,13 @@ class SystemSpec extends EcommerceSystemTestDriver with Eventually {
         )
         POST command {
           ReserveProduct(reservationId, product, quantity = 1)
-        } should succeed
+        } should beOK
       }
 
       "confirm reservation" in {
         POST command {
           ConfirmReservation(reservationId)
-        } should succeed
+        } should beOK
       }
     }
 
@@ -78,13 +78,13 @@ class SystemSpec extends EcommerceSystemTestDriver with Eventually {
       "pay" in eventually {
         POST command {
           ReceivePayment(invoiceId, reservationId, Money(10.0), paymentId = "230982342")
-        } should succeed
+        } should beOK
       }
     }
 
     using(shipping_read) { implicit b =>
       "respond to /shipment/order/{orderId}" in eventually {
-        GET / s"shipment/order/$reservationId" should succeed
+        GET / s"shipment/order/$reservationId" should beOK
       }
     }
 
