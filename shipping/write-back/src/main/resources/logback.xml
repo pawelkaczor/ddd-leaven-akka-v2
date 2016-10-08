@@ -6,11 +6,11 @@
         </encoder>
     </appender>
 
-    <root level="${ECOMMERCE_LOG_LEVEL:-DEBUG}">
+    <root level="${ECOMMERCE_LOG_LEVEL:-INFO}">
         <appender-ref ref="CONSOLE"/>
     </root>
 
-    <logger name="akka.cluster" level="INFO"/>
-    <logger name="akka.serialization" level="INFO"/>
-    <logger name="eventstore.tcp" level="INFO"/>
+    <logger name="akka.kernel" level="DEBUG"/>
+    <logger name="ecommerce" level="DEBUG"/>
+    <logger name="pl.newicom" level="DEBUG"/>
 </configuration>
