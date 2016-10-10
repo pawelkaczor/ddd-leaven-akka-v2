@@ -58,13 +58,12 @@ class OrderProcessManager(val pc: PassivationConfig) extends ProcessManager[Orde
     case New => {
 
       case ReservationConfirmed(reservationId, customerId, totalAmountOpt) =>
-        val totalAmount = totalAmountOpt.getOrElse(Money())
 
-        ⟶ (CreateInvoice(sagaId, reservationId, customerId, totalAmount, now()))
+        WaitingForPayment {
+          ⟶ (CreateInvoice(sagaId, reservationId, customerId, totalAmountOpt.getOrElse(Money()), now()))
 
-        ⟵ (PaymentExpired(sagaId, reservationId)) in 3.minutes
-
-        WaitingForPayment
+          ⟵ (PaymentExpired(sagaId, reservationId)) in 3.minutes
+        }
 
     }
 
@@ -72,21 +71,21 @@ class OrderProcessManager(val pc: PassivationConfig) extends ProcessManager[Orde
 
       case OrderBilled(_, orderId, _, _) =>
 
-        ⟶ (CloseReservation(orderId))
+        Completed {
+          ⟶ (CloseReservation(orderId))
 
-        ⟶ (CreateShipment(UUID.randomUUID().toString, orderId))
-
-        Completed
+          ⟶ (CreateShipment(UUID.randomUUID().toString, orderId))
+        }
 
       case PaymentExpired(invoiceId, orderId) =>
 
-        ⟶ (CancelInvoice(invoiceId, orderId))
+          ⟶ (CancelInvoice(invoiceId, orderId))
 
       case OrderBillingFailed(_, orderId) =>
 
-        ⟶ (CancelReservation(orderId))
-
-        Failed
+        Failed {
+          ⟶ (CancelReservation(orderId))
+        }
     }
 
   }
