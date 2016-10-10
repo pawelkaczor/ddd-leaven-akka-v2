@@ -1,16 +1,19 @@
 package ecommerce.headquarters.processes
 
 import java.util.UUID
+
 import com.github.nscala_time.time.Imports._
-import ecommerce.invoicing.{CancelInvoice, CreateInvoice, OrderBilled, OrderBillingFailed, PaymentExpired}
+import ecommerce.headquarters.app.HeadquartersConfiguration
+import ecommerce.headquarters.app.HeadquartersConfiguration.department
 import ecommerce.headquarters.processes.OrderProcessManager.OrderStatus
-import ecommerce.sales.{CancelReservation, CloseReservation, Money, ReservationConfirmed}
-import ecommerce.shipping.CreateShipment
+import ecommerce.invoicing.{CancelInvoice, CreateInvoice, OrderBilled, OrderBillingFailed, PaymentExpired, _}
+import ecommerce.sales.{CancelReservation, CloseReservation, Money, ReservationConfirmed, _}
+import ecommerce.shipping.{CreateShipment, _}
 import org.joda.time.DateTime._
 import pl.newicom.dddd.actor.PassivationConfig
-import pl.newicom.dddd.office.Office
 import pl.newicom.dddd.process._
 import pl.newicom.dddd.saga.SagaConfig
+import pl.newicom.dddd.scheduling.schedulingOfficeId
 
 object OrderProcessManager extends SagaSupport {
 
@@ -24,7 +27,7 @@ object OrderProcessManager extends SagaSupport {
   case object Completed         extends OrderStatus
   case object Failed            extends OrderStatus
 
-  implicit object OrderProcessConfig extends SagaConfig[OrderProcessManager]("order", "Headquarters") {
+  implicit object OrderProcessConfig extends SagaConfig[OrderProcessManager]("order", department) {
     def correlationIdResolver = {
       case ReservationConfirmed(reservationId, _, _) => reservationId // orderId
       case OrderBilled(_, orderId, _, _) => orderId
@@ -37,18 +40,19 @@ object OrderProcessManager extends SagaSupport {
 
 import ecommerce.headquarters.processes.OrderProcessManager._
 
-class OrderProcessManager(
-                           reservation: Office, invoicing: Office, shipping: Office,
-                           val pc: PassivationConfig,
-                           override val schedulingOffice: Option[Office])
-  extends ProcessManager[OrderStatus] {
+class OrderProcessManager(val pc: PassivationConfig) extends ProcessManager[OrderStatus] {
 
   val officeId = OrderProcessConfig
 
-  override def receiveEvent =
-    super.receiveEvent.orElse {
-      case e: PaymentExpired if state != WaitingForPayment => DropEvent
-    }
+  def processCollaborators = List(
+    schedulingOfficeId(HeadquartersConfiguration.department),
+    InvoicingOfficeId, ReservationOfficeId, ShippingOfficeId
+  )
+
+  override def receiveEvent = super.receiveEvent.orElse {
+    case e: PaymentExpired if state != WaitingForPayment => DropEvent
+  }
+
 
   startWhen {
 
@@ -61,9 +65,9 @@ class OrderProcessManager(
       case ReservationConfirmed(reservationId, customerId, totalAmountOpt) =>
         val totalAmount = totalAmountOpt.getOrElse(Money())
 
-        invoicing !! CreateInvoice(sagaId, reservationId, customerId, totalAmount, now())
+        ⟶ (CreateInvoice(sagaId, reservationId, customerId, totalAmount, now()))
 
-        schedule (PaymentExpired(sagaId, reservationId)) in 3.minutes
+        ⟵ (PaymentExpired(sagaId, reservationId)) in 3.minutes
 
         WaitingForPayment
 
@@ -73,20 +77,19 @@ class OrderProcessManager(
 
       case OrderBilled(_, orderId, _, _) =>
 
-        reservation !! CloseReservation(orderId)
+        ⟶ (CloseReservation(orderId))
 
-        shipping !! CreateShipment(UUID.randomUUID().toString, orderId)
+        ⟶ (CreateShipment(UUID.randomUUID().toString, orderId))
 
         Completed
 
       case PaymentExpired(invoiceId, orderId) =>
-        log.debug("Payment expired for order '{}'.", orderId)
 
-        invoicing !! CancelInvoice(invoiceId, orderId)
+        ⟶ (CancelInvoice(invoiceId, orderId))
 
       case OrderBillingFailed(_, orderId) =>
 
-        reservation !! CancelReservation(orderId)
+        ⟶ (CancelReservation(orderId))
 
         Failed
     }
