@@ -49,11 +49,6 @@ class OrderProcessManager(val pc: PassivationConfig) extends ProcessManager[Orde
     InvoicingOfficeId, ReservationOfficeId, ShippingOfficeId
   )
 
-  override def receiveEvent = super.receiveEvent.orElse {
-    case e: PaymentExpired if state != WaitingForPayment => DropEvent
-  }
-
-
   startWhen {
 
     case rc: ReservationConfirmed => New
@@ -94,6 +89,10 @@ class OrderProcessManager(val pc: PassivationConfig) extends ProcessManager[Orde
         Failed
     }
 
+  }
+
+  override def receiveEvent = super.receiveEvent.orElse {
+    case e: PaymentExpired if state != WaitingForPayment => DropEvent
   }
 
 }
