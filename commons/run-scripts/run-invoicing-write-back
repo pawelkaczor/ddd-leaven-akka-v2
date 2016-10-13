@@ -1,4 +1,5 @@
 #!/bin/bash
 
+source ./environment
 ../../invoicing/write-back/target/universal/stage/bin/invoicing-write-back
 

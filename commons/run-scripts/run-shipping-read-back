@@ -1,4 +1,5 @@
 #!/bin/bash
 
+source ./environment
 ../../shipping/read-back/target/universal/stage/bin/shipping-read-back
 

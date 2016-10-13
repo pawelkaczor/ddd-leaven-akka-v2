@@ -1,4 +1,5 @@
 #!/bin/bash
 
+source ./environment
 ../../shipping/write-back/target/universal/stage/bin/shipping-write-back
 

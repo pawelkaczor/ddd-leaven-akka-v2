@@ -1,4 +1,5 @@
 #!/bin/bash
 
+source ./environment
 ../../invoicing/write-front/target/universal/stage/bin/invoicing-write-front
 

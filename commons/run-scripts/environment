@@ -1,0 +1,4 @@
+#!/bin/bash
+
+export APP_CLUSTER_SEED="akka.tcp://ecommerce@127.0.0.1:9401"
+export APP_HOST="127.0.0.1"

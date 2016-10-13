@@ -1,4 +1,5 @@
 #!/bin/bash
 
+source ./environment
 ../../sales/write-front/target/universal/stage/bin/sales-write-front
 
