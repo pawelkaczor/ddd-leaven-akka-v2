@@ -2,20 +2,20 @@ package ecommerce.headquarters.app
 
 import akka.actor.{Props, _}
 import com.typesafe.config.Config
+import ecommerce.headquarters.app.HeadquartersConfiguration._
 import ecommerce.headquarters.processes.OrderProcessManager
 import org.slf4j.Logger
 import pl.newicom.dddd
 import pl.newicom.dddd.actor.{CreationSupport, PassivationConfig}
 import pl.newicom.dddd.aggregate.AggregateRootActorFactory
 import pl.newicom.dddd.cluster._
+import pl.newicom.dddd.coordination.ReceptorConfig
 import pl.newicom.dddd.eventhandling.NoPublishing
 import pl.newicom.dddd.office.LocalOfficeId
-import pl.newicom.dddd.process.ReceptorSupport._
-import pl.newicom.dddd.process.SagaSupport.SagaManagerFactory
-import pl.newicom.dddd.process.{Saga, SagaActorFactory, SagaManager}
-import pl.newicom.dddd.scheduling.{DeadlinesReceptor, Scheduler}
+import pl.newicom.dddd.process.ReceptorSupport.ReceptorFactory
+import pl.newicom.dddd.process.{Receptor, SagaActorFactory}
+import pl.newicom.dddd.scheduling.Scheduler
 import pl.newicom.eventstore.EventstoreSubscriber
-import HeadquartersConfiguration._
 
 import scala.concurrent.duration.DurationInt
 
@@ -43,16 +43,9 @@ trait HeadquartersConfiguration {
       Props(new OrderProcessManager(pc))
   }
 
-  implicit def sagaManagerFactory[E <: Saga]: SagaManagerFactory[E] = (sagaOffice) => {
-    new SagaManager[E]()(sagaOffice) with EventstoreSubscriber {
-      override lazy val config = defaultConfig.copy(capacity = 100)
+  implicit def receptorFactory: ReceptorFactory = (config: ReceptorConfig) => {
+    new Receptor(config.copy(capacity = 100)) with EventstoreSubscriber {
       override def redeliverInterval = 10.seconds
-    }
-  }
-
-  implicit val receptorFactory: ReceptorFactory = receptorConfig => {
-    new DeadlinesReceptor with EventstoreSubscriber {
-      def config = receptorConfig
     }
   }
 

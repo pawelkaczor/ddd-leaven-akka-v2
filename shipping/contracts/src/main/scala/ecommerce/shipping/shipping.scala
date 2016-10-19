@@ -19,6 +19,8 @@ case class CreateShipment(shipmentId: EntityId, orderId: EntityId) extends Comma
 //
 case class ShipmentCreated(shipmentId: EntityId, orderId: EntityId)
 
+case class GoodsDelivered(shipmentId: EntityId, orderId: EntityId)
+
 //
 // Value Objects
 //

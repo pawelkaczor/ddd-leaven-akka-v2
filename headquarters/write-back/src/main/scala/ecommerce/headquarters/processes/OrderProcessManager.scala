@@ -12,7 +12,7 @@ import ecommerce.shipping.{CreateShipment, _}
 import org.joda.time.DateTime._
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.process._
-import pl.newicom.dddd.saga.SagaConfig
+import pl.newicom.dddd.saga.ProcessConfig
 import pl.newicom.dddd.scheduling.schedulingOfficeId
 
 object OrderProcessManager extends SagaSupport {
@@ -23,11 +23,12 @@ object OrderProcessManager extends SagaSupport {
   case object New extends OrderStatus {
     override def isNew: Boolean = true
   }
-  case object WaitingForPayment extends OrderStatus
-  case object Completed         extends OrderStatus
-  case object Failed            extends OrderStatus
+  case object WaitingForPayment  extends OrderStatus
+  case object DeliveryInProgress extends OrderStatus
+  case object Completed          extends OrderStatus
+  case object Failed             extends OrderStatus
 
-  implicit object OrderProcessConfig extends SagaConfig[OrderProcessManager]("order", department) {
+  implicit object OrderProcessConfig extends ProcessConfig[OrderProcessManager]("order", department) {
     def correlationIdResolver = {
       case ReservationConfirmed(reservationId, _, _) => reservationId // orderId
       case OrderBilled(_, orderId, _, _) => orderId
@@ -51,7 +52,7 @@ class OrderProcessManager(val pc: PassivationConfig) extends ProcessManager[Orde
 
   startWhen {
 
-    case rc: ReservationConfirmed => New
+    case _: ReservationConfirmed => New
 
   } andThen {
 
@@ -69,17 +70,17 @@ class OrderProcessManager(val pc: PassivationConfig) extends ProcessManager[Orde
 
     case WaitingForPayment => {
 
+      case PaymentExpired(invoiceId, orderId) =>
+
+        ⟶ (CancelInvoice(invoiceId, orderId))
+
       case OrderBilled(_, orderId, _, _) =>
 
-        Completed {
+        DeliveryInProgress {
           ⟶ (CloseReservation(orderId))
 
           ⟶ (CreateShipment(UUID.randomUUID().toString, orderId))
         }
-
-      case PaymentExpired(invoiceId, orderId) =>
-
-          ⟶ (CancelInvoice(invoiceId, orderId))
 
       case OrderBillingFailed(_, orderId) =>
 

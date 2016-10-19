@@ -7,7 +7,7 @@ import ecommerce.headquarters.ClusterView
 import ecommerce.headquarters.app.HeadquartersConfiguration.department
 import ecommerce.headquarters.processes.OrderProcessManager
 import pl.newicom.dddd.office.OfficeFactory._
-import pl.newicom.dddd.process.ReceptorSupport.registerReceptor
+import pl.newicom.dddd.process.ReceptorSupport.receptor
 import pl.newicom.dddd.scheduling.{DeadlinesReceptor, Scheduler}
 
 class HeadquartersApp extends Bootable with HeadquartersConfiguration {
@@ -18,7 +18,7 @@ class HeadquartersApp extends Bootable with HeadquartersConfiguration {
     Cluster(system).registerOnMemberUp {
 
       office[Scheduler]
-      registerReceptor(DeadlinesReceptor("global", department))
+      receptor(DeadlinesReceptor("global", department))
 
       office[OrderProcessManager]
     }
