@@ -9,13 +9,24 @@ fromStreams(['clock', '$ce-deadlines']).
         'tick' : function(s,e) {
             for(var i = s.deadlines.length -1; i >= 0; i--) {
                 var eventScheduledEnvelope = s.deadlines[i];
+
+                var eventScheduledMetadata = JSON.parse(eventScheduledEnvelope.metadataRaw);
                 var eventScheduled = JSON.parse(eventScheduledEnvelope.bodyRaw);
+
                 var deadlineMillis = eventScheduled.payload.metadata.deadlineMillis;
                 var currentTimeMillis = JSON.parse(e.bodyRaw).timeMillis;
                 var businessUnit = eventScheduled.payload.metadata.businessUnit;
+
+                var deadlineEventPayload = eventScheduled.payload.event;
+                var deadlineEventClass = eventScheduled.payload.eventClass;
+
+                var deadlineEvent = eventScheduled;
+                deadlineEvent.payload = deadlineEventPayload;
+                deadlineEvent.payload.jsonClass = deadlineEventClass;
+
                 if (currentTimeMillis >= deadlineMillis) {
                     s.deadlines.splice(i, 1);
-                    linkTo('currentDeadlines-' + businessUnit, eventScheduledEnvelope);
+                    emit('currentDeadlines-' + businessUnit, deadlineEventClass, deadlineEvent, eventScheduledMetadata);
                 }
             }
         }
