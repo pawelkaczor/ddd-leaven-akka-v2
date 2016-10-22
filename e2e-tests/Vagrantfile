@@ -16,7 +16,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       # docker.vagrant_vagrantfile = "./host/Vagrantfile"
 
       docker.name     = "ecommerce-eventstore"
-      docker.image    = "ruudud/eventstore:3.4.0"
+      docker.image    = "eventstore/eventstore"
       docker.ports    = ['2113:2113', '1113:1113']
     end
   end
