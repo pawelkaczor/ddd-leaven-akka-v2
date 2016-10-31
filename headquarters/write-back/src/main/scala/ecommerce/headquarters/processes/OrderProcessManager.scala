@@ -91,8 +91,4 @@ class OrderProcessManager(val pc: PassivationConfig) extends ProcessManager[Orde
 
   }
 
-  override def receiveEvent = super.receiveEvent.orElse {
-    case e: PaymentExpired if state != WaitingForPayment => DropEvent
-  }
-
 }
