@@ -2,25 +2,36 @@ package ecommerce.sales
 
 import java.util.Date
 
-import ecommerce.sales.Reservation.State
-import ecommerce.sales.ReservationStatus._
 import pl.newicom.dddd.actor.PassivationConfig
-import pl.newicom.dddd.aggregate.{AggregateRoot, AggregateRootSupport, AggregateState, EntityId}
+import pl.newicom.dddd.aggregate._
 import pl.newicom.dddd.eventhandling.EventPublisher
+import pl.newicom.dddd.office.LocalOfficeId
 import pl.newicom.dddd.office.LocalOfficeId.fromRemoteId
+
+import scala.PartialFunction.empty
 
 object Reservation extends AggregateRootSupport {
 
-  implicit val officeId = fromRemoteId[Reservation](ReservationOfficeId)
+  implicit val officeId: LocalOfficeId[Reservation] =
+    fromRemoteId[Reservation](ReservationOfficeId)
 
-  case class State(
-      customerId: EntityId,
-      status: ReservationStatus,
-      items: List[ReservationItem],
-      createDate: Date)
-    extends AggregateState[State] {
+  sealed trait State extends AggregateState[State] {
+    def common: StateMachine = {
+      case ReservationCanceled(_) => Canceled
+      case ReservationClosed(_) => Closed
+    }
+  }
 
-    override def apply = {
+  implicit case object Uninitialized extends State with Uninitialized[State] {
+    def apply: StateMachine = {
+      case ReservationCreated(_, customerId) =>
+        Opened(customerId, items = List.empty, createDate = new Date)
+    }
+  }
+
+  case class Opened(customerId: EntityId, items: List[ReservationItem], createDate: Date) extends State {
+
+    def apply: StateMachine = common orElse {
       case ProductReserved(_, product, quantity) =>
         val newItems = items.find(item => item.productId == product.id) match {
           case Some(orderLine) =>
@@ -30,15 +41,6 @@ object Reservation extends AggregateRootSupport {
             ReservationItem(product, quantity) :: items
         }
         copy(items = newItems)
-
-      case ReservationConfirmed(_, _, _) =>
-        copy(status = Confirmed)
-
-      case ReservationCanceled(_) =>
-        copy(status = Canceled)
-
-      case ReservationClosed(_) =>
-        copy(status = Closed)
     }
 
     def totalAmount: Option[Money] = {
@@ -46,42 +48,56 @@ object Reservation extends AggregateRootSupport {
     }
   }
 
+  case object Confirmed extends State {
+    def apply: StateMachine = common
+  }
+
+  case object Canceled extends State {
+    def apply: StateMachine = common
+  }
+
+  case object Closed extends State {
+    def apply: StateMachine = empty
+  }
+
 }
+
+import ecommerce.sales.Reservation._
 
 abstract class Reservation(val pc: PassivationConfig) extends AggregateRoot[State, Reservation] {
   this: EventPublisher =>
 
-  override val factory: AggregateRootFactory = {
-    case ReservationCreated(_, customerId) =>
-      State(customerId, Opened, items = List.empty, createDate = new Date)
+  def handleCommand: Receive = state match {
+
+    case Uninitialized => {
+      case CreateReservation(reservationId, clientId) =>
+        raise(ReservationCreated(reservationId, clientId))
+    }
+
+    case state @ Opened(customerId, _, _) => common orElse {
+
+      case ReserveProduct(reservationId, product, quantity) =>
+        raise(ProductReserved(reservationId, product, quantity))
+
+      case ConfirmReservation(reservationId) =>
+        raise(ReservationConfirmed(reservationId, customerId, state.totalAmount))
+
+    }
+
+    case Confirmed => common
+
+    case Canceled => common
+
+    case Closed => empty
   }
 
-  override def handleCommand: Receive = {
-    case CreateReservation(reservationId, clientId) =>
-      if (initialized) {
-        throw new RuntimeException(s"Reservation $reservationId already exists")
-      } else {
-        raise(ReservationCreated(reservationId, clientId))
-      }
-
-    case ReserveProduct(reservationId, product, quantity) =>
-      if (state.status eq Closed) {
-        throw new RuntimeException(s"Reservation $reservationId is closed")
-      } else {
-        raise(ProductReserved(reservationId, product, quantity))
-      }
-
-    case ConfirmReservation(reservationId) =>
-      if ((state.status eq Closed) || (state.status eq Canceled)) {
-        throw new RuntimeException(s"Reservation $reservationId is ${state.status}")
-      } else {
-        raise(ReservationConfirmed(reservationId, state.customerId, state.totalAmount))
-      }
+  def common: Receive = {
+    case CloseReservation(reservationId) =>
+      raise(ReservationClosed(reservationId))
 
     case CancelReservation(reservationId) =>
       raise(ReservationCanceled(reservationId))
-
-    case CloseReservation(reservationId) =>
-      raise(ReservationClosed(reservationId))
   }
+
+
 }

@@ -2,14 +2,24 @@ package ecommerce.invoicing
 
 import ecommerce.sales._
 import pl.newicom.dddd.actor.PassivationConfig
-import pl.newicom.dddd.aggregate.{AggregateRoot, AggregateRootSupport, AggregateState}
+import pl.newicom.dddd.aggregate.{AggregateRoot, AggregateRootSupport, AggregateState, Uninitialized}
 import pl.newicom.dddd.eventhandling.EventPublisher
+import pl.newicom.dddd.office.LocalOfficeId
 import pl.newicom.dddd.office.LocalOfficeId.fromRemoteId
 
 object Invoice extends AggregateRootSupport {
 
- case class State(amountPaid: Option[Money]) extends AggregateState[State] {
-    override def apply = {
+  sealed trait State extends AggregateState[State]
+
+  implicit case object Uninitialized extends State with Uninitialized[State] {
+    def apply: StateMachine = {
+      case InvoiceCreated(_, _, _, _, _) =>
+        Active(amountPaid = None)
+    }
+  }
+
+ case class Active(amountPaid: Option[Money]) extends State {
+    override def apply: StateMachine = {
       case OrderBilled(_, _, amount, _) =>
         copy(amountPaid = Some(amountPaid.getOrElse(Money()) + amount))
       case OrderBillingFailed(_, _) =>
@@ -17,7 +27,7 @@ object Invoice extends AggregateRootSupport {
     }
   }
 
-  implicit val officeId = fromRemoteId[Invoice](InvoicingOfficeId)
+  implicit val officeId: LocalOfficeId[Invoice] = fromRemoteId[Invoice](InvoicingOfficeId)
 }
 
 import ecommerce.invoicing.Invoice._
@@ -25,33 +35,22 @@ import ecommerce.invoicing.Invoice._
 abstract class Invoice(override val pc: PassivationConfig) extends AggregateRoot[State, Invoice] {
   this: EventPublisher =>
 
-  override val factory: AggregateRootFactory = {
-    case InvoiceCreated(_, _, _, _, _) =>
-      State(None)
-  }
+  def handleCommand: Receive = state match {
 
-  override def handleCommand: Receive = {
-    case CreateInvoice(invoiceId, orderId, customerId, totalAmount, createEpoch) =>
-      if (initialized) {
-        throw new RuntimeException(s"Invoice $invoiceId already exists")
-      } else {
+    case Uninitialized => {
+      case CreateInvoice(invoiceId, orderId, customerId, totalAmount, createEpoch) =>
         raise(InvoiceCreated(invoiceId, orderId, customerId, totalAmount, createEpoch))
-      }
+    }
 
-    case ReceivePayment(invoiceId, orderId, amount, paymentId) =>
-      if (initialized) {
-        raise(OrderBilled(invoiceId, orderId, amount, paymentId))
-      } else {
-        throw new RuntimeException(s"Unknown invoice")
-      }
+    case Active(_) => {
 
-    case CancelInvoice(invoiceId, orderId) =>
-      if (initialized) {
-        raise(OrderBillingFailed(invoiceId, orderId))
-      } else {
-        throw new RuntimeException(s"Unknown invoice")
-      }
+      case ReceivePayment(invoiceId, orderId, amount, paymentId) =>
+          raise(OrderBilled(invoiceId, orderId, amount, paymentId))
 
+      case CancelInvoice(invoiceId, orderId) =>
+          raise(OrderBillingFailed(invoiceId, orderId))
+
+    }
   }
 
 }

@@ -3,16 +3,24 @@ package ecommerce.shipping
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.aggregate._
 import pl.newicom.dddd.eventhandling.EventPublisher
+import pl.newicom.dddd.office.LocalOfficeId
 import pl.newicom.dddd.office.LocalOfficeId.fromRemoteId
 
 object Shipment extends AggregateRootSupport {
 
-  implicit val officeId = fromRemoteId[Shipment](ShippingOfficeId)
+  implicit val officeId: LocalOfficeId[Shipment] =
+    fromRemoteId[Shipment](ShippingOfficeId)
 
-  case class State() extends AggregateState[State] {
-    override def apply = {
-      case _ => this
+  sealed trait State extends AggregateState[State]
+
+  implicit case object Uninitialized extends State with Uninitialized[State] {
+    def apply: StateMachine = {
+      case ShipmentCreated(_, _) => Active
     }
+  }
+
+  case object Active extends State {
+    def apply: StateMachine = PartialFunction.empty
   }
 
 }
@@ -22,12 +30,7 @@ import ecommerce.shipping.Shipment._
 abstract class Shipment(val pc: PassivationConfig) extends AggregateRoot[State, Shipment] {
   this: EventPublisher =>
 
-  override val factory: AggregateRootFactory = {
-    case ShipmentCreated(_, _) =>
-      State()
-  }
-
-  override def handleCommand: Receive = {
+  def handleCommand: Receive = {
     case CreateShipment(shipmentId, orderId) =>
       if (initialized) {
         throw new RuntimeException(s"Shipment $shipmentId already exists")
