@@ -5,6 +5,7 @@ import pl.newicom.dddd.aggregate._
 import pl.newicom.dddd.eventhandling.EventPublisher
 import pl.newicom.dddd.office.LocalOfficeId
 import pl.newicom.dddd.office.LocalOfficeId.fromRemoteId
+import scala.PartialFunction.empty
 
 object Shipment extends AggregateRootSupport {
 
@@ -20,7 +21,7 @@ object Shipment extends AggregateRootSupport {
   }
 
   case object Active extends State {
-    def apply: StateMachine = PartialFunction.empty
+    def apply: StateMachine = empty
   }
 
 }
