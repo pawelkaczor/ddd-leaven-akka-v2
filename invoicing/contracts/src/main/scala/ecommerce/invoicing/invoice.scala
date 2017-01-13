@@ -20,8 +20,9 @@ case class CancelInvoice(invoiceId: EntityId, orderId: EntityId) extends Command
 //
 // Events
 //
-case class InvoiceCreated(invoiceId: EntityId, orderId: EntityId, customerId: EntityId, totalAmount: Money, createEpoch: DateTime)
-case class OrderBilled(invoiceId: EntityId, orderId: EntityId, amount: Money, paymentId: EntityId)
-case class OrderBillingFailed(invoiceId: EntityId, orderId: EntityId)
+sealed trait Event
 
-case class PaymentExpired(invoiceId: EntityId, orderId: EntityId)
+case class InvoiceCreated(invoiceId: EntityId, orderId: EntityId, customerId: EntityId, totalAmount: Money, createEpoch: DateTime) extends Event
+case class OrderBilled(invoiceId: EntityId, orderId: EntityId, amount: Money, paymentId: EntityId) extends Event
+case class OrderBillingFailed(invoiceId: EntityId, orderId: EntityId) extends Event
+case class PaymentExpired(invoiceId: EntityId, orderId: EntityId) extends Event

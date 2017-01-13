@@ -64,23 +64,23 @@ object Reservation extends AggregateRootSupport {
 
 import ecommerce.sales.Reservation._
 
-abstract class Reservation(val pc: PassivationConfig) extends AggregateRoot[State, Reservation] {
+abstract class Reservation(val pc: PassivationConfig) extends AggregateRoot[Event, State, Reservation] {
   this: EventPublisher =>
 
-  def handleCommand: Receive = state match {
+  def handleCommand: HandleCommand = state match {
 
     case Uninitialized => {
       case CreateReservation(reservationId, clientId) =>
-        raise(ReservationCreated(reservationId, clientId))
+        ReservationCreated(reservationId, clientId)
     }
 
     case state @ Opened(customerId, _, _) => common orElse {
 
       case ReserveProduct(reservationId, product, quantity) =>
-        raise(ProductReserved(reservationId, product, quantity))
+        ProductReserved(reservationId, product, quantity)
 
       case ConfirmReservation(reservationId) =>
-        raise(ReservationConfirmed(reservationId, customerId, state.totalAmount))
+        ReservationConfirmed(reservationId, customerId, state.totalAmount)
 
     }
 
@@ -91,12 +91,12 @@ abstract class Reservation(val pc: PassivationConfig) extends AggregateRoot[Stat
     case Closed => empty
   }
 
-  def common: Receive = {
+  def common: HandleCommand = {
     case CloseReservation(reservationId) =>
-      raise(ReservationClosed(reservationId))
+      ReservationClosed(reservationId)
 
     case CancelReservation(reservationId) =>
-      raise(ReservationCanceled(reservationId))
+      ReservationCanceled(reservationId)
   }
 
 

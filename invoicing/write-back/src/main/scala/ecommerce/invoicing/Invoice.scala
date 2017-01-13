@@ -32,23 +32,23 @@ object Invoice extends AggregateRootSupport {
 
 import ecommerce.invoicing.Invoice._
 
-abstract class Invoice(override val pc: PassivationConfig) extends AggregateRoot[State, Invoice] {
+abstract class Invoice(override val pc: PassivationConfig) extends AggregateRoot[Event, State, Invoice] {
   this: EventPublisher =>
 
-  def handleCommand: Receive = state match {
+  def handleCommand: HandleCommand = state match {
 
     case Uninitialized => {
       case CreateInvoice(invoiceId, orderId, customerId, totalAmount, createEpoch) =>
-        raise(InvoiceCreated(invoiceId, orderId, customerId, totalAmount, createEpoch))
+        InvoiceCreated(invoiceId, orderId, customerId, totalAmount, createEpoch)
     }
 
     case Active(_) => {
 
       case ReceivePayment(invoiceId, orderId, amount, paymentId) =>
-          raise(OrderBilled(invoiceId, orderId, amount, paymentId))
+          OrderBilled(invoiceId, orderId, amount, paymentId)
 
       case CancelInvoice(invoiceId, orderId) =>
-          raise(OrderBillingFailed(invoiceId, orderId))
+          OrderBillingFailed(invoiceId, orderId)
 
     }
   }

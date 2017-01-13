@@ -17,9 +17,11 @@ case class CreateShipment(shipmentId: EntityId, orderId: EntityId) extends Comma
 //
 // Events
 //
-case class ShipmentCreated(shipmentId: EntityId, orderId: EntityId)
+sealed trait Event
 
-case class GoodsDelivered(shipmentId: EntityId, orderId: EntityId)
+case class ShipmentCreated(shipmentId: EntityId, orderId: EntityId) extends Event
+
+case class GoodsDelivered(shipmentId: EntityId, orderId: EntityId) extends Event
 
 //
 // Value Objects

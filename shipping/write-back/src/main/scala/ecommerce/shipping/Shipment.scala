@@ -28,15 +28,15 @@ object Shipment extends AggregateRootSupport {
 
 import ecommerce.shipping.Shipment._
 
-abstract class Shipment(val pc: PassivationConfig) extends AggregateRoot[State, Shipment] {
+abstract class Shipment(val pc: PassivationConfig) extends AggregateRoot[Event, State, Shipment] {
   this: EventPublisher =>
 
-  def handleCommand: Receive = {
+  def handleCommand: HandleCommand = {
     case CreateShipment(shipmentId, orderId) =>
       if (initialized) {
-        throw new RuntimeException(s"Shipment $shipmentId already exists")
+        sys.error(s"Shipment $shipmentId already exists")
       } else {
-        raise(ShipmentCreated(shipmentId, orderId))
+        ShipmentCreated(shipmentId, orderId)
       }
   }
 }
