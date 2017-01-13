@@ -41,6 +41,9 @@ object Reservation extends AggregateRootSupport {
             ReservationItem(product, quantity) :: items
         }
         copy(items = newItems)
+
+      case _: ReservationConfirmed =>
+        Confirmed
     }
 
     def totalAmount: Option[Money] = {
