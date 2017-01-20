@@ -3,12 +3,13 @@ package ecommerce.sales.view
 import java.sql.Date
 
 import com.typesafe.config.{Config, ConfigFactory}
-import ecommerce.sales.ReservationCreated
-import ecommerce.sales.ReservationConfirmed
+import ecommerce.sales.{ReservationConfirmed, ReservationCreated, ReservationOfficeId}
 import ecommerce.sales.ReservationStatus.{Confirmed, Opened}
 import org.joda.time.DateTime.now
 import org.scalatest._
-import pl.newicom.dddd.messaging.event.{OfficeEventMessage, CaseId}
+import pl.newicom.dddd.messaging.event.OfficeEventMessage
+import pl.newicom.dddd.office.CaseRef
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class ReservationProjectionSpec extends WordSpecLike with Matchers with ViewTestSupport {
@@ -48,7 +49,7 @@ class ReservationProjectionSpec extends WordSpecLike with Matchers with ViewTest
 
   override def ensureSchemaCreated = dao.ensureSchemaCreated
 
-  implicit def toEventMessage(event: ReservationCreated): OfficeEventMessage = OfficeEventMessage(CaseId(event.reservationId), event)
-  implicit def toEventMessage(event: ReservationConfirmed): OfficeEventMessage = OfficeEventMessage(CaseId(event.reservationId), event)
+  implicit def toEventMessage(event: ReservationCreated): OfficeEventMessage = OfficeEventMessage(CaseRef(event.reservationId, ReservationOfficeId, None), event)
+  implicit def toEventMessage(event: ReservationConfirmed): OfficeEventMessage = OfficeEventMessage(CaseRef(event.reservationId, ReservationOfficeId, None), event)
 
 }
