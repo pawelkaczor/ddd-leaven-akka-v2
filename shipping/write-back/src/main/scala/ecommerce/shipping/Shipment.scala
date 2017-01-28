@@ -9,34 +9,38 @@ import scala.PartialFunction.empty
 
 object Shipment extends AggregateRootSupport {
 
-  implicit val officeId: LocalOfficeId[Shipment] =
-    fromRemoteId[Shipment](ShippingOfficeId)
+  sealed trait Shipping extends AggregateBehaviour[Event, Shipping]
 
-  sealed trait State extends AggregateState[State]
+  implicit case object Uninitialized extends Shipping with Uninitialized[Shipping] {
 
-  implicit case object Uninitialized extends State with Uninitialized[State] {
-    def apply: StateMachine = {
+    def handleCommand = {
+      case CreateShipment(shipmentId, orderId) =>
+        if (initialized) {
+          sys.error(s"Shipment $shipmentId already exists")
+        } else {
+          ShipmentCreated(shipmentId, orderId)
+        }
+    }
+
+    def apply = {
       case ShipmentCreated(_, _) => Active
     }
   }
 
-  case object Active extends State {
-    def apply: StateMachine = empty
+  case object Active extends Shipping {
+
+    def handleCommand = empty
+
+    def apply = empty
   }
+
+  implicit val officeId: LocalOfficeId[Shipment] = fromRemoteId[Shipment](ShippingOfficeId)
 
 }
 
 import ecommerce.shipping.Shipment._
 
-abstract class Shipment(val pc: PassivationConfig) extends AggregateRoot[Event, State, Shipment] {
+abstract class Shipment(val pc: PassivationConfig) extends AggregateRoot[Event, Shipping, Shipment] {
   this: EventPublisher =>
 
-  def handleCommand: HandleCommand = {
-    case CreateShipment(shipmentId, orderId) =>
-      if (initialized) {
-        sys.error(s"Shipment $shipmentId already exists")
-      } else {
-        ShipmentCreated(shipmentId, orderId)
-      }
-  }
 }
