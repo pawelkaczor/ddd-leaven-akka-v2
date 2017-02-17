@@ -16,7 +16,7 @@ object Shipment extends AggregateRootSupport {
       handleCommands {
         case CreateShipment(shipmentId, orderId) =>
           if (initialized) {
-            sys.error(s"Shipment $shipmentId already exists")
+            error(s"Shipment $shipmentId already exists")
           } else {
             ShipmentCreated(shipmentId, orderId)
           }
