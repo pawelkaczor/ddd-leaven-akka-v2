@@ -6,7 +6,7 @@ import ReservationStatus.ReservationStatus
 import pl.newicom.dddd.aggregate.EntityId
 import slick.jdbc.meta.MTable._
 import scala.concurrent.ExecutionContext
-import slick.driver.JdbcProfile
+import slick.jdbc.JdbcProfile
 
 class ReservationDao(implicit val profile: JdbcProfile, ec: ExecutionContext)  {
   import profile.api._

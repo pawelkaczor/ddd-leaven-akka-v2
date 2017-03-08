@@ -11,7 +11,7 @@ import org.json4s.Formats
 import pl.newicom.dddd.serialization.JsonSerHints._
 
 import scala.concurrent.duration.FiniteDuration
-import slick.driver.PostgresDriver
+import slick.jdbc.PostgresProfile
 
 object HttpService {
   def props(interface: String, port: Int, askTimeout: FiniteDuration): Props =
@@ -24,7 +24,7 @@ class HttpService(interface: String, port: Int)(implicit askTimeout: Timeout) ex
   import context.dispatcher
 
   implicit val formats: Formats = fromConfig(config)
-  implicit val profile = PostgresDriver
+  implicit val profile = PostgresProfile
 
   Http(context.system).bindAndHandle(route, interface, port)
 

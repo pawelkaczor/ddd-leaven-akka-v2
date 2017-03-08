@@ -5,7 +5,7 @@ import akka.http.scaladsl.server.Route
 import ecommerce.sales.ReadEndpoint
 import ecommerce.sales.view.ReservationDao
 import org.json4s.Formats
-import slick.driver.JdbcProfile
+import slick.jdbc.JdbcProfile
 
 import scala.concurrent.ExecutionContext
 

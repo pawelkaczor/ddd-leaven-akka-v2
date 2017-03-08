@@ -6,7 +6,7 @@ import org.scalatest.{BeforeAndAfterAll, Suite}
 import org.slf4j.LoggerFactory.getLogger
 import pl.newicom.dddd.view.sql.SqlViewStoreConfiguration
 import slick.dbio._
-import slick.driver.H2Driver
+import slick.jdbc.H2Profile
 
 import scala.concurrent.ExecutionContext
 
@@ -15,7 +15,7 @@ trait ViewTestSupport extends SqlViewStoreConfiguration with BeforeAndAfterAll w
 
   val log = getLogger(getClass)
 
-  implicit val profile = H2Driver
+  implicit val profile = H2Profile
 
   implicit override val patienceConfig = PatienceConfig(
     timeout = scaled(Span(5, Seconds)),

@@ -4,8 +4,9 @@ object Deps {
 
   object Version {
     val akka        =    "2.4.16"
-    val akkaDDD     =    "1.5.0-SNAPSHOT"
-    val Kamon       =    "0.6.5"
+    val akkaDDD     =    "1.5.0"
+    val Kamon       =    "0.6.6"
+    val KamonAutoWeave = "0.6.5"
   }
 
   object Akka {
@@ -31,17 +32,17 @@ object Deps {
   }
 
   object Kamon {
-    val akka          = apply("akka")
+    val akka          = apply("akka-2.4")
     val aspectjweaver = "org.aspectj" % "aspectjweaver" % "1.8.7"
-    val akkaRemote    = apply("akka-remote")
-    val autoweave     = apply("autoweave")
+    val akkaRemote    = apply("akka-remote-2.4")
+    val autoweave     = "io.kamon" %% "kamon-autoweave" % Version.KamonAutoWeave
     val core          = apply("core")
     val logReporter   = apply("log-reporter")
     val scala         = apply("scala")
     val statsD        = apply("statsd")
     val systemMetrics = apply("system-metrics")
 
-    def apply(): Seq[ModuleID] = Seq(/*akka, akkaRemote, */aspectjweaver, autoweave, scala, statsD)
+    def apply(): Seq[ModuleID] = Seq(akka, akkaRemote, aspectjweaver, autoweave, scala, statsD)
     private def apply(m: String) = "io.kamon" %% s"kamon-$m" % Version.Kamon
   }
 

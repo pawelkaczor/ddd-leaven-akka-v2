@@ -8,14 +8,14 @@ import pl.newicom.dddd.view.sql.SqlViewStoreConfiguration
 import slick.dbio._
 
 import scala.concurrent.ExecutionContext
-import slick.driver.H2Driver
+import slick.jdbc.H2Profile
 
 trait ViewTestSupport extends SqlViewStoreConfiguration with BeforeAndAfterAll with ScalaFutures {
   this: Suite =>
 
   val log = getLogger(getClass)
 
-  implicit val profile = H2Driver
+  implicit val profile = H2Profile
 
   implicit class ViewStoreAction[A](a: DBIO[A])(implicit ex: ExecutionContext) {
     private val future = viewStore.run(a)

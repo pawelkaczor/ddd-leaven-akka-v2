@@ -5,7 +5,7 @@ import ecommerce.sales.view.{ReservationDao, ReservationProjection}
 import pl.newicom.dddd.view.sql.{SqlViewUpdateConfig, SqlViewUpdateService}
 import pl.newicom.eventstore.EventSourceProvider
 import slick.dbio.DBIO
-import slick.driver.JdbcProfile
+import slick.jdbc.JdbcProfile
 
 class SalesViewUpdateService(override val config: Config)(override implicit val profile: JdbcProfile)
   extends SqlViewUpdateService with SalesReadBackendConfiguration with EventSourceProvider {

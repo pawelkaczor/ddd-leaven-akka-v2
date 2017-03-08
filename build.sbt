@@ -6,7 +6,7 @@ version in ThisBuild := "0.5.0-SNAPSHOT"
 
 scalaVersion in ThisBuild := "2.12.1"
 
-scalacOptions in ThisBuild := Seq("-encoding", "utf8", "-feature", "-language:postfixOps", "-language:implicitConversions"/*, "-Xlog-implicits"*/)
+scalacOptions in ThisBuild := Seq("-deprecation", "-encoding", "utf8", "-feature", "-language:postfixOps", "-language:implicitConversions"/*, "-Xlog-implicits"*/)
 
 sourcesInBase in ThisBuild := false
 

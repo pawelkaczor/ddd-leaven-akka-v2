@@ -5,7 +5,7 @@ import ecommerce.shipping.view.{ShipmentDao, ShipmentProjection}
 import pl.newicom.dddd.view.sql.{SqlViewUpdateConfig, SqlViewUpdateService}
 import pl.newicom.eventstore.EventSourceProvider
 import slick.dbio.DBIO
-import slick.driver.JdbcProfile
+import slick.jdbc.JdbcProfile
 
 class ShippingViewUpdateService(override val config: Config)(override implicit val profile: JdbcProfile)
   extends SqlViewUpdateService with ShippingReadBackendConfiguration with EventSourceProvider {

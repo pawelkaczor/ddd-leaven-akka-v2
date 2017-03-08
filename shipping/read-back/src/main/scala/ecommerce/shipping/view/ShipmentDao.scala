@@ -3,7 +3,7 @@ package ecommerce.shipping.view
 import ecommerce.shipping.ShippingStatus
 import ecommerce.shipping.ShippingStatus.ShippingStatus
 import pl.newicom.dddd.aggregate.EntityId
-import slick.driver.JdbcProfile
+import slick.jdbc.JdbcProfile
 import slick.jdbc.meta.MTable._
 
 import scala.concurrent.ExecutionContext
