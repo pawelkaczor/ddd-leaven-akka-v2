@@ -1,4 +1,5 @@
-import com.typesafe.sbt.packager.archetypes.{AshScriptPlugin, JavaAppPackaging}
+import com.typesafe.sbt.packager.archetypes.JavaAppPackaging
+import com.typesafe.sbt.packager.archetypes.scripts.AshScriptPlugin
 import com.typesafe.sbt.packager.universal.UniversalPlugin.autoImport._
 import sbt.Keys._
 import sbt._
