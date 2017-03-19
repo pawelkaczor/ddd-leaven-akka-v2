@@ -1,14 +1,13 @@
 package ecommerce.sales
 
-import com.typesafe.config.Config
 import ecommerce.sales.view.{ReservationDao, ReservationProjection}
-import pl.newicom.dddd.view.sql.{SqlViewUpdateConfig, SqlViewUpdateService}
-import pl.newicom.eventstore.EventSourceProvider
+import pl.newicom.dddd.view.sql.{SqlViewStore, SqlViewUpdateConfig, SqlViewUpdateService}
+import pl.newicom.eventstore.{EventSourceProvider, EventStoreProvider}
 import slick.dbio.DBIO
 import slick.jdbc.JdbcProfile
 
-class SalesViewUpdateService(override val config: Config)(override implicit val profile: JdbcProfile)
-  extends SqlViewUpdateService with SalesReadBackendConfiguration with EventSourceProvider {
+class SalesViewUpdateService(viewStore: SqlViewStore)(override implicit val profile: JdbcProfile)
+  extends SqlViewUpdateService(viewStore) with EventStoreProvider with EventSourceProvider {
 
   lazy val resevationDao = new ReservationDao
 

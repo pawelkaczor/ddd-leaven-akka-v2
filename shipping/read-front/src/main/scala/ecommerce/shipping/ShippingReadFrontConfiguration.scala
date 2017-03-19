@@ -1,11 +1,10 @@
 package ecommerce.shipping
 
 import com.typesafe.config.Config
-import pl.newicom.dddd.view.sql.SqlViewStoreConfiguration
 
 import scala.concurrent.duration._
 
-trait ShippingReadFrontConfiguration extends SqlViewStoreConfiguration {
+trait ShippingReadFrontConfiguration {
 
   def config: Config
 

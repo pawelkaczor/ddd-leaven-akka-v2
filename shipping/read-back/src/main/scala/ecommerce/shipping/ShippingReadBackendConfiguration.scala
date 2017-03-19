@@ -1,6 +1,0 @@
-package ecommerce.shipping
-
-import pl.newicom.dddd.view.sql.SqlViewStoreConfiguration
-import pl.newicom.eventstore.EventStoreProvider
-
-trait ShippingReadBackendConfiguration extends SqlViewStoreConfiguration with EventStoreProvider

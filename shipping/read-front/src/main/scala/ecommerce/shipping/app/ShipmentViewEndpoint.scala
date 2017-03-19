@@ -5,6 +5,7 @@ import akka.http.scaladsl.server.Route
 import ecommerce.shipping.view.ShipmentDao
 import ecommerce.shipping.ReadEndpoint
 import org.json4s.Formats
+import pl.newicom.dddd.view.sql.SqlViewStore
 
 import scala.concurrent.ExecutionContext
 import slick.jdbc.JdbcProfile
@@ -13,7 +14,7 @@ case class ShipmentViewEndpoint(implicit val ec: ExecutionContext, profile: Jdbc
 
   lazy val dao = new ShipmentDao
 
-  def route(viewStore: Database): Route = {
+  def route(viewStore: SqlViewStore): Route = {
     path("shipment" / "all") {
       get {
         complete {

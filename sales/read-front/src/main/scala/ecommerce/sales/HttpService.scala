@@ -9,6 +9,7 @@ import com.typesafe.config.Config
 import ecommerce.sales.app.ReservationViewEndpoint
 import org.json4s.Formats
 import pl.newicom.dddd.serialization.JsonSerHints._
+import pl.newicom.dddd.view.sql.SqlViewStore
 
 import scala.concurrent.duration.FiniteDuration
 import slick.jdbc.PostgresProfile
@@ -35,6 +36,6 @@ class HttpService(interface: String, port: Int)(implicit askTimeout: Timeout) ex
 
   lazy val endpoints: ReservationViewEndpoint = ReservationViewEndpoint()
 
-  private def route = (provide(viewStore) & pathPrefix("ecommerce" / "sales"))(endpoints)
+  private def route = (provide(new SqlViewStore(config)) & pathPrefix("ecommerce" / "sales"))(endpoints)
 
 }

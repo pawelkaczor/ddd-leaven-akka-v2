@@ -2,8 +2,6 @@ package ecommerce.sales
 
 import org.json4s.Formats
 import pl.newicom.dddd.http.Endpoint
-import slick.jdbc.JdbcBackend
+import pl.newicom.dddd.view.sql.SqlViewStore
 
-abstract class ReadEndpoint(implicit formats: Formats) extends Endpoint[JdbcBackend#DatabaseDef] {
-  type Database = JdbcBackend#DatabaseDef
-}
+abstract class ReadEndpoint(implicit formats: Formats) extends Endpoint[SqlViewStore]

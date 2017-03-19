@@ -1,11 +1,10 @@
 package ecommerce.sales
 
 import com.typesafe.config.Config
-import pl.newicom.dddd.view.sql.SqlViewStoreConfiguration
 
 import scala.concurrent.duration._
 
-trait SalesReadFrontConfiguration extends SqlViewStoreConfiguration {
+trait SalesReadFrontConfiguration {
 
   def config: Config
 
