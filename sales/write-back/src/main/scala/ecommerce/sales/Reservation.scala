@@ -4,7 +4,6 @@ import java.util.Date
 
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.aggregate._
-import pl.newicom.dddd.eventhandling.EventPublisher
 import pl.newicom.dddd.office.LocalOfficeId
 import pl.newicom.dddd.office.LocalOfficeId.fromRemoteId
 
@@ -92,6 +91,6 @@ object Reservation extends AggregateRootSupport {
 import ecommerce.sales.Reservation._
 
 abstract class Reservation(val pc: PassivationConfig) extends AggregateRoot[Event, ReservationActions, Reservation] {
-  this: EventPublisher =>
+  this: ReplyConfig =>
 
 }

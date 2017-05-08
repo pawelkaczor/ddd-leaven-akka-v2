@@ -3,7 +3,6 @@ package ecommerce.invoicing
 import ecommerce.sales._
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.aggregate._
-import pl.newicom.dddd.eventhandling.EventPublisher
 import pl.newicom.dddd.office.LocalOfficeId
 import pl.newicom.dddd.office.LocalOfficeId.fromRemoteId
 
@@ -48,5 +47,5 @@ object Invoice extends AggregateRootSupport {
 import ecommerce.invoicing.Invoice._
 
 abstract class Invoice(override val pc: PassivationConfig) extends AggregateRoot[Event, Invoicing, Invoice] {
-  this: EventPublisher =>
+  this: ReplyConfig =>
 }

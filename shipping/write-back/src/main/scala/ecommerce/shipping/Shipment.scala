@@ -2,7 +2,6 @@ package ecommerce.shipping
 
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.aggregate._
-import pl.newicom.dddd.eventhandling.EventPublisher
 import pl.newicom.dddd.office.LocalOfficeId
 import pl.newicom.dddd.office.LocalOfficeId.fromRemoteId
 
@@ -39,6 +38,5 @@ object Shipment extends AggregateRootSupport {
 import ecommerce.shipping.Shipment._
 
 abstract class Shipment(val pc: PassivationConfig) extends AggregateRoot[Event, Shipping, Shipment] {
-  this: EventPublisher =>
-
+  this: ReplyConfig =>
 }
