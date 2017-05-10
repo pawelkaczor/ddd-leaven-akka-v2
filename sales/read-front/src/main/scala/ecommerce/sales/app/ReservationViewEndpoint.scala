@@ -10,7 +10,7 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.ExecutionContext
 
-case class ReservationViewEndpoint(implicit ec: ExecutionContext, profile: JdbcProfile, formats: Formats) extends ReadEndpoint {
+class ReservationViewEndpoint(implicit ec: ExecutionContext, profile: JdbcProfile, formats: Formats) extends ReadEndpoint {
 
   lazy val dao = new ReservationDao
 

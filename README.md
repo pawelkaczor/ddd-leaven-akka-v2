@@ -21,7 +21,7 @@ All these capabilities are obviously supported by the underlying technology stac
 
 * [Akka](http://akka.io) - actor-based, reactive middleware implemented in Scala,
 
-* [Akka HTTP](http://doc.akka.io/docs/akka/2.4/scala/http/introduction.html) - HTTP server build upon [Akka Stream](http://doc.akka.io/docs/akka/2.4/scala/stream/stream-introduction.html) (Akka's implementation of [Reactive Streams Specification](http://www.reactive-streams.org/)),
+* [Akka HTTP](http://doc.akka.io/docs/akka-http/current/scala/http/introduction.html) - HTTP server build upon [Akka Stream](http://doc.akka.io/docs/akka/2.4/scala/stream/stream-introduction.html) (Akka's implementation of [Reactive Streams Specification](http://www.reactive-streams.org/)),
 
 * [Akka Persistence](http://doc.akka.io/docs/akka/current/scala/persistence.html) - infrastructure for building durable (event sourced) actors, which has a pluggable journal,
 

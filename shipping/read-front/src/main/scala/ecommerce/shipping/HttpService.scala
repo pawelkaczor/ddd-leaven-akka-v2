@@ -33,7 +33,7 @@ class HttpService(interface: String, port: Int)(implicit askTimeout: Timeout) ex
   override def receive: Receive = Actor.emptyBehavior
   override def config: Config = context.system.settings.config
 
-  lazy val endpoints: ShipmentViewEndpoint = ShipmentViewEndpoint()
+  lazy val endpoints: ShipmentViewEndpoint = new ShipmentViewEndpoint
 
   private def route = (provide(new SqlViewStore(config)) & pathPrefix("ecommerce" / "shipping"))(endpoints)
 

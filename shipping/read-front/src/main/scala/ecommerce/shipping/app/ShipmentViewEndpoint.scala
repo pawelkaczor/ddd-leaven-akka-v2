@@ -10,7 +10,7 @@ import pl.newicom.dddd.view.sql.SqlViewStore
 import scala.concurrent.ExecutionContext
 import slick.jdbc.JdbcProfile
 
-case class ShipmentViewEndpoint(implicit val ec: ExecutionContext, profile: JdbcProfile, formats: Formats) extends ReadEndpoint {
+class ShipmentViewEndpoint(implicit val ec: ExecutionContext, profile: JdbcProfile, formats: Formats) extends ReadEndpoint {
 
   lazy val dao = new ShipmentDao
 

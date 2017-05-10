@@ -38,7 +38,7 @@ class ReservationViewEndpointSpec extends WordSpecLike with Matchers with Scalat
 
     def response = responseAs[String]
 
-    val route: Route = ReservationViewEndpoint().route(viewStore)
+    val route: Route = new ReservationViewEndpoint().route(viewStore)
 
     "respond to /reservation/all with all reservations" in {
       Get("/reservation/all") ~> route ~> check {

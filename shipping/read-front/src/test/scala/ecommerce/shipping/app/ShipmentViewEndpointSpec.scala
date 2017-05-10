@@ -42,7 +42,7 @@ class ShipmentViewEndpointSpec extends WordSpecLike with Matchers with Scalatest
 
     def response = responseAs[String]
 
-    val route: Route = ShipmentViewEndpoint().route(viewStore)
+    val route: Route = new ShipmentViewEndpoint().route(viewStore)
 
     "respond to /shipment/all with all shipments" in {
       Get("/shipment/all") ~> route ~> check {

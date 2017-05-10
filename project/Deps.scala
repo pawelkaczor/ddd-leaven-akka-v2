@@ -3,7 +3,7 @@ import sbt._
 object Deps {
 
   object Version {
-    val akka        =    "2.4.16"
+    val akka        =    "2.5.1"
     val akkaDDD     =    "1.6.0-SNAPSHOT"
     val Kamon       =    "0.6.6"
     val KamonAutoWeave = "0.6.5"
@@ -47,7 +47,7 @@ object Deps {
   }
 
   object SqlDb {
-    val `slick-for-pg` = "com.github.tminglei" %% "slick-pg" % "0.15.0-M4" exclude("org.slf4j", "slf4j-simple")
+    val `slick-for-pg` = "com.github.tminglei" %% "slick-pg" % "0.15.0-RC" exclude("org.slf4j", "slf4j-simple")
     val testDriver = "com.h2database" % "h2" % "1.4.189" % "test"
 
     def prod = Seq(`slick-for-pg`)

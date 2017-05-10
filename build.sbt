@@ -4,7 +4,7 @@ organization in ThisBuild := "pl.newicom"
 
 version in ThisBuild := "0.6.0-SNAPSHOT"
 
-scalaVersion in ThisBuild := "2.12.1"
+scalaVersion in ThisBuild := "2.12.2"
 
 scalacOptions in ThisBuild := Seq("-deprecation", "-encoding", "utf8", "-feature", "-language:postfixOps", "-language:implicitConversions"/*, "-Xlog-implicits"*/)
 
