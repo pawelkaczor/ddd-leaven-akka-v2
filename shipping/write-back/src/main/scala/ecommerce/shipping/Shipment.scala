@@ -12,7 +12,7 @@ object Shipment extends AggregateRootSupport {
   implicit case object Uninitialized extends Shipping with Uninitialized[Shipping] {
 
     def actions: Actions =
-      handleCommands {
+      handleCommand {
         case CreateShipment(shipmentId, orderId) =>
           if (initialized) {
             error(s"Shipment $shipmentId already exists")
@@ -20,7 +20,7 @@ object Shipment extends AggregateRootSupport {
             ShipmentCreated(shipmentId, orderId)
           }
       }
-      .handleEvents {
+      .handleEvent {
         case ShipmentCreated(_, _) => Active
       }
   }
@@ -37,6 +37,4 @@ object Shipment extends AggregateRootSupport {
 
 import ecommerce.shipping.Shipment._
 
-abstract class Shipment(val pc: PassivationConfig) extends AggregateRoot[Event, Shipping, Shipment] {
-  this: ReplyConfig =>
-}
+abstract class Shipment(val pc: PassivationConfig) extends AggregateRoot[Event, Shipping, Shipment]

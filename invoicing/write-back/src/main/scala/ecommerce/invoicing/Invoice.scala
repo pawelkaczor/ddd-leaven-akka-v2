@@ -13,11 +13,11 @@ object Invoice extends AggregateRootSupport {
   implicit case object Uninitialized extends Invoicing with Uninitialized[Invoicing] {
 
     def actions: Actions =
-      handleCommands {
+      handleCommand {
         case CreateInvoice(invoiceId, orderId, customerId, totalAmount, createEpoch) =>
           InvoiceCreated(invoiceId, orderId, customerId, totalAmount, createEpoch)
       }
-      .handleEvents {
+      .handleEvent {
         case InvoiceCreated(_, _, _, _, _) =>
           Active(amountPaid = None)
       }
@@ -26,14 +26,14 @@ object Invoice extends AggregateRootSupport {
  case class Active(amountPaid: Option[Money]) extends Invoicing {
 
    def actions: Actions =
-     handleCommands {
+     handleCommand {
        case ReceivePayment(invoiceId, orderId, amount, paymentId) =>
          OrderBilled(invoiceId, orderId, amount, paymentId)
 
        case CancelInvoice(invoiceId, orderId) =>
          OrderBillingFailed(invoiceId, orderId)
      }
-     .handleEvents {
+     .handleEvent {
         case OrderBilled(_, _, amount, _) =>
           copy(amountPaid = Some(amountPaid.getOrElse(Money()) + amount))
         case OrderBillingFailed(_, _) =>
@@ -46,6 +46,4 @@ object Invoice extends AggregateRootSupport {
 
 import ecommerce.invoicing.Invoice._
 
-abstract class Invoice(override val pc: PassivationConfig) extends AggregateRoot[Event, Invoicing, Invoice] {
-  this: ReplyConfig =>
-}
+abstract class Invoice(override val pc: PassivationConfig) extends AggregateRoot[Event, Invoicing, Invoice]

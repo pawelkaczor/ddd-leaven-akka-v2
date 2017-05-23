@@ -12,14 +12,14 @@ object Reservation extends AggregateRootSupport {
   sealed trait ReservationActions extends AggregateActions[Event, ReservationActions] {
 
     def canceledOrClosed: Actions =
-      handleCommands {
+      handleCommand {
         case CloseReservation(reservationId) =>
           ReservationClosed(reservationId)
 
         case CancelReservation(reservationId) =>
           ReservationCanceled(reservationId)
       }
-      .handleEvents {
+      .handleEvent {
         case ReservationCanceled(_) => Canceled
         case ReservationClosed(_) => Closed
       }
@@ -29,11 +29,11 @@ object Reservation extends AggregateRootSupport {
   implicit case object Uninitialized extends ReservationActions with Uninitialized[ReservationActions] {
 
     def actions: Actions =
-      handleCommands {
+      handleCommand {
         case CreateReservation(reservationId, clientId) =>
           ReservationCreated(reservationId, clientId)
       }
-      .handleEvents {
+      .handleEvent {
         case ReservationCreated(_, customerId) =>
           Opened(customerId, items = List.empty, createDate = new Date)
       }
@@ -43,14 +43,14 @@ object Reservation extends AggregateRootSupport {
   case class Opened(customerId: EntityId, items: List[ReservationItem], createDate: Date) extends ReservationActions {
 
     def actions: Actions =
-      handleCommands {
+      handleCommand {
         case ReserveProduct(reservationId, product, quantity) =>
           ProductReserved(reservationId, product, quantity)
 
         case ConfirmReservation(reservationId) =>
           ReservationConfirmed(reservationId, customerId, totalAmount)
       }
-      .handleEvents {
+      .handleEvent {
         case ProductReserved(_, product, quantity) =>
           val newItems = items.find(item => item.productId == product.id) match {
             case Some(orderLine) =>
@@ -90,7 +90,4 @@ object Reservation extends AggregateRootSupport {
 
 import ecommerce.sales.Reservation._
 
-abstract class Reservation(val pc: PassivationConfig) extends AggregateRoot[Event, ReservationActions, Reservation] {
-  this: ReplyConfig =>
-
-}
+abstract class Reservation(val pc: PassivationConfig) extends AggregateRoot[Event, ReservationActions, Reservation]
