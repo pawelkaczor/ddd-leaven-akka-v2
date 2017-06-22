@@ -4,11 +4,6 @@
  jdk:
    - oraclejdk8
 
- cache:
-  directories:
-    - $HOME/.ivy2/cache
-    - $HOME/.sbt/boot
-
  script:
   - sbt test:test
 
