@@ -74,7 +74,6 @@ class SystemSpec extends EcommerceSystemTestDriver with Eventually {
       }
     }
 
-/*
     using(invoicing_write) { implicit b =>
       "pay" in eventually {
         POST command {
@@ -88,7 +87,6 @@ class SystemSpec extends EcommerceSystemTestDriver with Eventually {
         GET / s"shipment/order/$reservationId" should beOK
       }
     }
-*/
 
   }
 }
