@@ -1,14 +1,13 @@
 package ecommerce.invoicing
 
 import ecommerce.sales._
-import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.aggregate._
 import pl.newicom.dddd.office.LocalOfficeId
 import pl.newicom.dddd.office.LocalOfficeId.fromRemoteId
 
 object Invoice extends AggregateRootSupport {
 
-  sealed trait Invoicing extends AggregateActions[Event, Invoicing]
+  sealed trait Invoicing extends AggregateActions[Event, Invoicing, Config]
 
   implicit case object Uninitialized extends Invoicing with Uninitialized[Invoicing] {
 
@@ -46,4 +45,4 @@ object Invoice extends AggregateRootSupport {
 
 import ecommerce.invoicing.Invoice._
 
-abstract class Invoice(override val pc: PassivationConfig) extends AggregateRoot[Event, Invoicing, Invoice]
+abstract class Invoice(val config: Config) extends AggregateRoot[Event, Invoicing, Invoice] with ConfigClass[Config]

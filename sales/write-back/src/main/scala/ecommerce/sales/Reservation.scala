@@ -2,14 +2,13 @@ package ecommerce.sales
 
 import java.util.Date
 
-import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.aggregate._
 import pl.newicom.dddd.office.LocalOfficeId
 import pl.newicom.dddd.office.LocalOfficeId.fromRemoteId
 
 object Reservation extends AggregateRootSupport {
 
-  sealed trait ReservationActions extends AggregateActions[Event, ReservationActions] {
+  sealed trait ReservationActions extends AggregateActions[Event, ReservationActions, Config] {
 
     def canceledOrClosed: Actions =
       handleCommand {
@@ -90,4 +89,4 @@ object Reservation extends AggregateRootSupport {
 
 import ecommerce.sales.Reservation._
 
-abstract class Reservation(val pc: PassivationConfig) extends AggregateRoot[Event, ReservationActions, Reservation]
+abstract class Reservation(val config: Config) extends AggregateRoot[Event, ReservationActions, Reservation] with ConfigClass[Config]

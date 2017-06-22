@@ -2,7 +2,7 @@ package ecommerce.sales
 
 import akka.actor.Props
 import pl.newicom.dddd.actor.PassivationConfig
-import pl.newicom.dddd.aggregate.{AggregateRootActorFactory, ReplyWithEvents}
+import pl.newicom.dddd.aggregate.{AggregateRootActorFactory, DefaultConfig, EntityId, ReplyWithEvents}
 import pl.newicom.dddd.test.support.OfficeSpec
 
 import scala.concurrent.duration._
@@ -13,7 +13,7 @@ import pl.newicom.dddd.office.Office
 object ReservationSpec {
   implicit def factory(implicit it: Duration = 1.minute): AggregateRootActorFactory[Reservation] =
     new AggregateRootActorFactory[Reservation] {
-      override def props(pc: PassivationConfig): Props = Props(new Reservation(pc) with ReplyWithEvents)
+      override def props(pc: PassivationConfig): Props = Props(new Reservation(DefaultConfig(pc)) with ReplyWithEvents)
       override def inactivityTimeout: Duration = it
     }
 }
@@ -22,7 +22,7 @@ class ReservationSpec extends OfficeSpec[Reservation] {
 
   def reservationOffice: Office = officeUnderTest
 
-  def reservationId = aggregateId
+  def reservationId: EntityId = aggregateId
 
   val product = Product("product1", "productName", ProductType.Standard, Some(Money(10)))
 

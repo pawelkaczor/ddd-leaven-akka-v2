@@ -4,14 +4,13 @@ object Deps {
 
   object Version {
     val akka        =    "2.5.1"
-    val akkaDDD     =    "1.6.0-SNAPSHOT"
+    val akkaDDD     =    "1.6.1-SNAPSHOT"
     val Kamon       =    "0.6.6"
     val KamonAutoWeave = "0.6.5"
   }
 
   object Akka {
     val actor =            apply("actor")
-    val httpTestKit =      apply("http-testkit", Version.akka) % "test"
     val multiNodeTestkit = apply("multi-node-testkit") % "test"
 
     private def apply(m: String, v: String = Version.akka) = "com.typesafe.akka" %% s"akka-$m" % v
@@ -20,7 +19,7 @@ object Deps {
   object AkkaDDD {
     val core          = apply("core")
     val eventStore    = "pl.newicom.dddd" %% "eventstore-akka-persistence" % Version.akkaDDD
-    val httpSupport   = Seq("pl.newicom.dddd" %% s"http-support" % Version.akkaDDD, Akka.httpTestKit)
+    val httpSupport   = Seq("pl.newicom.dddd" %% s"http-support" % Version.akkaDDD)
     val messaging     = apply("messaging")
     val monitoring    = apply("monitoring")
     val scheduling    = apply("scheduling")

@@ -1,13 +1,12 @@
 package ecommerce.shipping
 
-import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.aggregate._
 import pl.newicom.dddd.office.LocalOfficeId
 import pl.newicom.dddd.office.LocalOfficeId.fromRemoteId
 
 object Shipment extends AggregateRootSupport {
 
-  sealed trait Shipping extends AggregateActions[Event, Shipping]
+  sealed trait Shipping extends AggregateActions[Event, Shipping, Config]
 
   implicit case object Uninitialized extends Shipping with Uninitialized[Shipping] {
 
@@ -37,4 +36,4 @@ object Shipment extends AggregateRootSupport {
 
 import ecommerce.shipping.Shipment._
 
-abstract class Shipment(val pc: PassivationConfig) extends AggregateRoot[Event, Shipping, Shipment]
+abstract class Shipment(val config: Config) extends AggregateRoot[Event, Shipping, Shipment] with ConfigClass[Config]
