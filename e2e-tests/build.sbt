@@ -11,7 +11,8 @@ lazy val `e2e-tests` = (project in file("."))
     vagrantContainersLogFile := target.value / "e2e-tests.log",
     libraryDependencies ++= Seq(
       "org.yaml" % "snakeyaml" % "1.14",
-      "pl.newicom" %% "resttest" % "0.4.0"
+      "io.rest-assured" % "scala-support" % "3.0.3",
+      "org.scalatest" %% "scalatest" % "3.0.1"
     )
   )
   .configs(E2ETest)
