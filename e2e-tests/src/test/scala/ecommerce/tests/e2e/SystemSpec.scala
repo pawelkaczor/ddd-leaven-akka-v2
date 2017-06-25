@@ -8,8 +8,6 @@ import org.json4s.Formats
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Seconds, Span}
 import pl.newicom.dddd.serialization.JsonSerHints._
-import io.restassured.http.Method.POST
-import io.restassured.http.Method.GET
 import pl.newicom.dddd.utils.UUIDSupport.uuid7
 
 object SystemSpec {

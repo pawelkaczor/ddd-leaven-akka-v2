@@ -5,8 +5,6 @@ import io.restassured.builder.RequestSpecBuilder
 import io.restassured.config.HttpClientConfig
 import io.restassured.config.HttpClientConfig.HttpClientFactory
 import io.restassured.filter.log.LogDetail
-import io.restassured.http.Method
-import io.restassured.http.Method.{GET, POST}
 import io.restassured.module.scala.RestAssuredSupport.AddThenToResponse
 import io.restassured.response.ValidatableResponse
 import io.restassured.specification.RequestSpecification
@@ -42,13 +40,15 @@ trait TestDriver extends WordSpecLike with Matchers {
     )
   }
 
-  implicit def methodToBuilderDSL(method: Method)(implicit builder: RequestSpecBuilder): RequestBuilderDSL =
-    new RequestBuilderDSL(builder.build(), method)
+  def POST(implicit builder: RequestSpecBuilder): POSTOps =
+    new POSTOps(builder.build())
 
-  class RequestBuilderDSL(reqSpec: RequestSpecification, method: Method) {
+  def GET(implicit builder: RequestSpecBuilder): GETOps =
+    new GETOps(builder.build())
 
-    def command(c: Command)(implicit formats: Formats): ValidatableResponse = {
-      assert(method == POST)
+  class POSTOps(reqSpec: RequestSpecification) {
+
+    def command(c: Command)(implicit formats: Formats): ValidatableResponse =
       given(reqSpec)
         .body(write(c))
         .header("Command-Type", c.getClass.getName)
@@ -56,16 +56,16 @@ trait TestDriver extends WordSpecLike with Matchers {
       .Then()
         .log().all()
         .statusCode(200)
-    }
+  }
 
-    def /(subPath: String): ValidatableResponse = {
-      assert(method == GET)
+  class GETOps(reqSpec: RequestSpecification) {
+
+    def /(subPath: String): ValidatableResponse =
       given(reqSpec)
-      .get(subPath)
-      .Then()
+        .get(subPath)
+        .Then()
         .log().all()
         .statusCode(200)
-    }
   }
 
 }
