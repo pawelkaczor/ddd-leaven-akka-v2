@@ -18,6 +18,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       docker.name     = "ecommerce-eventstore"
       docker.image    = "eventstore/eventstore"
       docker.ports    = ['2113:2113', '1113:1113']
+      docker.env = {"EVENTSTORE_RUN_PROJECTIONS" => "All", "EVENTSTORE_START_STANDARD_PROJECTIONS" => "true"}
     end
   end
 
@@ -71,11 +72,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # triggers (https://github.com/emyl/vagrant-triggers)
 
   config.trigger.after :up, :vm => ["ecommerce-eventstore"] do
-    info "Enabling system projections"
     sleep(5)
-    run "curl -v -u admin:changeit --data '' 'http://localhost:2113/projection/$by_category/command/enable'"
-
     info "Installing user projections"
+
     run "curl -v -H 'Content-Type: application/json' -u admin:changeit --data @../headquarters/write-back/src/main/resources/projections/clock.js http://127.0.0.1:2113/projections/continuous?name=clock_proj&type=JS&emit=1"
     run "curl -v -H 'Content-Type: application/json' -u admin:changeit --data @../headquarters/write-back/src/main/resources/projections/current-deadlines.js http://127.0.0.1:2113/projections/continuous?name=current_deadlines_proj&type=JS&emit=1"
     run "curl -v -H 'Content-Type: application/json' -u admin:changeit --data @../headquarters/write-back/src/main/resources/projections/order-process.js http://127.0.0.1:2113/projections/continuous?name=order_process_proj&type=JS&emit=1"
