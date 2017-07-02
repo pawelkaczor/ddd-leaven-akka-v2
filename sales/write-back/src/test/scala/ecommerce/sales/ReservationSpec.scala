@@ -51,7 +51,6 @@ class ReservationSpec extends OfficeSpec[Reservation] {
     }
   }
 
-/*
   "Reservation office" should {
     "confirm reservation" in {
       given(
@@ -62,11 +61,10 @@ class ReservationSpec extends OfficeSpec[Reservation] {
         ConfirmReservation(reservationId)
       )
       .expectEvent {
-        ReservationConfirmed(reservationId, "client1", Some(Money(1)))
+        ReservationConfirmed(reservationId, "client1", product.price)
       }
     }
   }
-*/
 
   "Reservation office" should {
     "close reservation" in {

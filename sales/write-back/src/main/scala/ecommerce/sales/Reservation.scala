@@ -66,7 +66,12 @@ object Reservation extends AggregateRootSupport {
       .orElse(canceledOrClosed)
 
     def totalAmount: Option[Money] = {
-      items.foldLeft(Option.empty[Money]) {(mOpt, item) => mOpt.flatMap(m => item.product.price.map(_ + m)) }
+      items.foldLeft(Money()) {
+        (m, item) => item.product.price.getOrElse(Money()) + m
+      } match {
+        case Money(0d, _) => None
+        case m => Some(m)
+      }
     }
 
   }
