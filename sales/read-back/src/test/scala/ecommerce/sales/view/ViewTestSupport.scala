@@ -32,7 +32,7 @@ trait ViewTestSupport extends BeforeAndAfterAll with ScalaFutures {
   def ensureSchemaCreated: DBIO[Unit]
 
   implicit override val patienceConfig = PatienceConfig(
-    timeout = scaled(Span(5, Seconds)),
+    timeout = scaled(Span(10, Seconds)),
     interval = scaled(Span(200, Millis))
   )
 
