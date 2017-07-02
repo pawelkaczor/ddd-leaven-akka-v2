@@ -51,6 +51,23 @@ class ReservationSpec extends OfficeSpec[Reservation] {
     }
   }
 
+/*
+  "Reservation office" should {
+    "confirm reservation" in {
+      given(
+        CreateReservation(reservationId, "client1"),
+        ReserveProduct(reservationId, product, quantity = 1)
+      )
+      .when(
+        ConfirmReservation(reservationId)
+      )
+      .expectEvent {
+        ReservationConfirmed(reservationId, "client1", Some(Money(1)))
+      }
+    }
+  }
+*/
+
   "Reservation office" should {
     "close reservation" in {
       given(
