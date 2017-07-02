@@ -77,7 +77,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     run "curl -v -H 'Content-Type: application/json' -u admin:changeit --data @../headquarters/write-back/src/main/resources/projections/clock.js http://127.0.0.1:2113/projections/continuous?name=clock_proj&type=JS&emit=1"
     run "curl -v -H 'Content-Type: application/json' -u admin:changeit --data @../headquarters/write-back/src/main/resources/projections/current-deadlines.js http://127.0.0.1:2113/projections/continuous?name=current_deadlines_proj&type=JS&emit=1"
-    run "curl -v -H 'Content-Type: application/json' -u admin:changeit --data @../headquarters/write-back/src/main/resources/projections/order-process.js http://127.0.0.1:2113/projections/continuous?name=order_process_proj&type=JS&emit=1"
+    run "curl -v -H 'Content-Type: application/json' -u admin:changeit --data @../headquarters/write-back/src/main/resources/projections/tags.js http://127.0.0.1:2113/projections/continuous?name=tags_proj&type=JS&emit=1"
   end
 
 end

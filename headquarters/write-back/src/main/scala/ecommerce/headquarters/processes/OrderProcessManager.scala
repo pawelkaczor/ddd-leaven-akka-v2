@@ -17,6 +17,8 @@ import pl.newicom.dddd.scheduling.schedulingOfficeId
 
 object OrderProcessManager extends SagaSupport {
 
+  val ProcessId = "order"
+
   sealed trait OrderStatus extends SagaState[OrderStatus] {
     def isNew = false
   }
@@ -28,7 +30,7 @@ object OrderProcessManager extends SagaSupport {
   case object Completed          extends OrderStatus
   case object Failed             extends OrderStatus
 
-  implicit object OrderProcessConfig extends ProcessConfig[OrderProcessManager]("order", department) {
+  implicit object OrderProcessConfig extends ProcessConfig[OrderProcessManager](ProcessId, department) {
     def correlationIdResolver = {
       case ReservationConfirmed(reservationId, _, _) => reservationId // orderId
       case OrderBilled(_, orderId, _, _) => orderId

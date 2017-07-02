@@ -2,4 +2,4 @@
 
 ./create-projection clock_proj ../headquarters/write-back/src/main/resources/projections/clock.js
 ./create-projection current_deadlines_proj ../headquarters/write-back/src/main/resources/projections/current-deadlines.js
-./create-projection order_process_proj ../headquarters/write-back/src/main/resources/projections/order-process.js
+./create-projection tags_proj ../headquarters/write-back/src/main/resources/projections/tags.js

@@ -19,7 +19,7 @@ lazy val `sales-write-back` = (project in file("write-back"))
     libraryDependencies ++=
       Seq(AkkaDDD.core, AkkaDDD.test, AkkaDDD.eventStore, AkkaDDD.monitoring, AkkaDDD.scheduling)
   )
-  .dependsOn(`sales-contracts`, "invoicing-contracts", "shipping-contracts", "commons")
+  .dependsOn(`sales-contracts`, "invoicing-contracts", "shipping-contracts", "commons", "headquarters-event-tagging")
   .configs(MultiJvm)
   .enablePlugins(ApplicationPlugin)
 
