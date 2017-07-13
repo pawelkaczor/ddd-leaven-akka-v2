@@ -11,7 +11,7 @@ trait SalesBackendConfiguration {
   this: Bootable =>
 
   implicit object ReservationARFactory extends AggregateRootActorFactory[Reservation] {
-    override def props(pc: PassivationConfig) = Props(new Reservation(DefaultConfig(pc)) with SparseReply with AggregateRootMonitoring)
+    override def props(pc: PassivationConfig) = Props(new Reservation(DefaultConfig(pc, replyWithEvents = false)) with AggregateRootMonitoring)
   }
 
 }

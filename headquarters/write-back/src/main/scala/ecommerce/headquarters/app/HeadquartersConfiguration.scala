@@ -7,7 +7,7 @@ import ecommerce.headquarters.processes.OrderProcessManager
 import org.slf4j.Logger
 import pl.newicom.dddd
 import pl.newicom.dddd.actor.{CreationSupport, PassivationConfig}
-import pl.newicom.dddd.aggregate.{AggregateRootActorFactory, DefaultConfig, SparseReply}
+import pl.newicom.dddd.aggregate.{AggregateRootActorFactory, DefaultConfig}
 import pl.newicom.dddd.coordination.ReceptorConfig
 import pl.newicom.dddd.office.LocalOfficeId
 import pl.newicom.dddd.process.{Receptor, ReceptorActorFactory, SagaActorFactory}
@@ -29,7 +29,7 @@ trait HeadquartersConfiguration {
   implicit val schedulingOfficeID: LocalOfficeId[Scheduler] = dddd.scheduling.schedulingOfficeId(department)
 
   implicit object SchedulerFactory extends AggregateRootActorFactory[Scheduler] {
-    override def props(pc: PassivationConfig) = Props(new Scheduler(DefaultConfig(pc)) with SparseReply {
+    override def props(pc: PassivationConfig) = Props(new Scheduler(DefaultConfig(pc, replyWithEvents = false)) {
       override def id = "global"
     })
   }

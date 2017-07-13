@@ -94,4 +94,4 @@ object Reservation extends AggregateRootSupport {
 
 import ecommerce.sales.Reservation._
 
-abstract class Reservation(val config: Config) extends AggregateRoot[Event, ReservationActions, Reservation] with ConfigClass[Config]
+class Reservation(val config: Config) extends AggregateRoot[Event, ReservationActions, Reservation] with ConfigClass[Config]

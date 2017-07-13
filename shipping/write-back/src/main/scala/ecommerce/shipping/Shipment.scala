@@ -36,4 +36,4 @@ object Shipment extends AggregateRootSupport {
 
 import ecommerce.shipping.Shipment._
 
-abstract class Shipment(val config: Config) extends AggregateRoot[Event, Shipping, Shipment] with ConfigClass[Config]
+class Shipment(val config: Config) extends AggregateRoot[Event, Shipping, Shipment] with ConfigClass[Config]

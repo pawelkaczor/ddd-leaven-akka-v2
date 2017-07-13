@@ -45,4 +45,4 @@ object Invoice extends AggregateRootSupport {
 
 import ecommerce.invoicing.Invoice._
 
-abstract class Invoice(val config: Config) extends AggregateRoot[Event, Invoicing, Invoice] with ConfigClass[Config]
+class Invoice(val config: Config) extends AggregateRoot[Event, Invoicing, Invoice] with ConfigClass[Config]
