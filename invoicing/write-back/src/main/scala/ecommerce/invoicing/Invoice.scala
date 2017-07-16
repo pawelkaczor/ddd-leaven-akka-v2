@@ -7,7 +7,7 @@ import pl.newicom.dddd.office.LocalOfficeId.fromRemoteId
 
 object Invoice extends AggregateRootSupport {
 
-  sealed trait Invoicing extends AggregateActions[Event, Invoicing, Config]
+  sealed trait Invoicing extends Behavior[Event, Invoicing, Config]
 
   implicit case object Uninitialized extends Invoicing with Uninitialized[Invoicing] {
 

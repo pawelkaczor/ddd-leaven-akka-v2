@@ -6,9 +6,9 @@ import pl.newicom.dddd.aggregate._
 import pl.newicom.dddd.office.LocalOfficeId
 import pl.newicom.dddd.office.LocalOfficeId.fromRemoteId
 
-object Reservation extends AggregateRootSupport {
+object ReservationAggregateRoot extends AggregateRootSupport {
 
-  sealed trait ReservationActions extends AggregateActions[Event, ReservationActions, Config] {
+  sealed trait Reservation extends Behavior[Event, Reservation, Config] {
 
     def canceledOrClosed: Actions =
       handleCommand {
@@ -25,7 +25,7 @@ object Reservation extends AggregateRootSupport {
 
   }
 
-  implicit case object Uninitialized extends ReservationActions with Uninitialized[ReservationActions] {
+  implicit case object Uninitialized extends Reservation with Uninitialized[Reservation] {
 
     def actions: Actions =
       handleCommand {
@@ -39,7 +39,7 @@ object Reservation extends AggregateRootSupport {
 
   }
 
-  case class Opened(customerId: EntityId, items: List[ReservationItem], createDate: Date) extends ReservationActions {
+  case class Opened(customerId: EntityId, items: List[ReservationItem], createDate: Date) extends Reservation {
 
     def actions: Actions =
       handleCommand {
@@ -76,22 +76,22 @@ object Reservation extends AggregateRootSupport {
 
   }
 
-  case object Confirmed extends ReservationActions {
+  case object Confirmed extends Reservation {
     def actions: Actions = canceledOrClosed
   }
 
-  case object Canceled extends ReservationActions {
+  case object Canceled extends Reservation {
     def actions: Actions = canceledOrClosed
   }
 
-  case object Closed extends ReservationActions {
+  case object Closed extends Reservation {
     def actions: Actions = noActions
   }
 
-  implicit val officeId: LocalOfficeId[Reservation] = fromRemoteId[Reservation](ReservationOfficeId)
+  implicit val officeId: LocalOfficeId[ReservationAggregateRoot] = fromRemoteId[ReservationAggregateRoot](ReservationOfficeId)
 
 }
 
-import ecommerce.sales.Reservation._
+import ecommerce.sales.ReservationAggregateRoot._
 
-class Reservation(val config: Config) extends AggregateRoot[Event, ReservationActions, Reservation] with ConfigClass[Config]
+class ReservationAggregateRoot(val config: Config) extends AggregateRoot[Event, Reservation, ReservationAggregateRoot] with ConfigClass[Config]

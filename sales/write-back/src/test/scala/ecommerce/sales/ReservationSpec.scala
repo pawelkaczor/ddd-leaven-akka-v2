@@ -11,14 +11,14 @@ import ReservationSpec._
 import pl.newicom.dddd.office.Office
 
 object ReservationSpec {
-  implicit def factory(implicit it: Duration = 1.minute): AggregateRootActorFactory[Reservation] =
-    new AggregateRootActorFactory[Reservation] {
-      override def props(pc: PassivationConfig): Props = Props(new Reservation(DefaultConfig(pc)))
+  implicit def factory(implicit it: Duration = 1.minute): AggregateRootActorFactory[ReservationAggregateRoot] =
+    new AggregateRootActorFactory[ReservationAggregateRoot] {
+      override def props(pc: PassivationConfig): Props = Props(new ReservationAggregateRoot(DefaultConfig(pc)))
       override def inactivityTimeout: Duration = it
     }
 }
 
-class ReservationSpec extends OfficeSpec[Reservation] {
+class ReservationSpec extends OfficeSpec[ReservationAggregateRoot] {
 
   def reservationOffice: Office = officeUnderTest
 
