@@ -6,7 +6,7 @@ import pl.newicom.dddd.office.LocalOfficeId.fromRemoteId
 
 object Shipment extends AggregateRootSupport {
 
-  sealed trait Shipping extends AggregateActions[Event, Shipping, Config]
+  sealed trait Shipping extends Behavior[Event, Shipping, Config]
 
   implicit case object Uninitialized extends Shipping with Uninitialized[Shipping] {
 
