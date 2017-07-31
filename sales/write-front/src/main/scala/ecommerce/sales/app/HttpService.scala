@@ -1,6 +1,7 @@
 package ecommerce.sales.app
 
 import akka.actor.{Actor, ActorLogging, Props}
+import akka.event.Logging
 import akka.http.scaladsl.Http
 import akka.util.Timeout
 import ecommerce.sales.ReservationOfficeId
@@ -24,11 +25,11 @@ class HttpService(interface: String, port: Int)(implicit val timeout: Timeout)
 
   log.info(s"Listening on $interface:$port")
 
-  override def receive = Actor.emptyBehavior
+  override def receive: Receive = Actor.emptyBehavior
 
   override def offices = Set(ReservationOfficeId)
 
-  private def route = /*logRequestResult("sales")*/ {
+  private def route = logRequestResult(("sales", Logging.InfoLevel)) {
     pathPrefix("ecommerce") {
       path("sales") {
         handle[ecommerce.sales.Command]

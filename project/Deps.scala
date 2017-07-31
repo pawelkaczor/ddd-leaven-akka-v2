@@ -3,8 +3,8 @@ import sbt._
 object Deps {
 
   object Version {
-    val akka        =    "2.5.1"
-    val akkaDDD     =    "1.7.0-SNAPSHOT"
+    val akka        =    "2.5.3"
+    val akkaDDD     =    "1.7.0"
     val Kamon       =    "0.6.6"
     val KamonAutoWeave = "0.6.5"
   }

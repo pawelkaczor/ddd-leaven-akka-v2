@@ -5,16 +5,13 @@ import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.aggregate.{AggregateRootActorFactory, DefaultConfig, EntityId}
 import pl.newicom.dddd.test.support.OfficeSpec
 
-import scala.concurrent.duration._
-import scala.concurrent.duration.Duration
 import ReservationSpec._
 import pl.newicom.dddd.office.Office
 
 object ReservationSpec {
-  implicit def factory(implicit it: Duration = 1.minute): AggregateRootActorFactory[ReservationAggregateRoot] =
+  implicit def factory: AggregateRootActorFactory[ReservationAggregateRoot] =
     new AggregateRootActorFactory[ReservationAggregateRoot] {
-      override def props(pc: PassivationConfig): Props = Props(new ReservationAggregateRoot(DefaultConfig(pc)))
-      override def inactivityTimeout: Duration = it
+      def props(pc: PassivationConfig): Props = Props(new ReservationAggregateRoot(DefaultConfig(pc)))
     }
 }
 
