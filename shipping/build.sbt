@@ -7,7 +7,7 @@ lazy val `shipping-contracts` = (project in file("contracts"))
   .settings(
     libraryDependencies += AkkaDDD.messaging
   )
-  .dependsOn("invoicing-contracts")
+  .dependsOn(lp("invoicing-contracts"))
 
 
 
@@ -18,7 +18,7 @@ lazy val `shipping-write-back` = (project in file("write-back"))
     libraryDependencies ++=
       Seq(AkkaDDD.core, AkkaDDD.test, AkkaDDD.eventStore, AkkaDDD.scheduling)
   )
-  .dependsOn(`shipping-contracts`, "sales-contracts", "commons", "headquarters-event-tagging")
+  .dependsOn(`shipping-contracts`, lp("sales-contracts"), lp("commons"), lp("headquarters-event-tagging"))
   .enablePlugins(ApplicationPlugin)
 
 
@@ -28,7 +28,7 @@ lazy val `shipping-read-back` = (project in file("read-back"))
     javaOptions in Universal ++= Seq("-DmainClass=ecommerce.shipping.app.ShippingViewUpdateApp"),
     libraryDependencies ++= AkkaDDD.viewUpdateSql ++ Seq(AkkaDDD.eventStore)
   )
-  .dependsOn(`shipping-contracts`, "commons")
+  .dependsOn(`shipping-contracts`, lp("commons"))
   .enablePlugins(ApplicationPlugin)
 
 
@@ -38,5 +38,5 @@ lazy val `shipping-read-front` = (project in file("read-front"))
     dockerExposedPorts := Seq(9310),
     javaOptions in Universal ++= Seq("-DmainClass=ecommerce.shipping.app.ShippingReadFrontApp")
   )
-  .dependsOn(`shipping-read-back` % "test->test;compile->compile", "commons")
+  .dependsOn(`shipping-read-back` % "test->test;compile->compile", lp("commons"))
   .enablePlugins(HttpServerPlugin)

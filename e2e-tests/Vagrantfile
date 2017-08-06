@@ -18,7 +18,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       docker.name     = "ecommerce-eventstore"
       docker.image    = "eventstore/eventstore"
       docker.ports    = ['2113:2113', '1113:1113']
-      docker.env = {"EVENTSTORE_RUN_PROJECTIONS" => "All", "EVENTSTORE_START_STANDARD_PROJECTIONS" => "true"}
+      docker.env = {"EVENTSTORE_RUN_PROJECTIONS" => "All"}
     end
   end
 

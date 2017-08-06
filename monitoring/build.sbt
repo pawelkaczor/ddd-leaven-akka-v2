@@ -5,4 +5,4 @@ lazy val monitoring = (project in file("."))
   .settings(
     libraryDependencies ++= Kamon()
   )
-  .dependsOn("commons")
+  .dependsOn(pl("commons"))

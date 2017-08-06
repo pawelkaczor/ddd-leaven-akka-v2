@@ -19,7 +19,7 @@ lazy val `sales-write-back` = (project in file("write-back"))
     libraryDependencies ++=
       Seq(AkkaDDD.core, AkkaDDD.test, AkkaDDD.eventStore, AkkaDDD.monitoring, AkkaDDD.scheduling)
   )
-  .dependsOn(`sales-contracts`, "invoicing-contracts", "shipping-contracts", "commons", "headquarters-event-tagging")
+  .dependsOn(`sales-contracts`, lp("invoicing-contracts"), lp("shipping-contracts"), lp("commons"), lp("headquarters-event-tagging"))
   .configs(MultiJvm)
   .enablePlugins(ApplicationPlugin)
 
@@ -31,7 +31,7 @@ lazy val `sales-write-front` = (project in file("write-front"))
       javaOptions in Universal ++= Seq("-DmainClass=ecommerce.sales.app.SalesFrontApp"),
       libraryDependencies += AkkaDDD.writeFront
   )
-  .dependsOn(`sales-contracts`, "commons")
+  .dependsOn(`sales-contracts`, lp("commons"))
   .enablePlugins(HttpServerPlugin)
 
 
@@ -41,7 +41,7 @@ lazy val `sales-read-back` = (project in file("read-back"))
     javaOptions in Universal ++= Seq("-DmainClass=ecommerce.sales.app.SalesViewUpdateApp"),
     libraryDependencies ++= AkkaDDD.viewUpdateSql ++ Seq(AkkaDDD.eventStore)
   )
-  .dependsOn(`sales-contracts`, "commons")
+  .dependsOn(`sales-contracts`, lp("commons"))
   .enablePlugins(ApplicationPlugin)
 
 
@@ -51,29 +51,32 @@ lazy val `sales-read-front` = (project in file("read-front"))
     javaOptions in Universal ++= Seq("-DmainClass=ecommerce.sales.app.SalesReadFrontApp"),
     dockerExposedPorts := Seq(9110)
   )
-  .dependsOn(`sales-read-back` % "test->test;compile->compile", "commons")
+  .dependsOn(`sales-read-back` % "test->test;compile->compile", lp("commons"))
   .enablePlugins(HttpServerPlugin)
 
 
 
 lazy val multiNodeTestingSettings: Seq[Setting[_]] = SbtMultiJvm.multiJvmSettings ++ Seq(
   // make sure that MultiJvm test are compiled by the default test compilation
-  compile in MultiJvm <<= (compile in MultiJvm) triggeredBy (compile in Test),
+  compile in MultiJvm := ((compile in MultiJvm) triggeredBy (compile in Test)).value,
+
   // disable parallel tests
   parallelExecution in Test := false,
   // make sure that MultiJvm tests are executed by the default test target,
   // and combine the results from ordinary test and multi-jvm tests
-  executeTests in Test <<= (executeTests in Test, executeTests in MultiJvm) map {
-    case (testResults, multiNodeResults)  =>
-      val overall =
-        if (testResults.overall.id < multiNodeResults.overall.id)
-          multiNodeResults.overall
-        else
-          testResults.overall
-      Tests.Output(overall,
-        testResults.events ++ multiNodeResults.events,
-        testResults.summaries ++ multiNodeResults.summaries)
+  executeTests in Test := {
+    val testResults = (executeTests in Test).value
+    val multiNodeResults = (executeTests in MultiJvm).value
+    val overall =
+      if (testResults.overall.id < multiNodeResults.overall.id)
+        multiNodeResults.overall
+      else
+        testResults.overall
+    Tests.Output(overall,
+      testResults.events ++ multiNodeResults.events,
+      testResults.summaries ++ multiNodeResults.summaries)
   },
+
   libraryDependencies ++= Seq(
     Akka.multiNodeTestkit
   )

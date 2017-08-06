@@ -2,6 +2,7 @@ import sbt._
 import sbt.Keys._
 import Vagrant._
 import E2EConfig._
+import Deps._
 
 lazy val `e2e-tests` = (project in file("."))
   .settings(e2eTestingSettings ++ Vagrant.settings)
@@ -16,5 +17,5 @@ lazy val `e2e-tests` = (project in file("."))
     )
   )
   .configs(E2ETest)
-  .dependsOn("sales-contracts", "invoicing-contracts", "shipping-contracts")
+  .dependsOn(lp("sales-contracts"), lp("invoicing-contracts"), lp("shipping-contracts"))
 

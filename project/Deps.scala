@@ -4,7 +4,7 @@ object Deps {
 
   object Version {
     val akka        =    "2.5.3"
-    val akkaDDD     =    "1.7.0"
+    val akkaDDD     =    "1.7.2"
     val Kamon       =    "0.6.6"
     val KamonAutoWeave = "0.6.5"
   }
@@ -46,11 +46,12 @@ object Deps {
   }
 
   object SqlDb {
-    val `slick-for-pg` = "com.github.tminglei" %% "slick-pg" % "0.15.0-RC" exclude("org.slf4j", "slf4j-simple")
+    val `slick-for-pg` = "com.github.tminglei" %% "slick-pg" % "0.15.3" exclude("org.slf4j", "slf4j-simple")
     val testDriver = "com.h2database" % "h2" % "1.4.189" % "test"
 
     def prod = Seq(`slick-for-pg`)
     def apply() = Seq(`slick-for-pg`, testDriver)
   }
 
+  def lp(name: String): LocalProject = LocalProject(name)
 }

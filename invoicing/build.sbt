@@ -6,7 +6,7 @@ lazy val invoicing = (project in file(".")).aggregate(`invoicing-contracts`, `in
 lazy val `invoicing-contracts` = (project in file("contracts"))
   .settings(
     libraryDependencies += AkkaDDD.messaging
-  ).dependsOn("sales-contracts")
+  ).dependsOn(lp("sales-contracts"))
 
 
 
@@ -17,7 +17,7 @@ lazy val `invoicing-write-back` = (project in file("write-back"))
     libraryDependencies ++=
       Seq(AkkaDDD.core, AkkaDDD.scheduling, AkkaDDD.test, AkkaDDD.eventStore, AkkaDDD.monitoring)
   )
-  .dependsOn(`invoicing-contracts`, "shipping-contracts", "commons", "headquarters-event-tagging")
+  .dependsOn(`invoicing-contracts`, lp("shipping-contracts"), lp("commons"), lp("headquarters-event-tagging"))
   .enablePlugins(ApplicationPlugin)
 
 
@@ -28,5 +28,5 @@ lazy val `invoicing-write-front` = (project in file("write-front"))
     javaOptions in Universal ++= Seq("-DmainClass=ecommerce.invoicing.app.InvoicingFrontApp"),
     libraryDependencies += AkkaDDD.writeFront
   )
-  .dependsOn(`invoicing-contracts`, "commons")
+  .dependsOn(`invoicing-contracts`, lp("commons"))
   .enablePlugins(HttpServerPlugin)
