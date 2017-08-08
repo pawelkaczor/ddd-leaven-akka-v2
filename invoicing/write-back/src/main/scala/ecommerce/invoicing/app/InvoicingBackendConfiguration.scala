@@ -2,15 +2,16 @@ package ecommerce.invoicing.app
 
 import akka.actor._
 import akka.kernel.Bootable
-import ecommerce.invoicing.Invoice
+import ecommerce.invoicing.{Event, Invoice}
 import pl.newicom.dddd.actor.PassivationConfig
-import pl.newicom.dddd.aggregate.{AggregateRootActorFactory, DefaultConfig}
+import pl.newicom.dddd.aggregate.{AggregateRootActorFactory, AggregateRootLogger, DefaultConfig}
 
 trait InvoicingBackendConfiguration {
   this: Bootable =>
 
   implicit object InvoiceARFactory extends AggregateRootActorFactory[Invoice] {
-    override def props(pc: PassivationConfig) = Props(new Invoice(DefaultConfig(pc, replyWithEvents = false)))
+    override def props(pc: PassivationConfig) =
+      Props(new Invoice(DefaultConfig(pc, replyWithEvents = false)) with AggregateRootLogger[Event])
   }
 
 }

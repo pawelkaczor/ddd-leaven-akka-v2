@@ -7,11 +7,11 @@ import ecommerce.headquarters.processes.OrderProcessManager
 import org.slf4j.Logger
 import pl.newicom.dddd
 import pl.newicom.dddd.actor.{CreationSupport, PassivationConfig}
-import pl.newicom.dddd.aggregate.{AggregateRootActorFactory, DefaultConfig}
+import pl.newicom.dddd.aggregate.{AggregateRootActorFactory, AggregateRootLogger, DefaultConfig}
 import pl.newicom.dddd.coordination.ReceptorConfig
 import pl.newicom.dddd.office.LocalOfficeId
 import pl.newicom.dddd.process.{Receptor, ReceptorActorFactory, SagaActorFactory}
-import pl.newicom.dddd.scheduling.Scheduler
+import pl.newicom.dddd.scheduling.{Scheduler, SchedulerEvent}
 import pl.newicom.eventstore.EventstoreSubscriber
 
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
@@ -29,7 +29,7 @@ trait HeadquartersConfiguration {
   implicit val schedulingOfficeID: LocalOfficeId[Scheduler] = dddd.scheduling.schedulingOfficeId(department)
 
   implicit object SchedulerFactory extends AggregateRootActorFactory[Scheduler] {
-    override def props(pc: PassivationConfig) = Props(new Scheduler(DefaultConfig(pc, replyWithEvents = false)) {
+    override def props(pc: PassivationConfig) = Props(new Scheduler(DefaultConfig(pc, replyWithEvents = false)) with AggregateRootLogger[SchedulerEvent] {
       override def id = "global"
     })
   }
