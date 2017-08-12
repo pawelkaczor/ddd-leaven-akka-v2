@@ -1,6 +1,4 @@
 import Deps._
-import com.typesafe.sbt.SbtMultiJvm
-import com.typesafe.sbt.SbtMultiJvm.MultiJvmKeys.MultiJvm
 import sbt.Keys._
 
 lazy val sales = (project in file(".")).aggregate(`sales-contracts`, `sales-write-back`, `sales-write-front`, `sales-read-back`, `sales-read-front`)
@@ -15,12 +13,10 @@ lazy val `sales-write-back` = (project in file("write-back"))
   .settings(
     dockerExposedPorts := Seq(9101),
     javaOptions in Universal += "-DmainClass=ecommerce.sales.app.SalesBackendApp",
-    multiNodeTestingSettings,
     libraryDependencies ++=
       Seq(AkkaDDD.core, AkkaDDD.test, AkkaDDD.eventStore, AkkaDDD.monitoring, AkkaDDD.scheduling)
   )
   .dependsOn(`sales-contracts`, lp("invoicing-contracts"), lp("shipping-contracts"), lp("commons"), lp("headquarters-event-tagging"))
-  .configs(MultiJvm)
   .enablePlugins(ApplicationPlugin)
 
 
@@ -53,31 +49,3 @@ lazy val `sales-read-front` = (project in file("read-front"))
   )
   .dependsOn(`sales-read-back` % "test->test;compile->compile", lp("commons"))
   .enablePlugins(HttpServerPlugin)
-
-
-
-lazy val multiNodeTestingSettings: Seq[Setting[_]] = SbtMultiJvm.multiJvmSettings ++ Seq(
-  // make sure that MultiJvm test are compiled by the default test compilation
-  compile in MultiJvm := ((compile in MultiJvm) triggeredBy (compile in Test)).value,
-
-  // disable parallel tests
-  parallelExecution in Test := false,
-  // make sure that MultiJvm tests are executed by the default test target,
-  // and combine the results from ordinary test and multi-jvm tests
-  executeTests in Test := {
-    val testResults = (executeTests in Test).value
-    val multiNodeResults = (executeTests in MultiJvm).value
-    val overall =
-      if (testResults.overall.id < multiNodeResults.overall.id)
-        multiNodeResults.overall
-      else
-        testResults.overall
-    Tests.Output(overall,
-      testResults.events ++ multiNodeResults.events,
-      testResults.summaries ++ multiNodeResults.summaries)
-  },
-
-  libraryDependencies ++= Seq(
-    Akka.multiNodeTestkit
-  )
-)

@@ -1,5 +1,6 @@
 import sbt._
 import Keys._
+import scala.sys.process._
 
 object RestartCommand {
 
