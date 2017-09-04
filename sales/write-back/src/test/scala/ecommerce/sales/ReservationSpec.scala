@@ -15,7 +15,7 @@ object ReservationSpec {
     }
 }
 
-class ReservationSpec extends OfficeSpec[ReservationAggregateRoot] {
+class ReservationSpec extends OfficeSpec[Event, ReservationAggregateRoot] {
 
   def reservationOffice: Office = officeUnderTest
 
