@@ -36,12 +36,12 @@ class ReservationSpec extends OfficeSpec[Event, ReservationAggregateRoot] {
 
   "Reservation office" should {
     "reserve product" in {
-      given(
+      given {
         CreateReservation(reservationId, "client1")
-      )
-      .when(
+      }
+      .when {
         ReserveProduct(reservationId, product, quantity = 1)
-      )
+      }
       .expectEvent {
         ProductReserved(reservationId, product, quantity = 1)
       }
@@ -50,10 +50,10 @@ class ReservationSpec extends OfficeSpec[Event, ReservationAggregateRoot] {
 
   "Reservation office" should {
     "confirm reservation" in {
-      given(
-        CreateReservation(reservationId, "client1"),
+      given {
+        CreateReservation(reservationId, "client1") &
         ReserveProduct(reservationId, product, quantity = 1)
-      )
+      }
       .when(
         ConfirmReservation(reservationId)
       )
@@ -65,13 +65,13 @@ class ReservationSpec extends OfficeSpec[Event, ReservationAggregateRoot] {
 
   "Reservation office" should {
     "close reservation" in {
-      given(
-        CreateReservation(reservationId, "client1"),
+      given {
+        CreateReservation(reservationId, "client1") &
         ReserveProduct(reservationId, product, quantity = 1)
-      )
-      .when(
+      }
+      .when {
         CloseReservation(reservationId)
-      )
+      }
       .expectEvent {
         ReservationClosed(reservationId)
       }
