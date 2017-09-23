@@ -10,8 +10,9 @@ object Deps {
   }
 
   object Akka {
-    val actor =            apply("actor")
+    val actor            = apply("actor")
     val multiNodeTestkit = apply("multi-node-testkit") % "test"
+    val httpHealth       = "io.github.lhotari" %% "akka-http-health" % "1.0.8"
 
     private def apply(m: String, v: String = Version.akka) = "com.typesafe.akka" %% s"akka-$m" % v
   }

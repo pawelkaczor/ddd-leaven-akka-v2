@@ -5,6 +5,7 @@ import akka.event.Logging
 import akka.http.scaladsl.Http
 import akka.util.Timeout
 import ecommerce.sales.ReservationOfficeId
+import io.github.lhotari.akka.http.health.HealthEndpoint.createDefaultHealthRoute
 import org.json4s.Formats
 import pl.newicom.dddd.serialization.JsonSerHints.fromConfig
 import pl.newicom.dddd.writefront.HttpCommandHandler
@@ -19,6 +20,8 @@ object HttpService {
 class HttpService(interface: String, port: Int)(implicit val timeout: Timeout)
   extends Actor with SalesFrontConfiguration with HttpCommandHandler with ActorLogging {
 
+  import context.dispatcher
+
   implicit val formats: Formats = fromConfig(config)
 
   Http(context.system).bindAndHandle(route, interface, port)
@@ -30,10 +33,9 @@ class HttpService(interface: String, port: Int)(implicit val timeout: Timeout)
   override def offices = Set(ReservationOfficeId)
 
   private def route = logRequestResult(("sales", Logging.InfoLevel)) {
-    pathPrefix("ecommerce") {
-      path("sales") {
-        handle[ecommerce.sales.Command]
-      }
+    pathPrefix("ecommerce" / "sales") {
+      createDefaultHealthRoute() ~
+      handle[ecommerce.sales.Command]
     }
   }
 
