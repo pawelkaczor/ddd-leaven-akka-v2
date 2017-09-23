@@ -7,6 +7,7 @@ import java.util.jar.JarFile
 
 import akka.actor.ActorSystem
 import com.typesafe.config.{Config, ConfigFactory}
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory._
 
 import scala.collection.JavaConverters._
@@ -16,11 +17,11 @@ trait Bootable {
 
   def systemName = "ecommerce"
 
-  lazy val log = getLogger(getClass.getName)
+  lazy val log: Logger = getLogger(getClass.getName)
 
   lazy val config: Config = ConfigFactory.load()
 
-  implicit lazy val system = ActorSystem(systemName, config)
+  implicit lazy val system: ActorSystem = ActorSystem(systemName, config)
 
   /**
    * Callback run on microkernel startup.
@@ -41,9 +42,9 @@ trait Bootable {
 object Main {
   private val quiet = getBoolean("akka.kernel.quiet")
 
-  private def log(s: String) = if (!quiet) println(s)
+  private def log(s: String): Unit = if (!quiet) println(s)
 
-  def main(args: Array[String]) = {
+  def main(args: Array[String]): Unit = {
     val mainClass             = Option(System.getProperty("mainClass"))
     val monitoringRunnerClass = Option(System.getProperty("monitoringRunnerClass"))
 
@@ -105,18 +106,16 @@ object Main {
   }
 
   private def addShutdownHook(bootables: immutable.Seq[Bootable]): Unit = {
-    Runtime.getRuntime.addShutdownHook(new Thread(new Runnable {
-      def run() = {
-        log("")
-        log("Shutting down Akka...")
+    Runtime.getRuntime.addShutdownHook(new Thread(() => {
+      log("")
+      log("Shutting down Akka...")
 
-        for (bootable ← bootables) {
-          log("Shutting down " + bootable.getClass.getName)
-          bootable.shutdown()
-        }
-
-        log("Successfully shut down Akka")
+      for (bootable ← bootables) {
+        log("Shutting down " + bootable.getClass.getName)
+        bootable.shutdown()
       }
+
+      log("Successfully shut down Akka")
     }))
   }
 
