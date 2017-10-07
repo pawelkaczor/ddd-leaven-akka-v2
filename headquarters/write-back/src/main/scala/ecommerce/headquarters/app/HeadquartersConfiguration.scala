@@ -6,7 +6,7 @@ import ecommerce.headquarters.app.HeadquartersConfiguration._
 import ecommerce.headquarters.processes.OrderProcessManager
 import org.slf4j.Logger
 import pl.newicom.dddd
-import pl.newicom.dddd.actor.{CreationSupport, PassivationConfig}
+import pl.newicom.dddd.actor.{ActorFactory, PassivationConfig}
 import pl.newicom.dddd.aggregate.{AggregateRootActorFactory, AggregateRootLogger, DefaultConfig}
 import pl.newicom.dddd.coordination.ReceptorConfig
 import pl.newicom.dddd.office.LocalOfficeId
@@ -17,7 +17,7 @@ import pl.newicom.eventstore.EventstoreSubscriber
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
 
 object HeadquartersConfiguration {
-  val department: String = "Headquarters"
+  val Department: String = "Headquarters"
 }
 
 trait HeadquartersConfiguration {
@@ -26,7 +26,7 @@ trait HeadquartersConfiguration {
   def config: Config
   implicit def system: ActorSystem
 
-  implicit val schedulingOfficeID: LocalOfficeId[Scheduler] = dddd.scheduling.schedulingOfficeId(department)
+  implicit val schedulingOfficeID: LocalOfficeId[Scheduler] = dddd.scheduling.schedulingOfficeId(Department)
 
   implicit object SchedulerFactory extends AggregateRootActorFactory[Scheduler] {
     override def props(pc: PassivationConfig) = Props(new Scheduler(DefaultConfig(pc, replyWithEvents = false)) with AggregateRootLogger[SchedulerEvent] {
@@ -39,7 +39,7 @@ trait HeadquartersConfiguration {
       Props(new OrderProcessManager(pc))
   }
 
-  implicit def receptorActorFactory[A : LocalOfficeId : CreationSupport]: ReceptorActorFactory[A] = new ReceptorActorFactory[A] {
+  implicit def receptorActorFactory[A : LocalOfficeId : ActorFactory]: ReceptorActorFactory[A] = new ReceptorActorFactory[A] {
     def receptorFactory: ReceptorFactory = (config: ReceptorConfig) => {
       new Receptor(config.copy(capacity = 100)) with EventstoreSubscriber {
         override def redeliverInterval: FiniteDuration = 10.seconds

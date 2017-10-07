@@ -29,7 +29,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       # docker.vagrant_vagrantfile = "./host/Vagrantfile"
 
       docker.name     = "ecommerce-view-store"
-      docker.image    = "postgres"
+      docker.image    = "newicom/postgres"
       docker.ports    = ['5432:5432']
     end
   end
