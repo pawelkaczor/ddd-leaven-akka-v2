@@ -4,7 +4,7 @@ object Deps {
 
   object Version {
     val akka        =    "2.5.6"
-    val akkaDDD     =    "1.7.4"
+    val akkaDDD     =    "1.7.5-SNAPSHOT"
     val Kamon       =    "0.6.6"
     val KamonAutoWeave = "0.6.5"
   }
@@ -21,7 +21,7 @@ object Deps {
     val core          = apply("core")
     val eventStore    = "pl.newicom.dddd" %% "eventstore-akka-persistence" % Version.akkaDDD
     val httpSupport   = Seq("pl.newicom.dddd" %% s"http-support" % Version.akkaDDD)
-    val messaging     = apply("messaging")
+    val protocol      = apply("protocol")
     val monitoring    = apply("monitoring")
     val scheduling    = apply("scheduling")
     val test          = apply("test") % "test"

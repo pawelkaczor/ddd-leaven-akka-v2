@@ -4,16 +4,13 @@ organization in ThisBuild := "pl.newicom"
 
 version in ThisBuild := "0.7.5-SNAPSHOT"
 
-scalaVersion in ThisBuild := "2.12.3"
+scalaVersion in ThisBuild := "2.12.4"
 
 scalacOptions in ThisBuild := Seq("-deprecation", "-encoding", "utf8", "-feature", "-language:postfixOps", "-language:implicitConversions"/*, "-Xlog-implicits"*/)
 
 sourcesInBase in ThisBuild := false
 
-lazy val root = project.settings(
-    aggregate in update := false
-  )
-  .aggregate(commons, monitoring, sales, shipping, invoicing, headquarters, `e2e-tests`)
+lazy val root = project.aggregate(commons, monitoring, sales, shipping, invoicing, headquarters, `e2e-tests`)
 
 lazy val commons = project
 lazy val monitoring = project.dependsOn(commons)

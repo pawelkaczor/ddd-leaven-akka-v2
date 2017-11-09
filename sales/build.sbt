@@ -6,7 +6,7 @@ lazy val sales = (project in file(".")).aggregate(`sales-contracts`, `sales-writ
 
 lazy val `sales-contracts` = (project in file("contracts"))
   .settings(
-    libraryDependencies += AkkaDDD.messaging
+    libraryDependencies += AkkaDDD.protocol
   )
 
 

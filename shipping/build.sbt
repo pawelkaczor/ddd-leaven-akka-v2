@@ -5,7 +5,7 @@ lazy val shipping = (project in file(".")).aggregate(`shipping-contracts`, `ship
 
 lazy val `shipping-contracts` = (project in file("contracts"))
   .settings(
-    libraryDependencies += AkkaDDD.messaging
+    libraryDependencies += AkkaDDD.protocol
   )
   .dependsOn(lp("invoicing-contracts"))
 

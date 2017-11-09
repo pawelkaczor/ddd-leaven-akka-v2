@@ -4,9 +4,8 @@ import akka.actor.Props
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.aggregate.{AggregateRootActorFactory, DefaultConfig, EntityId}
 import pl.newicom.dddd.test.support.OfficeSpec
-
 import ReservationSpec._
-import pl.newicom.dddd.office.Office
+import pl.newicom.dddd.office.OfficeRef
 
 object ReservationSpec {
   implicit def factory: AggregateRootActorFactory[ReservationAggregateRoot] =
@@ -17,7 +16,7 @@ object ReservationSpec {
 
 class ReservationSpec extends OfficeSpec[Event, ReservationAggregateRoot] {
 
-  def reservationOffice: Office = officeUnderTest
+  def reservationOffice: OfficeRef = officeUnderTest
 
   def reservationId: EntityId = aggregateId
 
