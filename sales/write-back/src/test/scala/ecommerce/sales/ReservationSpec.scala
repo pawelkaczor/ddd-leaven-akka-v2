@@ -2,7 +2,7 @@ package ecommerce.sales
 
 import akka.actor.Props
 import pl.newicom.dddd.actor.PassivationConfig
-import pl.newicom.dddd.aggregate.{AggregateRootActorFactory, DefaultConfig, EntityId}
+import pl.newicom.dddd.aggregate.{AggregateRootActorFactory, DefaultConfig}
 import pl.newicom.dddd.test.support.OfficeSpec
 import ReservationSpec._
 import pl.newicom.dddd.office.OfficeRef
@@ -18,7 +18,7 @@ class ReservationSpec extends OfficeSpec[Event, ReservationAggregateRoot] {
 
   def reservationOffice: OfficeRef = officeUnderTest
 
-  def reservationId: EntityId = aggregateId
+  def reservationId: ReservationId = aggregateId
 
   val product = Product("product1", "productName", ProductType.Standard, Some(Money(10)))
 

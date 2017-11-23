@@ -14,7 +14,7 @@ class ShipmentProjection(dao: ShipmentDao)(implicit ex: ExecutionContext) extend
   override def consume(eventMessage: OfficeEventMessage): ProjectionAction[Write] = {
     eventMessage.event match {
       case ShipmentCreated(id, orderId) =>
-        dao.createOrUpdate(ShipmentView(id, orderId, Waiting))
+        dao.createOrUpdate(ShipmentView(id.value, orderId, Waiting))
     }
   }
 }

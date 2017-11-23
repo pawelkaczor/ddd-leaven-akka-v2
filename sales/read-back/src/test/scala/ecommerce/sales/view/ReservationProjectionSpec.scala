@@ -3,7 +3,7 @@ package ecommerce.sales.view
 import java.sql.Date
 
 import com.typesafe.config.{Config, ConfigFactory}
-import ecommerce.sales.{ReservationConfirmed, ReservationCreated, ReservationOfficeId}
+import ecommerce.sales.{ReservationConfirmed, ReservationCreated, ReservationId, ReservationOfficeId}
 import ecommerce.sales.ReservationStatus.{Confirmed, Opened}
 import org.joda.time.DateTime.now
 import org.scalatest._
@@ -22,7 +22,7 @@ class ReservationProjectionSpec extends WordSpecLike with Matchers with ViewTest
   "ReservationProjection" should {
     "consume ReservationCreated event" in {
       // When
-      projection.consume(ReservationCreated("reservation-1", "client-1")).run()
+      projection.consume(ReservationCreated(new ReservationId("reservation-1"), "client-1")).run()
 
       // Then
       val reservation = dao.byId("reservation-1").result
@@ -37,7 +37,7 @@ class ReservationProjectionSpec extends WordSpecLike with Matchers with ViewTest
       dao.createOrUpdate(ReservationView("reservation-1", "client-1", Opened, new Date(now.getMillis))).run()
 
       // When
-      projection.consume(ReservationConfirmed("reservation-1", "client-1", None)).run()
+      projection.consume(ReservationConfirmed(new ReservationId("reservation-1"), "client-1", None)).run()
 
       // Then
       val reservation = dao.byId("reservation-1").result
@@ -49,7 +49,7 @@ class ReservationProjectionSpec extends WordSpecLike with Matchers with ViewTest
 
   override def ensureSchemaCreated = dao.ensureSchemaCreated
 
-  implicit def toEventMessage(event: ReservationCreated): OfficeEventMessage = OfficeEventMessage(CaseRef(event.reservationId, ReservationOfficeId, None), event)
-  implicit def toEventMessage(event: ReservationConfirmed): OfficeEventMessage = OfficeEventMessage(CaseRef(event.reservationId, ReservationOfficeId, None), event)
+  implicit def toEventMessage(event: ReservationCreated): OfficeEventMessage = OfficeEventMessage(CaseRef(event.reservationId.value, ReservationOfficeId, None), event)
+  implicit def toEventMessage(event: ReservationConfirmed): OfficeEventMessage = OfficeEventMessage(CaseRef(event.reservationId.value, ReservationOfficeId, None), event)
 
 }

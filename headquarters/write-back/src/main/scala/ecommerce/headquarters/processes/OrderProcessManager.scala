@@ -7,8 +7,8 @@ import ecommerce.headquarters.app.HeadquartersConfiguration
 import ecommerce.headquarters.app.HeadquartersConfiguration.Department
 import ecommerce.headquarters.processes.OrderProcessManager.OrderStatus
 import ecommerce.invoicing.{CancelInvoice, CreateInvoice, OrderBilled, OrderBillingFailed, PaymentExpired, _}
-import ecommerce.sales.{CancelReservation, CloseReservation, Money, ReservationConfirmed, _}
-import ecommerce.shipping.{CreateShipment, _}
+import ecommerce.sales.{Money, ReservationConfirmed, _}
+import ecommerce.shipping._
 import org.joda.time.DateTime._
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.process._
@@ -32,7 +32,7 @@ object OrderProcessManager extends SagaSupport {
 
   implicit object OrderProcessConfig extends ProcessConfig[OrderProcessManager](BusinessProcessId(ProcessDomain, ProcessId, Department)) {
     def correlationIdResolver = {
-      case ReservationConfirmed(reservationId, _, _) => reservationId // orderId
+      case ReservationConfirmed(reservationId, _, _) => reservationId.value // orderId
       case OrderBilled(_, orderId, _, _)             => orderId
       case OrderBillingFailed(_, orderId)            => orderId
       case PaymentExpired(_, orderId)                => orderId
@@ -64,9 +64,9 @@ class OrderProcessManager(val pc: PassivationConfig) extends ProcessManager[Orde
 
       case ReservationConfirmed(reservationId, customerId, totalAmountOpt) =>
         WaitingForPayment {
-          ⟶(CreateInvoice(sagaId, reservationId, customerId, totalAmountOpt.getOrElse(Money()), now()))
+          ⟶(CreateInvoice(new InvoiceId(sagaId), reservationId.value, customerId, totalAmountOpt.getOrElse(Money()), now()))
 
-          ⟵(PaymentExpired(sagaId, reservationId)) in 3.minutes
+          ⟵(PaymentExpired(new InvoiceId(sagaId), reservationId.value)) in 3.minutes
         }
 
     }
@@ -78,14 +78,14 @@ class OrderProcessManager(val pc: PassivationConfig) extends ProcessManager[Orde
 
       case OrderBilled(_, orderId, _, _) =>
         DeliveryInProgress {
-          ⟶(CloseReservation(orderId))
+          ⟶(CloseReservation(new ReservationId(orderId)))
 
-          ⟶(CreateShipment(UUID.randomUUID().toString, orderId))
+          ⟶(CreateShipment(new ShipmentId(UUID.randomUUID().toString), orderId))
         }
 
       case OrderBillingFailed(_, orderId) =>
         Failed {
-          ⟶(CancelReservation(orderId))
+          ⟶(CancelReservation(new ReservationId(orderId)))
         }
     }
 

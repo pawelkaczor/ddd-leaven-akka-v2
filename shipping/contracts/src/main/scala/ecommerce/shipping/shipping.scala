@@ -8,20 +8,20 @@ import pl.newicom.dddd.aggregate._
 //
 
 sealed trait Command extends aggregate.Command {
-  def shipmentId: EntityId
-  override def aggregateId = shipmentId
+  def shipmentId: ShipmentId
+  override def aggregateId: ShipmentId = shipmentId
 }
 
-case class CreateShipment(shipmentId: EntityId, orderId: EntityId) extends Command
+case class CreateShipment(shipmentId: ShipmentId, orderId: EntityId) extends Command
 
 //
 // Events
 //
 sealed trait Event
 
-case class ShipmentCreated(shipmentId: EntityId, orderId: EntityId) extends Event
+case class ShipmentCreated(shipmentId: ShipmentId, orderId: EntityId) extends Event
 
-case class GoodsDelivered(shipmentId: EntityId, orderId: EntityId) extends Event
+case class GoodsDelivered(shipmentId: ShipmentId, orderId: EntityId) extends Event
 
 //
 // Value Objects

@@ -36,7 +36,7 @@ class SystemSpec extends TestDriver with Eventually {
   )
 
   "Ecommerce system" should {
-    val reservationId = uuid7
+    val reservationId = new ReservationId(uuid7)
     val invoiceId     = reservationId
     val customerId    = uuid7
 
@@ -78,7 +78,7 @@ class SystemSpec extends TestDriver with Eventually {
     using(invoicing_write) { implicit b =>
       "pay" in eventually {
         POST command {
-          ReceivePayment(invoiceId, reservationId, Money(10.0), paymentId = "230982342")
+          ReceivePayment(invoiceId, reservationId.value, Money(10.0), paymentId = "230982342")
         }
       }
     }

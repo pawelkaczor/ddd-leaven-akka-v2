@@ -19,17 +19,17 @@ class ReservationProjection(dao: ReservationDao)(implicit ec: ExecutionContext) 
     eventMessage.event match {
 
       case ReservationCreated(id, clientId) =>
-        val newView = ReservationView(id, clientId, Opened, new Date(now().getMillis))
+        val newView = ReservationView(id.value, clientId, Opened, new Date(now().getMillis))
         dao.createOrUpdate(newView)
 
       case ReservationConfirmed(id, clientId, _) =>
-          dao.updateStatus(id, Confirmed)
+          dao.updateStatus(id.value, Confirmed)
 
       case ReservationCanceled(id) =>
-        dao.updateStatus(id, Canceled)
+        dao.updateStatus(id.value, Canceled)
 
       case ReservationClosed(id) =>
-        dao.updateStatus(id, Closed)
+        dao.updateStatus(id.value, Closed)
 
       case ProductReserved(id, product, quantity) =>
         // TODO handle

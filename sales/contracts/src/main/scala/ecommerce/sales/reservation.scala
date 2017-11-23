@@ -10,15 +10,15 @@ import pl.newicom.dddd.aggregate._
 //
 
 sealed trait Command extends aggregate.Command {
-  def reservationId: EntityId
+  def reservationId: ReservationId
   override def aggregateId = reservationId
 }
 
-case class CreateReservation(reservationId: EntityId, customerId: EntityId) extends Command
-case class ReserveProduct(reservationId: EntityId, product: Product, quantity: Int) extends Command
-case class ConfirmReservation(reservationId: EntityId) extends Command
-case class CancelReservation(reservationId: EntityId) extends Command
-case class CloseReservation(reservationId: EntityId) extends Command
+case class CreateReservation(reservationId: ReservationId, customerId: EntityId) extends Command
+case class ReserveProduct(reservationId: ReservationId, product: Product, quantity: Int) extends Command
+case class ConfirmReservation(reservationId: ReservationId) extends Command
+case class CancelReservation(reservationId: ReservationId) extends Command
+case class CloseReservation(reservationId: ReservationId) extends Command
 
 
 //
@@ -26,11 +26,11 @@ case class CloseReservation(reservationId: EntityId) extends Command
 //
 sealed trait Event
 
-case class ReservationCreated(reservationId: EntityId, customerId: EntityId) extends Event
-case class ProductReserved(reservationId: EntityId, product: Product, quantity: Int) extends Event
-case class ReservationConfirmed(reservationId: EntityId, customerId: EntityId, totalAmount: Option[Money]) extends Event
-case class ReservationCanceled(reservationId: EntityId) extends Event
-case class ReservationClosed(reservationId: EntityId) extends Event
+case class ReservationCreated(reservationId: ReservationId, customerId: EntityId) extends Event
+case class ProductReserved(reservationId: ReservationId, product: Product, quantity: Int) extends Event
+case class ReservationConfirmed(reservationId: ReservationId, customerId: EntityId, totalAmount: Option[Money]) extends Event
+case class ReservationCanceled(reservationId: ReservationId) extends Event
+case class ReservationClosed(reservationId: ReservationId) extends Event
 
 // Value Objects
 
