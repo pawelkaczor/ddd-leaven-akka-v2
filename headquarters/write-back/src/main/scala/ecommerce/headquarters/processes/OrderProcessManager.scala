@@ -3,7 +3,6 @@ package ecommerce.headquarters.processes
 import java.util.UUID
 
 import com.github.nscala_time.time.Imports._
-import ecommerce.headquarters.app.HeadquartersConfiguration
 import ecommerce.headquarters.app.HeadquartersConfiguration.Department
 import ecommerce.headquarters.processes.OrderProcessManager.OrderStatus
 import ecommerce.invoicing.{CancelInvoice, CreateInvoice, OrderBilled, OrderBillingFailed, PaymentExpired, _}
@@ -13,7 +12,6 @@ import org.joda.time.DateTime._
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.process._
 import pl.newicom.dddd.saga.{BusinessProcessId, ProcessConfig}
-import pl.newicom.dddd.scheduling.schedulingOfficeId
 
 object OrderProcessManager extends SagaSupport {
 
@@ -46,13 +44,6 @@ import ecommerce.headquarters.processes.OrderProcessManager._
 class OrderProcessManager(val pc: PassivationConfig) extends ProcessManager[OrderStatus] {
 
   val officeId = OrderProcessConfig
-
-  def processCollaborators = List(
-    schedulingOfficeId(HeadquartersConfiguration.Department),
-    InvoicingOfficeId,
-    ReservationOfficeId,
-    ShippingOfficeId
-  )
 
   startWhen {
 

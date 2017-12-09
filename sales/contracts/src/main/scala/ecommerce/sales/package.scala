@@ -7,10 +7,10 @@ package object sales {
 
   type ReservationId = AggregateId
 
-  implicit object ReservationOfficeId extends RemoteOfficeId[sales.Command](
+  object ReservationOfficeId extends RemoteOfficeId[sales.Command](
     id           = "Reservation",
     department   = "Sales",
-    messageClass = classOf[sales.Command]
+    commandClass = classOf[sales.Command]
   )
 
 }
