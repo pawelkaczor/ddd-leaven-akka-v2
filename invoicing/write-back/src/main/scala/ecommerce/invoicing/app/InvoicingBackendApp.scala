@@ -8,9 +8,12 @@ import pl.newicom.dddd.office.OfficeFactory.office
 
 class InvoicingBackendApp extends Bootable with InvoicingBackendConfiguration {
 
-  override def startup() = {
+  import commandReception._
+
+  override def startup(): Unit = {
     Cluster(system).registerOnMemberUp {
       office[Invoice]
+      commandReception.receptor
     }
   }
 

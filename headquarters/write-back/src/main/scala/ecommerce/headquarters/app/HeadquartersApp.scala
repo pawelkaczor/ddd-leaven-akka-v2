@@ -10,6 +10,7 @@ import ecommerce.shipping.ShippingOfficeId
 import pl.newicom.dddd.cluster._
 import pl.newicom.dddd.office.OfficeFactory._
 import pl.newicom.dddd.office.OfficeRegistry
+import pl.newicom.dddd.process.CommandSink
 import pl.newicom.dddd.scheduling.Scheduler
 
 class HeadquartersApp extends Bootable with HeadquartersConfiguration {
@@ -22,9 +23,10 @@ class HeadquartersApp extends Bootable with HeadquartersConfiguration {
     cluster.registerOnMemberUp {
       office[Scheduler]
       office[OrderProcessManager]
+      office[CommandSink]
 
       List(InvoicingOfficeId, ReservationOfficeId, ShippingOfficeId).foreach {
-        offices.registerOffice(_, external = false)
+        offices.registerOffice(_, external = true)
       }
     }
 

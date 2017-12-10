@@ -6,10 +6,11 @@ import pl.newicom.dddd.office.RemoteOfficeId
 package object sales {
 
   type ReservationId = AggregateId
+  val Department = "Sales"
 
   object ReservationOfficeId extends RemoteOfficeId[sales.Command](
     id           = "Reservation",
-    department   = "Sales",
+    department   = Department,
     commandClass = classOf[sales.Command]
   )
 

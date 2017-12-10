@@ -5,6 +5,7 @@ import pl.newicom.dddd.office.RemoteOfficeId
 
 package object shipping {
   type ShipmentId = AggregateId
+  val Department = "Shipping"
 
-  implicit object ShippingOfficeId extends RemoteOfficeId[shipping.Command]("Shipment", "Shipping", classOf[shipping.Command])
+  implicit object ShippingOfficeId extends RemoteOfficeId[shipping.Command]("Shipment", Department, classOf[shipping.Command])
 }

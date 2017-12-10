@@ -3,11 +3,11 @@ package ecommerce.headquarters.processes
 import java.util.UUID
 
 import com.github.nscala_time.time.Imports._
-import ecommerce.headquarters.app.HeadquartersConfiguration.Department
+import ecommerce.headquarters.app.HeadquartersConfiguration.HQDepartment
 import ecommerce.headquarters.processes.OrderProcessManager.OrderStatus
 import ecommerce.invoicing.{CancelInvoice, CreateInvoice, OrderBilled, OrderBillingFailed, PaymentExpired, _}
-import ecommerce.sales.{Money, ReservationConfirmed, _}
-import ecommerce.shipping._
+import ecommerce.sales._
+import ecommerce.shipping.{CreateShipment, ShipmentId}
 import org.joda.time.DateTime._
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.process._
@@ -28,7 +28,7 @@ object OrderProcessManager extends SagaSupport {
   case object Completed          extends OrderStatus
   case object Failed             extends OrderStatus
 
-  implicit object OrderProcessConfig extends ProcessConfig[OrderProcessManager](BusinessProcessId(ProcessDomain, ProcessId, Department)) {
+  implicit object OrderProcessConfig extends ProcessConfig[OrderProcessManager](BusinessProcessId(ProcessDomain, ProcessId, HQDepartment)) {
     def correlationIdResolver = {
       case ReservationConfirmed(reservationId, _, _) => reservationId.value // orderId
       case OrderBilled(_, orderId, _, _)             => orderId
