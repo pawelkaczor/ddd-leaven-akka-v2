@@ -2,7 +2,6 @@ package ecommerce.shipping.app
 
 import akka.actor._
 import akka.kernel.Bootable
-import ecommerce.shipping.Department
 import ecommerce.shipping.{Event, Shipment}
 import pl.newicom.dddd.actor.{ActorFactory, PassivationConfig}
 import pl.newicom.dddd.aggregate.{AggregateRootActorFactory, AggregateRootLogger, DefaultConfig}
@@ -23,7 +22,5 @@ trait ShippingBackendConfiguration {
   implicit def commandReceptorActorFactory[A <: CommandReception : LocalOfficeId : ActorFactory]: ReceptorActorFactory[A] = new ReceptorActorFactory[A] {
     def receptorFactory: ReceptorFactory = (config: ReceptorConfig) => new Receptor(config) with EventstoreSubscriber
   }
-
-  val commandReception: CommandReception = CommandReception(Department)
 
 }
