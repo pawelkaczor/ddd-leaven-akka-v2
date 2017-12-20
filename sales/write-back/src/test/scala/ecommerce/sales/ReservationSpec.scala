@@ -3,9 +3,9 @@ package ecommerce.sales
 import akka.actor.Props
 import pl.newicom.dddd.actor.PassivationConfig
 import pl.newicom.dddd.aggregate.{AggregateRootActorFactory, DefaultConfig}
-import pl.newicom.dddd.test.support.OfficeSpec
 import ReservationSpec._
 import pl.newicom.dddd.office.OfficeRef
+import pl.newicom.dddd.test.ar.ARSpec
 
 object ReservationSpec {
   implicit def factory: AggregateRootActorFactory[ReservationAggregateRoot] =
@@ -14,7 +14,7 @@ object ReservationSpec {
     }
 }
 
-class ReservationSpec extends OfficeSpec[Event, ReservationAggregateRoot] {
+class ReservationSpec extends ARSpec[Event, ReservationAggregateRoot] {
 
   def reservationOffice: OfficeRef = officeUnderTest
 
