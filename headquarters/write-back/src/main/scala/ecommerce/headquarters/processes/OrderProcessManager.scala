@@ -1,7 +1,5 @@
 package ecommerce.headquarters.processes
 
-import java.util.UUID
-
 import com.github.nscala_time.time.Imports._
 import ecommerce.headquarters.app.HeadquartersConfiguration.HQDepartment
 import ecommerce.headquarters.processes.OrderProcessManager.OrderStatus
@@ -41,7 +39,7 @@ object OrderProcessManager extends SagaSupport {
 
 import ecommerce.headquarters.processes.OrderProcessManager._
 
-class OrderProcessManager(val pc: PassivationConfig) extends ProcessManager[OrderStatus] {
+class OrderProcessManager(val pc: PassivationConfig, shipmentIdGen: () => ShipmentId) extends ProcessManager[OrderStatus] {
 
   val officeId = OrderProcessConfig
 
@@ -71,7 +69,7 @@ class OrderProcessManager(val pc: PassivationConfig) extends ProcessManager[Orde
         DeliveryInProgress {
           ⟶(CloseReservation(new ReservationId(orderId)))
 
-          ⟶(CreateShipment(new ShipmentId(UUID.randomUUID().toString), orderId))
+          ⟶(CreateShipment(shipmentIdGen(), orderId))
         }
 
       case OrderBillingFailed(_, orderId) =>

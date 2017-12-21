@@ -1,9 +1,12 @@
 package ecommerce.headquarters.app
 
+import java.util.UUID
+
 import akka.actor.{Props, _}
 import com.typesafe.config.Config
 import ecommerce.headquarters.app.HeadquartersConfiguration._
 import ecommerce.headquarters.processes.OrderProcessManager
+import ecommerce.shipping.ShipmentId
 import org.slf4j.Logger
 import pl.newicom.dddd.actor.{ActorFactory, PassivationConfig}
 import pl.newicom.dddd.aggregate.{AggregateRootActorFactory, AggregateRootLogger, DefaultConfig}
@@ -41,7 +44,7 @@ trait HeadquartersConfiguration {
 
   implicit object OrderProcessManagerActorFactory extends SagaActorFactory[OrderProcessManager] {
     def props(pc: PassivationConfig): Props =
-      Props(new OrderProcessManager(pc))
+      Props(new OrderProcessManager(pc, () => new ShipmentId(UUID.randomUUID().toString)))
   }
 
   implicit def receptorActorFactory[A : LocalOfficeId : ActorFactory]: ReceptorActorFactory[A] = new ReceptorActorFactory[A] {
