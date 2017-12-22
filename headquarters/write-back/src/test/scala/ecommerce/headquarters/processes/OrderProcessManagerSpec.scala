@@ -19,21 +19,17 @@ object OrderProcessManagerSpec {
     def props(pc: PassivationConfig): Props = Props(new OrderProcessManager(pc, () => shipmentId))
   }
 
-  def ids: (EntityId, ReservationId, InvoiceId) = {
-    val orderId: EntityId = uuid10
-    val reservationId: ReservationId = AggregateId(orderId)
-    val invoiceId: InvoiceId = AggregateId(orderId)
-    (orderId, reservationId, invoiceId)
-  }
 }
 
 class OrderProcessManagerSpec extends PMSpec[OrderProcessManager](Some(testSystem)) {
 
+  def orderId: EntityId = testId
+  def reservationId: ReservationId = AggregateId(orderId)
+  def invoiceId: InvoiceId = AggregateId(orderId)
+
   "Order Process Manager" should {
 
     "create invoice & schedule payment expiration on ReservationConfirmed event" in {
-      val (orderId, reservationId, invoiceId) = ids
-
       when {
         ReservationConfirmed(reservationId, "customer-1", Some(Money(100d)))
       }
@@ -47,8 +43,6 @@ class OrderProcessManagerSpec extends PMSpec[OrderProcessManager](Some(testSyste
     }
 
     "cancel invoice on PaymentExpired event" in {
-      val (orderId, reservationId, invoiceId) = ids
-
       given {
         ReservationConfirmed(reservationId, "customer-1", Some(Money(100d)))
       }
@@ -62,8 +56,6 @@ class OrderProcessManagerSpec extends PMSpec[OrderProcessManager](Some(testSyste
     }
 
     "close reservation & create shipment on OrderBilled event" in {
-      val (orderId, reservationId, invoiceId) = ids
-
       given {
         ReservationConfirmed(reservationId, "customer-1", Some(Money(100d)))
       }
@@ -80,8 +72,6 @@ class OrderProcessManagerSpec extends PMSpec[OrderProcessManager](Some(testSyste
     }
 
     "cancel reservation on OrderBillingFailed event" in {
-      val (orderId, reservationId, invoiceId) = ids
-
       given {
         ReservationConfirmed(reservationId, "customer-1", Some(Money(100d)))
       }
