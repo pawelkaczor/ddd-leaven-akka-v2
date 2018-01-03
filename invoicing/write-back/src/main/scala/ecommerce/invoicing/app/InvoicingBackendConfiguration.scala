@@ -3,8 +3,8 @@ package ecommerce.invoicing.app
 import akka.actor._
 import akka.kernel.Bootable
 import ecommerce.invoicing.{Event, Invoice}
-import pl.newicom.dddd.actor.{ActorFactory, PassivationConfig}
-import pl.newicom.dddd.aggregate.{AggregateRootActorFactory, AggregateRootLogger, DefaultConfig}
+import pl.newicom.dddd.actor.{ActorFactory, DefaultConfig, PassivationConfig}
+import pl.newicom.dddd.aggregate.{AggregateRootActorFactory, AggregateRootLogger}
 import pl.newicom.dddd.coordination.ReceptorConfig
 import pl.newicom.dddd.office.LocalOfficeId
 import pl.newicom.dddd.process.CommandReceptorSupport.CommandReception

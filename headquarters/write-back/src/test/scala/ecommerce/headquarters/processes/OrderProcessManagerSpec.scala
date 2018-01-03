@@ -6,7 +6,7 @@ import ecommerce.headquarters.processes.OrderProcessManagerSpec._
 import ecommerce.invoicing.{CancelInvoice, CreateInvoice, InvoiceId, OrderBilled, OrderBillingFailed, PaymentExpired}
 import ecommerce.sales._
 import ecommerce.shipping.{CreateShipment, ShipmentId}
-import pl.newicom.dddd.actor.PassivationConfig
+import pl.newicom.dddd.actor.{DefaultConfig, PassivationConfig}
 import pl.newicom.dddd.aggregate.{AggregateId, EntityId}
 import pl.newicom.dddd.process.SagaActorFactory
 import pl.newicom.dddd.test.pm.PMSpec
@@ -16,7 +16,7 @@ import pl.newicom.dddd.utils.UUIDSupport.uuid10
 object OrderProcessManagerSpec {
   val shipmentId = new ShipmentId(uuid10)
   implicit object OrderProcessManagerActorFactory extends SagaActorFactory[OrderProcessManager] {
-    def props(pc: PassivationConfig): Props = Props(new OrderProcessManager(pc, () => shipmentId))
+    def props(pc: PassivationConfig): Props = Props(new OrderProcessManager(DefaultConfig(pc), () => shipmentId))
   }
 
 }

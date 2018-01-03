@@ -1,9 +1,9 @@
 package ecommerce.sales
 
 import akka.actor.Props
-import pl.newicom.dddd.actor.PassivationConfig
-import pl.newicom.dddd.aggregate.{AggregateRootActorFactory, DefaultConfig}
-import ReservationSpec._
+import ecommerce.sales.ReservationSpec._
+import pl.newicom.dddd.actor.{DefaultConfig, PassivationConfig}
+import pl.newicom.dddd.aggregate.AggregateRootActorFactory
 import pl.newicom.dddd.office.OfficeRef
 import pl.newicom.dddd.test.ar.ARSpec
 

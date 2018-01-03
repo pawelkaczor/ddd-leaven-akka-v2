@@ -7,9 +7,9 @@ import ecommerce.invoicing.{CancelInvoice, CreateInvoice, OrderBilled, OrderBill
 import ecommerce.sales._
 import ecommerce.shipping.{CreateShipment, ShipmentId}
 import org.joda.time.DateTime._
-import pl.newicom.dddd.actor.PassivationConfig
+import pl.newicom.dddd.actor.Config
 import pl.newicom.dddd.process._
-import pl.newicom.dddd.saga.{BusinessProcessId, ProcessConfig}
+import pl.newicom.dddd.saga.BusinessProcessId
 
 object OrderProcessManager extends SagaSupport {
 
@@ -39,9 +39,7 @@ object OrderProcessManager extends SagaSupport {
 
 import ecommerce.headquarters.processes.OrderProcessManager._
 
-class OrderProcessManager(val pc: PassivationConfig, shipmentIdGen: () => ShipmentId) extends ProcessManager[OrderStatus] {
-
-  val officeId = OrderProcessConfig
+class OrderProcessManager(val config: Config, shipmentIdGen: () => ShipmentId) extends ProcessManager[OrderStatus, OrderProcessManager] {
 
   startWhen {
 

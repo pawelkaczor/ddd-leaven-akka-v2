@@ -8,8 +8,8 @@ import ecommerce.headquarters.app.HeadquartersConfiguration._
 import ecommerce.headquarters.processes.OrderProcessManager
 import ecommerce.shipping.ShipmentId
 import org.slf4j.Logger
-import pl.newicom.dddd.actor.{ActorFactory, PassivationConfig}
-import pl.newicom.dddd.aggregate.{AggregateRootActorFactory, AggregateRootLogger, DefaultConfig}
+import pl.newicom.dddd.actor.{ActorFactory, DefaultConfig, PassivationConfig}
+import pl.newicom.dddd.aggregate.{AggregateRootActorFactory, AggregateRootLogger}
 import pl.newicom.dddd.coordination.ReceptorConfig
 import pl.newicom.dddd.office.LocalOfficeId
 import pl.newicom.dddd.process._
@@ -44,7 +44,7 @@ trait HeadquartersConfiguration {
 
   implicit object OrderProcessManagerActorFactory extends SagaActorFactory[OrderProcessManager] {
     def props(pc: PassivationConfig): Props =
-      Props(new OrderProcessManager(pc, () => new ShipmentId(UUID.randomUUID().toString)))
+      Props(new OrderProcessManager(DefaultConfig(pc, replyWithEvents = false), () => new ShipmentId(UUID.randomUUID().toString)))
   }
 
   implicit def receptorActorFactory[A : LocalOfficeId : ActorFactory]: ReceptorActorFactory[A] = new ReceptorActorFactory[A] {
