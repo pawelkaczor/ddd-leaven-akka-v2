@@ -3,7 +3,7 @@ package ecommerce.sales.view
 import java.sql.Date
 
 import com.typesafe.config.{Config, ConfigFactory}
-import ecommerce.sales.{ReservationConfirmed, ReservationCreated, ReservationId, ReservationOfficeId}
+import ecommerce.sales._
 import ecommerce.sales.ReservationStatus.{Confirmed, Opened}
 import org.joda.time.DateTime.now
 import org.scalatest._
@@ -37,7 +37,7 @@ class ReservationProjectionSpec extends WordSpecLike with Matchers with ViewTest
       dao.createOrUpdate(ReservationView("reservation-1", "client-1", Opened, new Date(now.getMillis))).run()
 
       // When
-      projection.consume(ReservationConfirmed(new ReservationId("reservation-1"), "client-1", None)).run()
+      projection.consume(ReservationConfirmed(new ReservationId("reservation-1"), "client-1", Money(10))).run()
 
       // Then
       val reservation = dao.byId("reservation-1").result

@@ -7,30 +7,10 @@ import ecommerce.tests.e2e.SystemSpec._
 import org.json4s.Formats
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Seconds, Span}
-import pl.newicom.dddd.serialization.JsonSerHints._
 import pl.newicom.dddd.utils.UUIDSupport.uuid7
-
-object SystemSpec {
-
-  val sales     = EndpointConfig(path = "ecommerce/sales")
-  val invoicing = EndpointConfig(path = "ecommerce/invoicing")
-  val shipping  = EndpointConfig(path = "ecommerce/shipping")
-
-  val sales_write: EndpointConfig     = sales.copy(port = 9100)
-  val invoicing_write: EndpointConfig = invoicing.copy(port = 9200)
-
-  val sales_read: EndpointConfig    = sales.copy(port = 9110)
-  val shipping_read: EndpointConfig = shipping.copy(port = 9310)
-
-  implicit val formats: Formats =
-    new SalesSerializationHintsProvider().hints() ++
-      new ShippingSerializationHintsProvider().hints()
-
-}
-
 class SystemSpec extends TestDriver with Eventually {
 
-  implicit override val patienceConfig = PatienceConfig(
+  implicit override val patienceConfig: PatienceConfig = PatienceConfig(
     timeout = scaled(Span(10, Seconds)),
     interval = scaled(Span(2, Seconds))
   )
@@ -60,7 +40,7 @@ class SystemSpec extends TestDriver with Eventually {
           productId = uuid7,
           name = "DDDD For Dummies - 7th Edition",
           productType = ProductType.Standard,
-          price = Some(Money(10.0))
+          price = Money(10.0)
         )
 
         POST command {
@@ -89,4 +69,23 @@ class SystemSpec extends TestDriver with Eventually {
       }
     }
   }
+}
+import pl.newicom.dddd.serialization.JsonSerHints._
+
+object SystemSpec {
+
+  val sales     = EndpointConfig(path = "ecommerce/sales")
+  val invoicing = EndpointConfig(path = "ecommerce/invoicing")
+  val shipping  = EndpointConfig(path = "ecommerce/shipping")
+
+  val sales_write: EndpointConfig     = sales.copy(port = 9100)
+  val invoicing_write: EndpointConfig = invoicing.copy(port = 9200)
+
+  val sales_read: EndpointConfig    = sales.copy(port = 9110)
+  val shipping_read: EndpointConfig = shipping.copy(port = 9310)
+
+  implicit val formats: Formats =
+    new SalesSerializationHintsProvider().hints() ++
+      new ShippingSerializationHintsProvider().hints()
+
 }

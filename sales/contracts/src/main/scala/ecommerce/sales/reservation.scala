@@ -28,7 +28,7 @@ sealed trait Event
 
 case class ReservationCreated(reservationId: ReservationId, customerId: EntityId) extends Event
 case class ProductReserved(reservationId: ReservationId, product: Product, quantity: Int) extends Event
-case class ReservationConfirmed(reservationId: ReservationId, customerId: EntityId, totalAmount: Option[Money]) extends Event
+case class ReservationConfirmed(reservationId: ReservationId, customerId: EntityId, totalAmount: Money) extends Event
 case class ReservationCanceled(reservationId: ReservationId) extends Event
 case class ReservationClosed(reservationId: ReservationId) extends Event
 

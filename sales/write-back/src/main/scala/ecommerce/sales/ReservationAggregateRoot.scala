@@ -66,14 +66,10 @@ object ReservationAggregateRoot extends AggregateRootSupport {
       }
       .orElse(canceledOrClosed)
 
-    def totalAmount: Option[Money] = {
+    def totalAmount: Money =
       items.foldLeft(Money()) {
-        (m, item) => item.product.price.getOrElse(Money()) + m
-      } match {
-        case Money(0d, _) => None
-        case m => Some(m)
+        (m, item) => item.product.price + m
       }
-    }
 
   }
 

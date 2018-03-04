@@ -20,7 +20,7 @@ class ReservationSpec extends ARSpec[Event, ReservationAggregateRoot] {
 
   def reservationId: ReservationId = aggregateId
 
-  val product = Product("product1", "productName", ProductType.Standard, Some(Money(10)))
+  val product = Product("product1", "productName", ProductType.Standard, Money(10))
 
   "Reservation office" should {
     "create reservation" in {

@@ -1,13 +1,15 @@
 package ecommerce.headquarters.processes
 
+import akka.cluster.sharding.ShardRegion.EntityId
 import com.github.nscala_time.time.Imports._
 import ecommerce.headquarters.app.HeadquartersConfiguration.HQDepartment
 import ecommerce.headquarters.processes.OrderProcessManager.OrderStatus
-import ecommerce.invoicing.{CancelInvoice, CreateInvoice, OrderBilled, OrderBillingFailed, PaymentExpired, _}
+import ecommerce.invoicing.{CancelInvoice, CreateInvoice, OrderBilled, OrderBillingFailed, PaymentExpired}
 import ecommerce.sales._
 import ecommerce.shipping.{CreateShipment, ShipmentId}
 import org.joda.time.DateTime._
 import pl.newicom.dddd.actor.Config
+import pl.newicom.dddd.aggregate.AggregateId
 import pl.newicom.dddd.process._
 import pl.newicom.dddd.saga.BusinessProcessId
 
@@ -35,6 +37,8 @@ object OrderProcessManager extends SagaSupport {
     }
   }
 
+  implicit def toEntityId(arId: AggregateId): String = arId.value
+  implicit def toARId(entityId: EntityId): AggregateId = AggregateId(entityId)
 }
 
 import ecommerce.headquarters.processes.OrderProcessManager._
@@ -49,11 +53,11 @@ class OrderProcessManager(val config: Config, shipmentIdGen: () => ShipmentId) e
 
     case New => {
 
-      case ReservationConfirmed(reservationId, customerId, totalAmountOpt) =>
+      case ReservationConfirmed(reservationId, customerId, totalAmount) =>
         WaitingForPayment {
-          ⟶(CreateInvoice(new InvoiceId(sagaId), reservationId.value, customerId, totalAmountOpt.getOrElse(Money()), now()))
+          ⟶(CreateInvoice(sagaId, reservationId, customerId, totalAmount, now()))
 
-          ⟵(PaymentExpired(new InvoiceId(sagaId), reservationId.value)) in 3.minutes
+          ⟵(PaymentExpired(sagaId, reservationId.value)) in 3.minutes
         }
 
     }
@@ -65,14 +69,14 @@ class OrderProcessManager(val config: Config, shipmentIdGen: () => ShipmentId) e
 
       case OrderBilled(_, orderId, _, _) =>
         DeliveryInProgress {
-          ⟶(CloseReservation(new ReservationId(orderId)))
+          ⟶(CloseReservation(orderId))
 
           ⟶(CreateShipment(shipmentIdGen(), orderId))
         }
 
       case OrderBillingFailed(_, orderId) =>
         Failed {
-          ⟶(CancelReservation(new ReservationId(orderId)))
+          ⟶(CancelReservation(orderId))
         }
     }
 

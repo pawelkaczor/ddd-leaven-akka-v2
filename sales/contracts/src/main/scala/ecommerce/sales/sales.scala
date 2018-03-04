@@ -90,7 +90,7 @@ object ProductType extends Enumeration {
 }
 
 object Product {
-  def apply(productId: String, name: String, productType: ProductType, price: Option[Money]) =
+  def apply(productId: String, name: String, productType: ProductType, price: Money) =
     new Product(productId, 0L, name, productType, price)
 }
 
@@ -99,4 +99,4 @@ case class Product(
                     version: Long,
                     name: String,
                     productType: ProductType,
-                    price: Option[Money])
+                    price: Money)

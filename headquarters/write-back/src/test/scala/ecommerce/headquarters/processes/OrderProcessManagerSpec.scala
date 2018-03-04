@@ -31,11 +31,11 @@ class OrderProcessManagerSpec extends PMSpec[OrderProcessManager](Some(testSyste
 
     "create invoice & schedule payment expiration on ReservationConfirmed event" in {
       when {
-        ReservationConfirmed(reservationId, "customer-1", Some(Money(100d)))
+        ReservationConfirmed(reservationId, "customer-1", Money(100))
       }
       .expectReceivedEvent
       .expect { e =>
-        CreateInvoice(invoiceId, orderId, e.customerId, e.totalAmount.get, testEpoch)
+        CreateInvoice(invoiceId, orderId, e.customerId, e.totalAmount, testEpoch)
       }
       .expectEventScheduled(testEpoch + 3.minutes) {
         PaymentExpired(invoiceId, orderId)
@@ -44,7 +44,7 @@ class OrderProcessManagerSpec extends PMSpec[OrderProcessManager](Some(testSyste
 
     "cancel invoice on PaymentExpired event" in {
       given {
-        ReservationConfirmed(reservationId, "customer-1", Some(Money(100d)))
+        ReservationConfirmed(reservationId, "customer-1", Money(100))
       }
       .when {
         PaymentExpired(invoiceId, orderId)
@@ -57,7 +57,7 @@ class OrderProcessManagerSpec extends PMSpec[OrderProcessManager](Some(testSyste
 
     "close reservation & create shipment on OrderBilled event" in {
       given {
-        ReservationConfirmed(reservationId, "customer-1", Some(Money(100d)))
+        ReservationConfirmed(reservationId, "customer-1", Money(100))
       }
       .when {
         OrderBilled(invoiceId, orderId, Money(100d), "payment-1")
@@ -73,7 +73,7 @@ class OrderProcessManagerSpec extends PMSpec[OrderProcessManager](Some(testSyste
 
     "cancel reservation on OrderBillingFailed event" in {
       given {
-        ReservationConfirmed(reservationId, "customer-1", Some(Money(100d)))
+        ReservationConfirmed(reservationId, "customer-1", Money(100))
       }
       .when {
         OrderBillingFailed(invoiceId, orderId)
