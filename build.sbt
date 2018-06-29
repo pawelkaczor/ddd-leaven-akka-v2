@@ -2,9 +2,9 @@ import sbt.Keys._
 
 organization in ThisBuild := "pl.newicom"
 
-version in ThisBuild := "0.7.7-SNAPSHOT"
+version in ThisBuild := "0.7.8-SNAPSHOT"
 
-scalaVersion in ThisBuild := "2.12.4"
+scalaVersion in ThisBuild := "2.12.6"
 
 scalacOptions in ThisBuild := Seq("-deprecation", "-encoding", "utf8", "-feature", "-language:postfixOps", "-language:implicitConversions"/*, "-Xlog-implicits"*/)
 
