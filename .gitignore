@@ -17,3 +17,4 @@ dist
 .settings
 .vagrant
 /journal
+.DS_Store
